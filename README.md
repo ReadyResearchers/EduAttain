@@ -9,3 +9,6 @@ There is evidence in how income, and more specifically socioeconomic status, can
 ## Technical Details & Future Plans
 
 For my project, I am considering it a two-part "mission", as I am not only trying to perform data analysis but also displaying it in a user-friendly manner using a web platform. As a result of this two-fold endeavor, I will be employing the use of various tools to study the impact of different indicators on educational attainment. For my data analysis, I plan to use R and R-Studio to run statistical tests on and create different visualizations from my data. Speaking of data, for my project I will be using data from [IPUMS CPS](https://cps.ipums.org/cps/) (Integrated Public Use Microdata Series, Current Population Survey), which harmonizes microdata from the Current Population Survey and includes relevant demographic information. I plan to use cross-sectional data from 2010-2021, which encompasses all of the US. I may also have to employ the use of a database to hold my data, since as it stands, it cannot open in R Studio. As for my web platform, I will be doing research over the course of the next few months to decide what tool(s) will be best suited for me in developing this idea.
+
+## References
+[APA - Education and Socioeconomic Status](https://www.apa.org/pi/ses/resources/publications/education)
