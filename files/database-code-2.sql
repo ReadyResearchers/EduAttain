@@ -23,6 +23,11 @@ FTOTVAL - total family income
 INCTOT - total personal income
 /*
 
+/* 
+CREATE DATABASE FROM CMD
+sqlite3 CPS.db
+*/
+
 /* Remove previous table if already in database */
 DROP TABLE CPS;
 CREATE TABLE CPS (
@@ -49,4 +54,14 @@ INCTOT VARCHAR NOT NULL
 .mode csv
 
 /* import csv file in */
-.import C:\Users\kyrie\OneDrive\Desktop\data\cps_00002.csv CPS
+.import C:\\Users\\kyrie\\OneDrive\\Desktop\\data\\cps_00002.csv CPS
+
+/* view tables */
+.tables
+
+/* view structure of table */
+.schema CPS
+
+/* view all contents of table */
+SELECT * from CPS
+/* BUT DON'T ACTUALLY RUN THIS BC IT TAKES FOREVER :D*/
