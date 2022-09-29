@@ -31,7 +31,7 @@ sqlite3 CPS.db
 /* Remove previous table if already in database */
 DROP TABLE IF EXISTS CPS;
 CREATE TABLE CPS (
-CPSIDP VARCHAR NOT NULL,
+CPSIDP VARCHAR NOT NULL, /* NOT NULL == BLANK COLUMN -- investigate whether or not it is*/
 YEAR VARCHAR NOT NULL,
 SERIAL VARCHAR NOT NULL,
 MONTH VARCHAR NOT NULL,
@@ -65,7 +65,7 @@ PRIMARY KEY (`YEAR`, `SERIAL`, `MONTH`, `PERNUM`)
 .schema CPS
 
 /* view all contents of table */
-SELECT * from CPS
+/* SELECT * from CPS*/
 /* BUT DON'T ACTUALLY RUN THIS BC IT TAKES FOREVER :D*/
 
 /* view first 5 rows of table */
