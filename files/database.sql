@@ -31,7 +31,7 @@ sqlite3 CPS.db
 /* Remove previous table if already in database */
 DROP TABLE IF EXISTS CPS;
 CREATE TABLE CPS (
-CPSIDP VARCHAR NOT NULL, /* NOT NULL == BLANK COLUMN -- investigate whether or not it is*/
+CPSIDP VARCHAR NOT NULL, 
 YEAR VARCHAR NOT NULL,
 SERIAL VARCHAR NOT NULL,
 MONTH VARCHAR NOT NULL,
@@ -50,6 +50,7 @@ INCTOT VARCHAR NOT NULL,
 PRIMARY KEY (`YEAR`, `SERIAL`, `MONTH`, `PERNUM`)
 );
 
+/* NOT NULL == BLANK COLUMN -- investigate whether or not it is*/
 /* file import commands - csv */
 
 /* assign import mode */

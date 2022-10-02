@@ -4,29 +4,41 @@
 
 ########################################################
 
-rm(list = ls()) # remove variables stored in memory.
-
-# If you want to remove all previous plots and clear the console, run the following two lines.
-graphics.off() # clear out all plots from previous work.
-
-cat("\014") # clear the console
-
-
-########################################################
+# remove packages
+remove.packages("RSQLite")
 
 # install necessary packages
-install.packages("devtools") # install to connect to github
-devtools::install_github("RcppCore/Rcpp") # download needed dependency for DBI
-devtools::install_github("rstats-db/DBI") # download new version of DBI to run SQLite
 install.packages("RSQLite")
 
 # load necessary libraries
 library(RSQLite)
 
+# setting database path
+db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
+
 # connect to database
-conn <- dbConnect(RSQLite::SQLite(), "CPS")
+conn <- dbConnect(drv = SQLite(), dbname = db)
 
-# list all tables connected to db
-dbListTables(conn)
+# view structure
+dbGetQuery(conn, "SELECT type, tbl_name  FROM sqlite_master")
 
-# does not work rn, need to debug
+# list fields in cps
+dbListFields(conn,"CPS")
+
+################################################
+# QUERIES 
+################################################
+
+# query to display the first 5 rows
+q <- 'SELECT * from CPS LIMIT 5;'
+result <- dbGetQuery(conn,q)
+
+# display data
+head(result)
+
+# query to get all data from 2015 for sex + educ attain
+q1 <- 'SELECT pernum, sex, educ, month FROM CPS WHERE year = 2015'
+res1 <- dbGetQuery(conn, q1)
+
+# display data
+head(res1)
