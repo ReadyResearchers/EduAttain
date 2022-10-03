@@ -42,3 +42,20 @@ res1 <- dbGetQuery(conn, q1)
 
 # display data
 head(res1)
+
+################################################
+# PLOTS 
+################################################
+
+# educational attainment plot for gender differences - in month 3
+#WORK ON LATER: gender2015Plot <- ggplot(data = res1, mapping = aes(x = SEX, y = EDUC, fill = Personal.Income))
+
+#Fem2008Plot <- ggplot(data = data_lowincome_f2008, mapping = aes(x = Educational.Attainment, y = Population.Count, fill = Personal.Income)) +
+ # geom_bar(stat = "identity", position=position_dodge(), 
+  #         colour="black") +
+  #scale_fill_hue(name = "Personal Income") + 
+  #xlab("Highest Level of Education Attained") + ylab("Number of People") + 
+  #ggtitle("2008 CA Female Educational Attainment, Grouped by Income") +
+  #theme(axis.text.x = element_text(angle = 90))
+
+#ggplotly(Fem2008Plot)
