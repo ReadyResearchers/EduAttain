@@ -44,11 +44,16 @@ res1 <- dbGetQuery(conn, q1)
 head(res1)
 
 ################################################
+# STATS
+################################################
+summary(res1)
+
+################################################
 # PLOTS 
 ################################################
 
 # educational attainment plot for gender differences - in month 3
-#WORK ON LATER: gender2015Plot <- ggplot(data = res1, mapping = aes(x = SEX, y = EDUC, fill = Personal.Income))
+gender2015Plot <- ggplot(data = res1, mapping = aes(x = SEX, y = EDUC, fill = Personal.Income))
 
 #Fem2008Plot <- ggplot(data = data_lowincome_f2008, mapping = aes(x = Educational.Attainment, y = Population.Count, fill = Personal.Income)) +
  # geom_bar(stat = "identity", position=position_dodge(), 
