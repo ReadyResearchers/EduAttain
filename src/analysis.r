@@ -39,9 +39,15 @@ head(result)
 # query to get all data from 2015 for sex + educ attain
 q1 <- 'SELECT pernum, sex, educ, month FROM CPS WHERE year = 2015'
 res1 <- dbGetQuery(conn, q1)
+# test to check if it is a dataframe --> need to remove
+res1
+class(res1)
 
 # display data
 head(res1)
+
+# convert from character to factors
+# res1$educ <- as.factor(res1$educ)
 
 ################################################
 # STATS
@@ -53,7 +59,7 @@ summary(res1)
 ################################################
 
 # educational attainment plot for gender differences - in month 3
-gender2015Plot <- ggplot(data = res1, mapping = aes(x = SEX, y = EDUC, fill = Personal.Income))
+#gender2015Plot <- ggplot(data = res1, mapping = aes(x = SEX, y = EDUC, fill = Personal.Income))
 
 #Fem2008Plot <- ggplot(data = data_lowincome_f2008, mapping = aes(x = Educational.Attainment, y = Population.Count, fill = Personal.Income)) +
  # geom_bar(stat = "identity", position=position_dodge(), 
@@ -64,3 +70,6 @@ gender2015Plot <- ggplot(data = res1, mapping = aes(x = SEX, y = EDUC, fill = Pe
   #theme(axis.text.x = element_text(angle = 90))
 
 #ggplotly(Fem2008Plot)
+
+# closes connection to db
+dbDisconnect(conn)
