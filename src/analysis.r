@@ -12,6 +12,8 @@ install.packages("RSQLite")
 
 # load necessary libraries
 library(RSQLite)
+library(dplyr)
+library(ggplot2)
 
 # setting database path
 db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
@@ -70,6 +72,25 @@ summary(res1)
   #theme(axis.text.x = element_text(angle = 90))
 
 #ggplotly(Fem2008Plot)
+
+
+# test plot
+tbl(conn, "CPS") %>%
+  group_by(educ) %>%
+  tally() %>%
+  collect() %>%
+  ggplot() + 
+  geom_col(aes(x=educ, y=sex))
+# theoretically works -- need to work but might scrap for the one below
+
+# plot --> play w to get actual plot to print out
+plot1 <- ggplot(res1, aes(sex, educ, color = pernum)) +
+  geom_point() +
+  xlab("Gender") +
+  ylab("Level of Educational Attainment") +
+  ggtitle("Educational Attainment by Gender in 2015")
+
+plot1
 
 # closes connection to db
 dbDisconnect(conn)
