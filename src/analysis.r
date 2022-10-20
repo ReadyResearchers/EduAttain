@@ -14,6 +14,8 @@ install.packages("RSQLite")
 library(RSQLite)
 library(dplyr)
 library(ggplot2)
+library(tidyverse)
+library(psych)
 
 # setting database path
 db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
@@ -35,11 +37,15 @@ dbListFields(conn,"CPS")
 q <- 'SELECT * from CPS LIMIT 5;'
 result <- dbGetQuery(conn,q)
 
+# pairs panels
+pairs.panels(result)
+
 # display data
 head(result)
+View(result)
 
 # query to get all data from 2015 for sex + educ attain
-q1 <- 'SELECT pernum, sex, educ, month FROM CPS WHERE year = 2015'
+q1 <- 'SELECT cpsidp, sex, educ, month FROM CPS WHERE year = 2015 AND sex = 1'
 res1 <- dbGetQuery(conn, q1)
 # test to check if it is a dataframe --> need to remove
 res1
@@ -119,11 +125,14 @@ sex_count
 #####################################################################
 
 # test plot --> working!!! but not correct :>
-plot1 <- ggplot(res1, aes(educ_count, SEX)) +
+plot1 <- ggplot(res1, aes(EDUC, SEX)) +
   geom_col() +
   xlab("Level of Educational Attainment") +
   ylab("Gender") +
-  ggtitle("Educational Attainment by Gender in 2015")
+  ggtitle("Educational Attainment by 1 in 2015")
+
+#bi.bars("EDUC","SEX",xlab="Education",
+ #       main="Education by gender",horiz=FALSE)
 
 # display plot
 plot1
