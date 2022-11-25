@@ -1,4 +1,4 @@
-# EduAttain: Statistical Analysis of the Impact of Different Demographic Indicators on Educational Attainment
+# EduAttain: A Statistical Analysis of the Impact of Different Demographic Indicators on Educational Attainment
 
 ## Abstract
 
