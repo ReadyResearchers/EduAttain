@@ -82,7 +82,7 @@ head(data2010)
 View(data2010)
 
 #################################
-# Filter Data
+# Filter Data / Styling Data for Visuals
 #################################
 
 # replacing educational attainment numerical codes for textual values
@@ -125,6 +125,45 @@ data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
 data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
 data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
 
+
+# replacing state fips code with state name
+data2010$STATEFIP[data2010$STATEFIP == "6"]<-"CA"
+data2010$STATEFIP[data2010$STATEFIP == "48"]<-"TX"
+data2010$STATEFIP[data2010$STATEFIP == "36"]<-"NY"
+data2010$STATEFIP[data2010$STATEFIP == "12"]<-"FL"
+data2010$STATEFIP[data2010$STATEFIP == "17"]<-"IL"
+data2010$STATEFIP[data2010$STATEFIP == "42"]<-"PA"
+data2010$STATEFIP[data2010$STATEFIP == "39"]<-"OH"
+data2010$STATEFIP[data2010$STATEFIP == "24"]<-"MD"
+data2010$STATEFIP[data2010$STATEFIP == "26"]<-"MI"
+data2010$STATEFIP[data2010$STATEFIP == "27"]<-"MN"
+data2010$STATEFIP[data2010$STATEFIP == "8"]<-"CO"
+data2010$STATEFIP[data2010$STATEFIP == "13"]<-"GA"
+data2010$STATEFIP[data2010$STATEFIP == "51"]<-"VA"
+data2010$STATEFIP[data2010$STATEFIP == "9"]<-"CT"
+data2010$STATEFIP[data2010$STATEFIP == "37"]<-"NC"
+data2010$STATEFIP[data2010$STATEFIP == "34"]<-"NJ"
+
+#---- work on adding states below starting at 33
+  
+data2010$STATEFIP[data2010$STATEFIP == "6"]<-"CA"
+data2010$STATEFIP[data2010$STATEFIP == "48"]<-"TX"
+data2010$STATEFIP[data2010$STATEFIP == "36"]<-"NY"
+data2010$STATEFIP[data2010$STATEFIP == "12"]<-"FL"
+data2010$STATEFIP[data2010$STATEFIP == "17"]<-"IL"
+data2010$STATEFIP[data2010$STATEFIP == "42"]<-"PA"
+data2010$STATEFIP[data2010$STATEFIP == "39"]<-"OH"
+data2010$STATEFIP[data2010$STATEFIP == "24"]<-"MD"
+data2010$STATEFIP[data2010$STATEFIP == "26"]<-"MI"
+data2010$STATEFIP[data2010$STATEFIP == "27"]<-"MN"
+data2010$STATEFIP[data2010$STATEFIP == "8"]<-"CO"
+data2010$STATEFIP[data2010$STATEFIP == "13"]<-"GA"
+data2010$STATEFIP[data2010$STATEFIP == "51"]<-"VA"
+data2010$STATEFIP[data2010$STATEFIP == "9"]<-"CT"
+data2010$STATEFIP[data2010$STATEFIP == "37"]<-"NC"
+data2010$STATEFIP[data2010$STATEFIP == "34"]<-"NJ"
+
+
 #####
 # NY
 #####
@@ -135,7 +174,7 @@ male_2010NY <- data2010 %>% filter(STATEFIP == 36 & SEX == 1) %>% filter(as.nume
 
 View(male_2010NY)
 
-# adult female educational attainment in ny - 2014
+# adult female educational attainment in ny - 2010
 female_2010NY <- data2010 %>% filter(STATEFIP == 36 & SEX == 2) %>% filter(as.numeric(AGE) >= 18)
 
 View(female_2010NY)
@@ -202,6 +241,14 @@ NY2010F_educ_count
 # gender population count
 sex_count <- data2014 %>% count(SEX, sort = TRUE)
 sex_count
+
+
+############################################################
+# Linear Regression -- TESTING
+############################################################
+
+test <- lm()
+
 
 ################################################
 # PLOTS 
