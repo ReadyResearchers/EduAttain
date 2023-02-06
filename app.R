@@ -7,6 +7,7 @@
 # install needed packages
 # install.packages("shiny")
 # install.packages("shinydashboard")
+#install.packages('rsconnect')
 
 # install libs
 library(shiny)
@@ -16,6 +17,7 @@ library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(plotly)
+library(rsconnect)
 
 # setting database path
 db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
@@ -122,6 +124,11 @@ server <- function(input, output) {
 
 # view app
 shinyApp(ui, server)
+
+#rsconnect::deployApp('C:/Users/kyrie/Documents/cs600/eduattain/app.R')
+
+#dbDisconnect()
+
 
 
 # NOTE: sample implementation of a basic dash

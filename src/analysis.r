@@ -372,6 +372,10 @@ state_count
 educ_count <- data2014 %>% count(EDUC, sort = TRUE)
 educ_count
 
+educ_count <- data2010 %>% count(EDUC, sort = TRUE)
+educ_count
+
+
 # educational attainment in NY by males in 2014
 NY2014M_educ_count <- male_2014NY %>% count(EDUC, sort = TRUE)
 NY2014M_educ_count
@@ -519,6 +523,10 @@ TXFemaleEdu2010 <- ggplot(TX2010F_educ_count, aes(EDUC, n)) +
   ggtitle("Educational Attainment by Adult Females in TX (2010)") +
   theme(axis.text.x = element_text(angle = 90))
 
+test <- ggplot(data2010, aes(x=EDUC, fill=SEX)) + 
+  geom_bar()
+
+ggplotly(test)
 
 # 2014
 
@@ -584,6 +592,44 @@ ggplotly(TXFemaleEdu2014)
 ggplotly(USMaleEdu)
 ggplotly(USFemaleEdu)
 
+
+########
+# recoding categorical 2 dummy
+#######
+
+# sex
+result$female <- ifelse(result$SEX == "2", 1, 0)
+result$male <- ifelse(result$SEX == "1", 1, 0)
+
+# race
+result$white <- ifelse(result$RACE == "100", 1, 0)
+result$black <- ifelse(result$RACE == "200", 1, 0)
+result$amer_indian <- ifelse(result$RACE == "300", 1, 0)
+result$asian <- ifelse(result$RACE == "651", 1, 0)
+result$islander <- ifelse(result$RACE == "652", 1, 0)
+result$white_black <- ifelse(result$RACE == "801", 1, 0)
+result$white_amer_indian <- ifelse(result$RACE == "802", 1, 0)
+result$white_asian <- ifelse(result$RACE == "803", 1, 0)
+result$white_islander <- ifelse(result$RACE == "804", 1, 0)
+result$black_amer_indian <- ifelse(result$RACE == "805", 1, 0)
+result$black_asian <- ifelse(result$RACE == "806", 1, 0)
+result$black_islander <- ifelse(result$RACE == "807", 1, 0)
+result$amer_indian_asian <- ifelse(result$RACE == "808", 1, 0)
+result$asian_islander <- ifelse(result$RACE == "809", 1, 0)
+result$white_black_amer_indian <- ifelse(result$RACE == "810", 1, 0)
+result$white_black_asian <- ifelse(result$RACE == "811", 1, 0)
+result$white_amer_indian_asian <- ifelse(result$RACE == "812", 1, 0)
+result$white_asian_islander <- ifelse(result$RACE == "813", 1, 0)
+result$white_black_amer_indian_asian <- ifelse(result$RACE == "814", 1, 0)
+result$amer_indian_islander <- ifelse(result$RACE == "815", 1, 0)
+result$white_black_islander <- ifelse(result$RACE == "816", 1, 0)
+result$white_amer_indian_islander <- ifelse(result$RACE == "817", 1, 0)
+result$black_amer_indian_asian <- ifelse(result$RACE == "818", 1, 0)
+result$white_amer_indian_asian_islander <- ifelse(result$RACE == "819", 1, 0)
+result$unspecified_2_orMore <- ifelse(result$RACE == "820", 1, 0)
+result$unspecified_4_orMore <- ifelse(result$RACE == "830", 1, 0)
+
+# 
 
 ### SAMPLE REGRESSION
 
