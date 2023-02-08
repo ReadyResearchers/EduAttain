@@ -57,49 +57,46 @@ rng
 ###### 
 
 # query to get all data from 2014 for sex + educ attain
-q1 <- 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014'
-data2014 <- dbGetQuery(conn, q1)
-# test to check if it is a dataframe --> need to remove
-data2014
-class(data2014)
-
-# display data
-head(data2014)
-
-# view data sets
-View(data2014)
-
+q1 <- 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18'
+d2014 <- dbGetQuery(conn, q1)
+data2014 <- d2014 %>% filter(EDUC != "1")
 
 ###### 
 
 # query to get all data from 2010 for sex + educ attain
-q2 <- 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010'
-data2010 <- dbGetQuery(conn, q2)
-# test to check if it is a dataframe --> need to remove
-data2010
-class(data2010)
-
-# display data
-head(data2010)
-
-# view data sets
-View(data2010)
-
+q2 <- 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18'
+d2010 <- dbGetQuery(conn, q2)
+data2010 <- d2010 %>% filter(EDUC != "1")
 
 ########
 
 # query to get all data from 2010 for sex + educ attain
-q3 <- 'SELECT cpsidp, sex, educ, month, age, statefip FROM CPS WHERE year = 2012'
-data2012 <- dbGetQuery(conn, q1)
-# test to check if it is a dataframe --> need to remove
-data2012
-class(data2012)
+q3 <- 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18'
+d2012 <- dbGetQuery(conn, q3)
+data2012 <- d2012 %>% filter(EDUC != "1")
 
-# display data
-head(data2012)
+#########
 
-# view data sets
-View(data2012)
+# query to get all data from 2010 for sex + educ attain
+q4 <- 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18'
+d2013 <- dbGetQuery(conn, q4)
+data2013 <- d2013 %>% filter(EDUC != "1")
+
+#########
+
+# query to get all data from 2010 for sex + educ attain
+q5 <- 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18'
+d2015 <- dbGetQuery(conn, q5)
+data2015 <- d2015 %>% filter(EDUC != "1")
+
+#########
+
+# query to get all data from 2011for sex + educ attain
+q6 <- 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2011 AND age >= 18'
+d2011 <- dbGetQuery(conn, q6)
+data2011 <- d2011 %>% filter(EDUC != "1")
+
+
 
 #################################
 # Filter Data / Styling Data for Visuals
@@ -109,6 +106,7 @@ View(data2012)
 
 
 # 2010
+data2010$EDUC[data2010$EDUC == "1"]<-"NIU"
 data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
 data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
 data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
@@ -125,6 +123,76 @@ data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
 data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
 data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
 data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+
+data2010$SEX[data2010$SEX == "1"]<-"Male"
+data2010$SEX[data2010$SEX == "2"]<-"Female"
+
+# 2011
+data2011$EDUC[data2011$EDUC == "1"]<-"NIU"
+data2011$EDUC[data2011$EDUC == "10"]<-"Grades 1-4"
+data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
+data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
+data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
+data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
+data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
+data2011$EDUC[data2011$EDUC == "20"]<-"Grades 5-6"
+data2011$EDUC[data2011$EDUC == "30"]<-"Grades 7-8"
+data2011$EDUC[data2011$EDUC == "40"]<-"HS, Grade 9"
+data2011$EDUC[data2011$EDUC == "50"]<-"HS, Grade 10"
+data2011$EDUC[data2011$EDUC == "60"]<-"HS, Grade 11"
+data2011$EDUC[data2011$EDUC == "71"]<-"HS, Grade 12, no diploma"
+data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
+data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
+data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+
+data2011$SEX[data2011$SEX == "1"]<-"Male"
+data2011$SEX[data2011$SEX == "2"]<-"Female"
+
+# 2012
+data2012$EDUC[data2012$EDUC == "1"]<-"NIU"
+data2012$EDUC[data2012$EDUC == "10"]<-"Grades 1-4"
+data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
+data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
+data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
+data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
+data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
+data2012$EDUC[data2012$EDUC == "20"]<-"Grades 5-6"
+data2012$EDUC[data2012$EDUC == "30"]<-"Grades 7-8"
+data2012$EDUC[data2012$EDUC == "40"]<-"HS, Grade 9"
+data2012$EDUC[data2012$EDUC == "50"]<-"HS, Grade 10"
+data2012$EDUC[data2012$EDUC == "60"]<-"HS, Grade 11"
+data2012$EDUC[data2012$EDUC == "71"]<-"HS, Grade 12, no diploma"
+data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
+data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
+data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+
+data2012$SEX[data2012$SEX == "1"]<-"Male"
+data2012$SEX[data2012$SEX == "2"]<-"Female"
+
+# 2013
+data2013$EDUC[data2013$EDUC == "1"]<-"NIU"
+data2013$EDUC[data2013$EDUC == "10"]<-"Grades 1-4"
+data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
+data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
+data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
+data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
+data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
+data2013$EDUC[data2013$EDUC == "20"]<-"Grades 5-6"
+data2013$EDUC[data2013$EDUC == "30"]<-"Grades 7-8"
+data2013$EDUC[data2013$EDUC == "40"]<-"HS, Grade 9"
+data2013$EDUC[data2013$EDUC == "50"]<-"HS, Grade 10"
+data2013$EDUC[data2013$EDUC == "60"]<-"HS, Grade 11"
+data2013$EDUC[data2013$EDUC == "71"]<-"HS, Grade 12, no diploma"
+data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
+data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
+data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+
+data2013$SEX[data2013$SEX == "1"]<-"Male"
+data2013$SEX[data2013$SEX == "2"]<-"Female"
+
 
 # 2014
 
@@ -144,6 +212,31 @@ data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
 data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
 data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
 data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+
+data2014$SEX[data2014$SEX == "1"]<-"Male"
+data2014$SEX[data2014$SEX == "2"]<-"Female"
+
+# 2015
+
+data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
+data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
+data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
+data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
+data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
+data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
+data2015$EDUC[data2015$EDUC == "20"]<-"Grades 5-6"
+data2015$EDUC[data2015$EDUC == "30"]<-"Grades 7-8"
+data2015$EDUC[data2015$EDUC == "40"]<-"HS, Grade 9"
+data2015$EDUC[data2015$EDUC == "50"]<-"HS, Grade 10"
+data2015$EDUC[data2015$EDUC == "60"]<-"HS, Grade 11"
+data2015$EDUC[data2015$EDUC == "71"]<-"HS, Grade 12, no diploma"
+data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
+data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
+data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+
+data2015$SEX[data2015$SEX == "1"]<-"Male"
+data2015$SEX[data2015$SEX == "2"]<-"Female"
 
 # all yrs
 result$EDUC[result$EDUC == "10"]<-"Grades 1-4"
@@ -523,10 +616,77 @@ TXFemaleEdu2010 <- ggplot(TX2010F_educ_count, aes(EDUC, n)) +
   ggtitle("Educational Attainment by Adult Females in TX (2010)") +
   theme(axis.text.x = element_text(angle = 90))
 
-test <- ggplot(data2010, aes(x=EDUC, fill=SEX)) + 
-  geom_bar()
 
-ggplotly(test)
+################## GENDER X EDUC 2010-2015 #####################
+
+
+## gender x educ 2010
+genderxeduc2010 <- ggplot(data2010, aes(x=EDUC, fill=SEX)) + 
+  geom_bar(position = "dodge", stat = "count") + 
+  xlab("Level of Educational Attainment") + 
+  ggtitle("US Educational Attainment by Gender in 2010") +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(genderxeduc2010)
+
+## gender x educ 2011
+
+genderxeduc2011 <- ggplot(data2011, aes(x=EDUC, fill=SEX)) + 
+  geom_bar(position = "dodge", stat = "count") + 
+  xlab("Level of Educational Attainment") + 
+  ggtitle("US Educational Attainment by Gender in 2011") +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(genderxeduc2011)
+
+## gender x educ 2012
+
+genderxeduc2012 <- ggplot(data2012, aes(x=EDUC, fill=SEX)) + 
+  geom_bar(position = "dodge", stat = "count") + 
+  xlab("Level of Educational Attainment") + 
+  ggtitle("US Educational Attainment by Gender in 2012") +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(genderxeduc2012)
+
+## gender x educ 2013
+
+genderxeduc2013 <- ggplot(data2013, aes(x=EDUC, fill=SEX)) + 
+  geom_bar(position = "dodge", stat = "count") + 
+  xlab("Level of Educational Attainment") + 
+  ggtitle("US Educational Attainment by Gender in 2013") +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(genderxeduc2013)
+
+## gender x educ 2014
+
+genderxeduc2014 <- ggplot(data2014, aes(x=EDUC, fill=SEX)) + 
+  geom_bar(position = "dodge", stat = "count") + 
+  xlab("Level of Educational Attainment") + 
+  ggtitle("US Educational Attainment by Gender in 2014") +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(genderxeduc2014)
+
+## gender x educ 2015
+
+genderxeduc2015 <- ggplot(data2015, aes(x=EDUC, fill=SEX)) + 
+  geom_bar(position = "dodge", stat = "count") + 
+  xlab("Level of Educational Attainment") + 
+  ggtitle("US Educational Attainment by Gender in 2015") +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(genderxeduc2015)
+
+#####################################################
+
+################## RACE X EDUC #####################
+
+
+
+#####################################################
+
 
 # 2014
 
@@ -629,8 +789,25 @@ result$white_amer_indian_asian_islander <- ifelse(result$RACE == "819", 1, 0)
 result$unspecified_2_orMore <- ifelse(result$RACE == "820", 1, 0)
 result$unspecified_4_orMore <- ifelse(result$RACE == "830", 1, 0)
 
-# 
+# hispanic
+result$mex <- ifelse(result$HISPAN == "100", 1, 0)
+result$pr <- ifelse(result$HISPAN == "200", 1, 0)
+result$cuban <- ifelse(result$HISPAN == "300", 1, 0)
+result$dom <- ifelse(result$HISPAN == "400", 1, 0)
+result$salv <- ifelse(result$HISPAN == "500", 1, 0)
+result$otherhispan <- ifelse(result$HISPAN == "600", 1, 0)
+result$centralamer <- ifelse(result$HISPAN == "611", 1, 0)
+result$southamer <- ifelse(result$HISPAN == "612", 1, 0)
 
+### SAMPLE ORDINAL LOG REGRESSION
+
+## fit ordered logit model and store results 'm'
+m <- polr(EDUC ~ female + male + white + black + amer_indian + asian + islander + white_black + white_amer_indian + white_asian + white_islander  INCOME, data = result, Hess=TRUE)
+# replace sex + race vars with new transformed dummy vars
+
+
+## view a summary of the model
+summary(m)
 ### SAMPLE REGRESSION
 
 lm <- lm(EDUC ~ SEX + RACE + HISPAN, data = result)
