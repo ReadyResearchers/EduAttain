@@ -257,6 +257,195 @@ result$EDUC[result$EDUC == "91"]<-"Occupational/Vocational Program Degree"
 result$EDUC[result$EDUC == "92"]<-"Associate's Degree, Academic"
 
 
+########### race filtering #################
+
+data2010$RACE[data2010$RACE == "100"]<-"White"
+data2011$RACE[data2011$RACE == "100"]<-"White"
+data2012$RACE[data2012$RACE == "100"]<-"White"
+data2013$RACE[data2013$RACE == "100"]<-"White"
+data2014$RACE[data2014$RACE == "100"]<-"White"
+data2015$RACE[data2015$RACE == "100"]<-"White"
+
+data2010$RACE[data2010$RACE == "200"]<-"Black"
+data2011$RACE[data2011$RACE == "200"]<-"Black"
+data2012$RACE[data2012$RACE == "200"]<-"Black"
+data2013$RACE[data2013$RACE == "200"]<-"Black"
+data2014$RACE[data2014$RACE == "200"]<-"Black"
+data2015$RACE[data2015$RACE == "200"]<-"Black"
+
+data2010$RACE[data2010$RACE == "300"]<-"American Indian"
+data2011$RACE[data2011$RACE == "300"]<-"American Indian"
+data2012$RACE[data2012$RACE == "300"]<-"American Indian"
+data2013$RACE[data2013$RACE == "300"]<-"American Indian"
+data2014$RACE[data2014$RACE == "300"]<-"American Indian"
+data2015$RACE[data2015$RACE == "300"]<-"American Indian"
+
+data2010$RACE[data2010$RACE == "651"]<-"Asian"
+data2011$RACE[data2011$RACE == "651"]<-"Asian"
+data2012$RACE[data2012$RACE == "651"]<-"Asian"
+data2013$RACE[data2013$RACE == "651"]<-"Asian"
+data2014$RACE[data2014$RACE == "651"]<-"Asian"
+data2015$RACE[data2015$RACE == "651"]<-"Asian"
+
+data2010$RACE[data2010$RACE == "652"]<-"Pacific Islander"
+data2011$RACE[data2011$RACE == "652"]<-"Pacific Islander"
+data2012$RACE[data2012$RACE == "652"]<-"Pacific Islander"
+data2013$RACE[data2013$RACE == "652"]<-"Pacific Islander"
+data2014$RACE[data2014$RACE == "652"]<- "Pacific Islander"
+data2015$RACE[data2015$RACE == "652"]<-"Pacific Islander"
+
+data2010$RACE[data2010$RACE == "801"]<-"Other"
+data2011$RACE[data2011$RACE == "801"]<-"Other"
+data2012$RACE[data2012$RACE == "801"]<-"Other"
+data2013$RACE[data2013$RACE == "801"]<-"Other"
+data2014$RACE[data2014$RACE == "801"]<-"Other"
+data2015$RACE[data2015$RACE == "801"]<-"Other"
+
+data2010$RACE[data2010$RACE == "802"]<-"Other"
+data2011$RACE[data2011$RACE == "802"]<-"Other"
+data2012$RACE[data2012$RACE == "802"]<-"Other"
+data2013$RACE[data2013$RACE == "802"]<-"Other"
+data2014$RACE[data2014$RACE == "802"]<-"Other"
+data2015$RACE[data2015$RACE == "802"]<-"Other"
+
+data2010$RACE[data2010$RACE == "803"]<-"Other"
+data2011$RACE[data2011$RACE == "803"]<-"Other"
+data2012$RACE[data2012$RACE == "803"]<-"Other"
+data2013$RACE[data2013$RACE == "803"]<-"Other"
+data2014$RACE[data2014$RACE == "803"]<-"Other"
+data2015$RACE[data2015$RACE == "803"]<-"Other"
+
+data2010$RACE[data2010$RACE == "804"]<-"Other"
+data2011$RACE[data2011$RACE == "804"]<-"Other"
+data2012$RACE[data2012$RACE == "804"]<-"Other"
+data2013$RACE[data2013$RACE == "804"]<-"Other"
+data2014$RACE[data2014$RACE == "804"]<-"Other"
+data2015$RACE[data2015$RACE == "804"]<-"Other"
+
+data2010$RACE[data2010$RACE == "805"]<-"Other"
+data2011$RACE[data2011$RACE == "805"]<-"Other"
+data2012$RACE[data2012$RACE == "805"]<-"Other"
+data2013$RACE[data2013$RACE == "805"]<-"Other"
+data2014$RACE[data2014$RACE == "805"]<-"Other"
+data2015$RACE[data2015$RACE == "805"]<-"Other"
+
+data2010$RACE[data2010$RACE == "806"]<-"Other"
+data2011$RACE[data2011$RACE == "806"]<-"Other"
+data2012$RACE[data2012$RACE == "806"]<-"Other"
+data2013$RACE[data2013$RACE == "806"]<-"Other"
+data2014$RACE[data2014$RACE == "806"]<-"Other"
+data2015$RACE[data2015$RACE == "806"]<-"Other"
+
+data2010$RACE[data2010$RACE == "807"]<-"Other"
+data2011$RACE[data2011$RACE == "807"]<-"Other"
+data2012$RACE[data2012$RACE == "807"]<-"Other"
+data2013$RACE[data2013$RACE == "807"]<-"Other"
+data2014$RACE[data2014$RACE == "807"]<-"Other"
+data2015$RACE[data2015$RACE == "807"]<-"Other"
+
+data2010$RACE[data2010$RACE == "808"]<-"Other"
+data2011$RACE[data2011$RACE == "808"]<-"Other"
+data2012$RACE[data2012$RACE == "808"]<-"Other"
+data2013$RACE[data2013$RACE == "808"]<-"Other"
+data2014$RACE[data2014$RACE == "808"]<-"Other"
+data2015$RACE[data2015$RACE == "808"]<-"Other"
+
+data2010$RACE[data2010$RACE == "809"]<-"Other"
+data2011$RACE[data2011$RACE == "809"]<-"Other"
+data2012$RACE[data2012$RACE == "809"]<-"Other"
+data2013$RACE[data2013$RACE == "809"]<-"Other"
+data2014$RACE[data2014$RACE == "809"]<-"Other"
+data2015$RACE[data2015$RACE == "809"]<-"Other"
+
+data2010$RACE[data2010$RACE == "810"]<-"Other"
+data2011$RACE[data2011$RACE == "810"]<-"Other"
+data2012$RACE[data2012$RACE == "810"]<-"Other"
+data2013$RACE[data2013$RACE == "810"]<-"Other"
+data2014$RACE[data2014$RACE == "810"]<-"Other"
+data2015$RACE[data2015$RACE == "810"]<-"Other"
+
+data2010$RACE[data2010$RACE == "811"]<-"Other"
+data2011$RACE[data2011$RACE == "811"]<-"Other"
+data2012$RACE[data2012$RACE == "811"]<-"Other"
+data2013$RACE[data2013$RACE == "811"]<-"Other"
+data2014$RACE[data2014$RACE == "811"]<-"Other"
+data2015$RACE[data2015$RACE == "811"]<-"Other"
+
+data2010$RACE[data2010$RACE == "812"]<-"Other"
+data2011$RACE[data2011$RACE == "812"]<-"Other"
+data2012$RACE[data2012$RACE == "812"]<-"Other"
+data2013$RACE[data2013$RACE == "812"]<-"Other"
+data2014$RACE[data2014$RACE == "812"]<-"Other"
+data2015$RACE[data2015$RACE == "812"]<-"Other"
+
+data2010$RACE[data2010$RACE == "813"]<-"Other"
+data2011$RACE[data2011$RACE == "813"]<-"Other"
+data2012$RACE[data2012$RACE == "813"]<-"Other"
+data2013$RACE[data2013$RACE == "813"]<-"Other"
+data2014$RACE[data2014$RACE == "813"]<-"Other"
+data2015$RACE[data2015$RACE == "813"]<-"Other"
+
+data2010$RACE[data2010$RACE == "814"]<-"Other"
+data2011$RACE[data2011$RACE == "814"]<-"Other"
+data2012$RACE[data2012$RACE == "814"]<-"Other"
+data2013$RACE[data2013$RACE == "814"]<-"Other"
+data2014$RACE[data2014$RACE == "814"]<-"Other"
+data2015$RACE[data2015$RACE == "814"]<-"Other"
+
+data2010$RACE[data2010$RACE == "815"]<-"Other"
+data2011$RACE[data2011$RACE == "815"]<-"Other"
+data2012$RACE[data2012$RACE == "815"]<-"Other"
+data2013$RACE[data2013$RACE == "815"]<-"Other"
+data2014$RACE[data2014$RACE == "815"]<-"Other"
+data2015$RACE[data2015$RACE == "815"]<-"Other"
+
+data2010$RACE[data2010$RACE == "816"]<-"Other"
+data2011$RACE[data2011$RACE == "816"]<-"Other"
+data2012$RACE[data2012$RACE == "816"]<-"Other"
+data2013$RACE[data2013$RACE == "816"]<-"Other"
+data2014$RACE[data2014$RACE == "816"]<-"Other"
+data2015$RACE[data2015$RACE == "816"]<-"Other"
+
+data2010$RACE[data2010$RACE == "817"]<-"Other"
+data2011$RACE[data2011$RACE == "817"]<-"Other"
+data2012$RACE[data2012$RACE == "817"]<-"Other"
+data2013$RACE[data2013$RACE == "817"]<-"Other"
+data2014$RACE[data2014$RACE == "817"]<-"Other"
+data2015$RACE[data2015$RACE == "817"]<-"Other"
+
+data2010$RACE[data2010$RACE == "818"]<-"Other"
+data2011$RACE[data2011$RACE == "818"]<-"Other"
+data2012$RACE[data2012$RACE == "818"]<-"Other"
+data2013$RACE[data2013$RACE == "818"]<-"Other"
+data2014$RACE[data2014$RACE == "818"]<-"Other"
+data2015$RACE[data2015$RACE == "818"]<-"Other"
+
+data2010$RACE[data2010$RACE == "819"]<-"Other"
+data2011$RACE[data2011$RACE == "819"]<-"Other"
+data2012$RACE[data2012$RACE == "819"]<-"Other"
+data2013$RACE[data2013$RACE == "819"]<-"Other"
+data2014$RACE[data2014$RACE == "819"]<-"Other"
+data2015$RACE[data2015$RACE == "819"]<-"Other"
+
+data2010$RACE[data2010$RACE == "820"]<-"Other"
+data2011$RACE[data2011$RACE == "820"]<-"Other"
+data2012$RACE[data2012$RACE == "820"]<-"Other"
+data2013$RACE[data2013$RACE == "820"]<-"Other"
+data2014$RACE[data2014$RACE == "820"]<-"Other"
+data2015$RACE[data2015$RACE == "820"]<-"Other"
+
+data2010$RACE[data2010$RACE == "830"]<-"Other"
+data2011$RACE[data2011$RACE == "830"]<-"Other"
+data2012$RACE[data2012$RACE == "830"]<-"Other"
+data2013$RACE[data2013$RACE == "830"]<-"Other"
+data2014$RACE[data2014$RACE == "830"]<-"Other"
+data2015$RACE[data2015$RACE == "830"]<-"Other"
+###########################################
+
+
+
+
+
 # replacing state fips code with state name
 data2010$STATEFIP[data2010$STATEFIP == "6"]<-"CA" #CALIFORNIA
 data2010$STATEFIP[data2010$STATEFIP == "48"]<-"TX" #TEXAS
@@ -683,10 +872,65 @@ ggplotly(genderxeduc2015)
 
 ################## RACE X EDUC #####################
 
+racexeduc2010 <- ggplot(data2010, aes(x=EDUC, fill=RACE)) + 
+  geom_bar(position = "dodge", stat = "count") + 
+  xlab("Level of Educational Attainment") + 
+  ggtitle("US Educational Attainment by Race in 2010") +
+  theme(axis.text.x = element_text(angle = 90))
 
+ggplotly(racexeduc2010)
+
+racexeduc2011 <- ggplot(data2011, aes(x=EDUC, fill=RACE)) + 
+  geom_bar(position = "dodge", stat = "count") + 
+  xlab("Level of Educational Attainment") + 
+  ggtitle("US Educational Attainment by Race in 2011") +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(racexeduc2011)
+
+racexeduc2012 <- ggplot(data2012, aes(x=EDUC, fill=RACE)) + 
+  geom_bar(position = "dodge", stat = "count") + 
+  xlab("Level of Educational Attainment") + 
+  ggtitle("US Educational Attainment by Race in 2012") +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(racexeduc2012)
+
+racexeduc2013 <- ggplot(data2013, aes(x=EDUC, fill=RACE)) + 
+  geom_bar(position = "dodge", stat = "count") + 
+  xlab("Level of Educational Attainment") + 
+  ggtitle("US Educational Attainment by Race in 2013") +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(racexeduc2013)
+
+racexeduc2014 <- ggplot(data2014, aes(x=EDUC, fill=RACE)) + 
+  geom_bar(position = "dodge", stat = "count") + 
+  xlab("Level of Educational Attainment") + 
+  ggtitle("US Educational Attainment by Race in 2014") +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(racexeduc2014)
+
+racexeduc2015 <- ggplot(data2015, aes(x=EDUC, fill=RACE)) + 
+  geom_bar(position = "dodge", stat = "count") + 
+  xlab("Level of Educational Attainment") + 
+  ggtitle("US Educational Attainment by Race in 2015") +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(racexeduc2015)
 
 #####################################################
 
+incxeduc2010 <- ggplot(data2010, aes(x=EDUC, y=INCTOT)) + 
+  geom_bar(position = "dodge", stat = "identity") + 
+  xlab("Level of Educational Attainment") + 
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(incxeduc2010)
+
+
+#######################################################
 
 # 2014
 
