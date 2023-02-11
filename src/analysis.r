@@ -54,6 +54,9 @@ rng <- range(result$YEAR)
 rng
 
 
+rng <- range(as.numeric(result$AGE))
+rng
+
 ###### 
 
 # query to get all data from 2014 for sex + educ attain

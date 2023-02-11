@@ -25,6 +25,17 @@ db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
 # connect to database
 conn <- dbConnect(drv = SQLite(), dbname = db)
 
+
+#### test to limit results to 18+####
+# query to display the first 5 rows
+q <- 'SELECT * from CPS;'
+result <- dbGetQuery(conn,q)
+result = result[-1,]
+as.numeric(result$AGE)
+res <- result %>% filter(AGE >= 18)
+######################################
+
+
 # format dash sidebar
 sidebar <- dashboardSidebar(
   width = 250,
@@ -88,6 +99,27 @@ body <- dashboardBody(
             box(
               title = "US Educational Attainment by Gender in 2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
               plotlyOutput("y6_plot_1"), width = 10)
+    ),
+    tabItem(tabName = "hisxedu",
+            h2("US Hispanic/Latino Educational Attainment from 2010 to 2015"),
+            box(
+              title = "US Educational Attainment by Hispanic Ethnicity in 2010", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              plotlyOutput("y1_plot_2"), width = 10),
+            box(
+              title = "US Educational Attainment by Hispanic Ethnicity in 2011", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              plotlyOutput("y2_plot_2"), width = 10),
+            box(
+              title = "US Educational Attainment by Hispanic Ethnicity in 2012", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              plotlyOutput("y3_plot_2"), width = 10),
+            box(
+              title = "US Educational Attainment by Hispanic Ethnicity in 2013", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              plotlyOutput("y4_plot_2"), width = 10),
+            box(
+              title = "US Educational Attainment by Hispanic Ethnicity in 2014", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              plotlyOutput("y5_plot_2"), width = 10),
+            box(
+              title = "US Educational Attainment by Hispanic Ethnicity in 2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              plotlyOutput("y6_plot_2"), width = 10)
     )
   )
 )
@@ -106,10 +138,10 @@ server <- function(input, output) {
 ###################### TABLE ###########################
   
   output$data_table <- renderDataTable(
-    
+    #res
     # query to get all data from 2010 for sex + educ attain
-    data <- dbGetQuery(conn,
-                           statement= "SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE cpsidp !='CPSIDP' ")
+    df <- dbGetQuery(conn,
+                          statement= "SELECT cpsidp, sex, educ, race, hispan, ftotval, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
   )
   
 #########################################################
@@ -741,6 +773,304 @@ server <- function(input, output) {
     
     ggplotly(racexeduc2015)
   })
+  
+  ###################### HISPANIC ######################
+  # 2010 Hispanic
+  output$y1_plot_2 <- renderPlotly({
+    # query to get all data from 2010 for sex + educ attain
+    d2010 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
+    
+    # filter NIU for educ
+    data2010 <- d2010 %>% filter(EDUC != "1")
+    
+    # 2010 filters
+    data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
+    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
+    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
+    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
+    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
+    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
+    data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
+    data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
+    data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
+    data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
+    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2010$HISPAN[data2010$HISPAN == "0"]<-"Not Hispanic"
+    data2010$HISPAN[data2010$HISPAN == "000"]<-"Not Hispanic"
+    data2010$HISPAN[data2010$HISPAN == "100"]<-"Mexican"
+    data2010$HISPAN[data2010$HISPAN == "200"]<-"Puerto Rican"
+    data2010$HISPAN[data2010$HISPAN == "300"]<-"Cuban"
+    data2010$HISPAN[data2010$HISPAN == "400"]<-"Dominican"
+    data2010$HISPAN[data2010$HISPAN == "500"]<-"Salvadoran"
+    data2010$HISPAN[data2010$HISPAN == "600"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "610"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "611"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "612"]<-"Other"
+    
+    # plot
+    hispxeduc2010 <- ggplot(data2010, aes(x=EDUC, fill=HISPAN)) + 
+      geom_bar(position = "dodge", stat = "count") + 
+      xlab("Level of Educational Attainment") + 
+      theme(axis.text.x = element_text(angle = 90))
+    
+    ggplotly(hispxeduc2010)
+  })
+  
+  # 2011
+  output$y2_plot_2 <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2011 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2011 AND age >= 18 ORDER BY cpsidp')
+    
+    # filter NIU for educ
+    data2011 <- d2011 %>% filter(EDUC != "1")
+    
+    # 2011 filters
+    data2011$EDUC[data2011$EDUC == "10"]<-"Grades 1-4"
+    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
+    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
+    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
+    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
+    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Grades 5-6"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Grades 7-8"
+    data2011$EDUC[data2011$EDUC == "40"]<-"HS, Grade 9"
+    data2011$EDUC[data2011$EDUC == "50"]<-"HS, Grade 10"
+    data2011$EDUC[data2011$EDUC == "60"]<-"HS, Grade 11"
+    data2011$EDUC[data2011$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
+    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2011$HISPAN[data2011$HISPAN == "0"]<-"Not Hispanic"
+    data2011$HISPAN[data2011$HISPAN == "000"]<-"Not Hispanic"
+    data2011$HISPAN[data2011$HISPAN == "100"]<-"Mexican"
+    data2011$HISPAN[data2011$HISPAN == "200"]<-"Puerto Rican"
+    data2011$HISPAN[data2011$HISPAN == "300"]<-"Cuban"
+    data2011$HISPAN[data2011$HISPAN == "400"]<-"Dominican"
+    data2011$HISPAN[data2011$HISPAN == "500"]<-"Salvadoran"
+    data2011$HISPAN[data2011$HISPAN == "600"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "610"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "611"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "612"]<-"Other"
+    
+    # plot
+    hispxeduc2011 <- ggplot(data2011, aes(x=EDUC, fill=HISPAN)) + 
+      geom_bar(position = "dodge", stat = "count") + 
+      xlab("Level of Educational Attainment") + 
+      theme(axis.text.x = element_text(angle = 90))
+    
+    ggplotly(hispxeduc2011)
+  })
+  
+  # 2012
+  output$y3_plot_2 <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2012 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18')
+    
+    # filter NIU for educ
+    data2012 <- d2012 %>% filter(EDUC != "1")
+    
+    # 2012 filters
+    data2012$EDUC[data2012$EDUC == "1"]<-"NIU"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Grades 1-4"
+    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
+    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
+    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
+    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
+    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Grades 5-6"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Grades 7-8"
+    data2012$EDUC[data2012$EDUC == "40"]<-"HS, Grade 9"
+    data2012$EDUC[data2012$EDUC == "50"]<-"HS, Grade 10"
+    data2012$EDUC[data2012$EDUC == "60"]<-"HS, Grade 11"
+    data2012$EDUC[data2012$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
+    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2012$HISPAN[data2012$HISPAN == "0"]<-"Not Hispanic"
+    data2012$HISPAN[data2012$HISPAN == "000"]<-"Not Hispanic"
+    data2012$HISPAN[data2012$HISPAN == "100"]<-"Mexican"
+    data2012$HISPAN[data2012$HISPAN == "200"]<-"Puerto Rican"
+    data2012$HISPAN[data2012$HISPAN == "300"]<-"Cuban"
+    data2012$HISPAN[data2012$HISPAN == "400"]<-"Dominican"
+    data2012$HISPAN[data2012$HISPAN == "500"]<-"Salvadoran"
+    data2012$HISPAN[data2012$HISPAN == "600"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "610"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "611"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "612"]<-"Other"
+    
+    # plot
+    hispxeduc2012 <- ggplot(data2012, aes(x=EDUC, fill=HISPAN)) + 
+      geom_bar(position = "dodge", stat = "count") + 
+      xlab("Level of Educational Attainment") + 
+      theme(axis.text.x = element_text(angle = 90))
+    
+    ggplotly(hispxeduc2012)
+    
+  })
+  
+  # 2013
+  output$y4_plot_2 <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2013 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18')
+    
+    # filter NIU for educ
+    data2013 <- d2013 %>% filter(EDUC != "1")
+    
+    # 2013 filters
+    data2013$EDUC[data2013$EDUC == "1"]<-"NIU"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Grades 1-4"
+    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
+    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
+    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
+    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
+    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Grades 5-6"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Grades 7-8"
+    data2013$EDUC[data2013$EDUC == "40"]<-"HS, Grade 9"
+    data2013$EDUC[data2013$EDUC == "50"]<-"HS, Grade 10"
+    data2013$EDUC[data2013$EDUC == "60"]<-"HS, Grade 11"
+    data2013$EDUC[data2013$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
+    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2013$HISPAN[data2013$HISPAN == "0"]<-"Not Hispanic"
+    data2013$HISPAN[data2013$HISPAN == "000"]<-"Not Hispanic"
+    data2013$HISPAN[data2013$HISPAN == "100"]<-"Mexican"
+    data2013$HISPAN[data2013$HISPAN == "200"]<-"Puerto Rican"
+    data2013$HISPAN[data2013$HISPAN == "300"]<-"Cuban"
+    data2013$HISPAN[data2013$HISPAN == "400"]<-"Dominican"
+    data2013$HISPAN[data2013$HISPAN == "500"]<-"Salvadoran"
+    data2013$HISPAN[data2013$HISPAN == "600"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "610"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "611"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "612"]<-"Other"
+    
+    # plot
+    hispxeduc2013 <- ggplot(data2013, aes(x=EDUC, fill=HISPAN)) + 
+      geom_bar(position = "dodge", stat = "count") + 
+      xlab("Level of Educational Attainment") + 
+      theme(axis.text.x = element_text(angle = 90))
+    
+    ggplotly(hispxeduc2013)
+    
+  })
+  
+  # 2014
+  output$y5_plot_2 <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2014 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
+    
+    # filter NIU for educ
+    data2014 <- d2014 %>% filter(EDUC != "1")
+    
+    # 2014 filters
+    
+    data2014$EDUC[data2014$EDUC == "10"]<-"Grades 1-4"
+    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
+    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
+    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
+    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
+    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Grades 5-6"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Grades 7-8"
+    data2014$EDUC[data2014$EDUC == "40"]<-"HS, Grade 9"
+    data2014$EDUC[data2014$EDUC == "50"]<-"HS, Grade 10"
+    data2014$EDUC[data2014$EDUC == "60"]<-"HS, Grade 11"
+    data2014$EDUC[data2014$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
+    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "100"]<-"Mexican"
+    data2014$HISPAN[data2014$HISPAN == "200"]<-"Puerto Rican"
+    data2014$HISPAN[data2014$HISPAN == "300"]<-"Cuban"
+    data2014$HISPAN[data2014$HISPAN == "400"]<-"Dominican"
+    data2014$HISPAN[data2014$HISPAN == "500"]<-"Salvadoran"
+    data2014$HISPAN[data2014$HISPAN == "600"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "610"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "611"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "612"]<-"Other"
+    
+    # plot
+    hispxeduc2014 <- ggplot(data2014, aes(x=EDUC, fill=HISPAN)) + 
+      geom_bar(position = "dodge", stat = "count") + 
+      xlab("Level of Educational Attainment") + 
+      theme(axis.text.x = element_text(angle = 90))
+    
+    ggplotly(hispxeduc2014)
+  })
+  
+  # 2015
+  output$y6_plot_2 <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2015 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
+    
+    # filter NIU for educ
+    data2015 <- d2015 %>% filter(EDUC != "1")
+    
+    # 2015 filters
+    
+    data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
+    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
+    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
+    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
+    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
+    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Grades 5-6"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Grades 7-8"
+    data2015$EDUC[data2015$EDUC == "40"]<-"HS, Grade 9"
+    data2015$EDUC[data2015$EDUC == "50"]<-"HS, Grade 10"
+    data2015$EDUC[data2015$EDUC == "60"]<-"HS, Grade 11"
+    data2015$EDUC[data2015$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
+    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "000"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "100"]<-"Mexican"
+    data2015$HISPAN[data2015$HISPAN == "200"]<-"Puerto Rican"
+    data2015$HISPAN[data2015$HISPAN == "300"]<-"Cuban"
+    data2015$HISPAN[data2015$HISPAN == "400"]<-"Dominican"
+    data2015$HISPAN[data2015$HISPAN == "500"]<-"Salvadoran"
+    data2015$HISPAN[data2015$HISPAN == "600"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "610"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "611"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "612"]<-"Other"
+    
+    # plot
+    hispxeduc2015 <- ggplot(data2015, aes(x=EDUC, fill=HISPAN)) + 
+      geom_bar(position = "dodge", stat = "count") + 
+      xlab("Level of Educational Attainment") + 
+      theme(axis.text.x = element_text(angle = 90))
+    
+    ggplotly(hispxeduc2015)
+  })
+
+#######################################################
+
 }
 
 # view app
