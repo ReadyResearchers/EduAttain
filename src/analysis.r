@@ -38,7 +38,7 @@ dbListFields(conn,"CPS")
 ################################################
 
 # query to display the first 5 rows
-q <- 'SELECT * FROM CPS;'
+q <- "SELECT cpsidp, sex, educ, race, hispan, ftotval, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP';"
 result <- dbGetQuery(conn,q)
 
 # filter header out (already there)
