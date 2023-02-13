@@ -28,11 +28,11 @@ conn <- dbConnect(drv = SQLite(), dbname = db)
 
 #### test to limit results to 18+####
 # query to display the first 5 rows
-q <- 'SELECT * from CPS;'
-result <- dbGetQuery(conn,q)
-result = result[-1,]
-as.numeric(result$AGE)
-res <- result %>% filter(AGE >= 18)
+#q <- 'SELECT * from CPS;'
+#result <- dbGetQuery(conn,q)
+#result = result[-1,]
+#as.numeric(result$AGE)
+#res <- result %>% filter(AGE >= 18)
 ######################################
 
 
@@ -53,10 +53,13 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
   tabItems(
     tabItem(tabName = "dash",
-            h2("Data Description"),
+            h2("Dataset & Description"),
             box(
-              title = "IPUMS US CPS Data 2010-2015", status = "primary", solidHeader = TRUE,
-              dataTableOutput("data_table"), width = 10)
+              title = "IPUMS US CPS Data 2010-2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              dataTableOutput("data_table"), width = 10),
+            box(
+              title = "Data Key", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              textOutput("key"), width = 10)
     ),
     tabItem(tabName = "genxedu",
             h2("Educational Attainment by Gender from 2010 to 2015"),
@@ -120,6 +123,12 @@ body <- dashboardBody(
             box(
               title = "US Educational Attainment by Hispanic Ethnicity in 2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
               plotlyOutput("y6_plot_2"), width = 10)
+    ),
+    tabItem(tabName = "incxedu",
+            h2("Educational Attainment by Income from 2010 to 2015"),
+            box(
+              title = "US Educational Attainment by Income in 2010", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              plotlyOutput("y1_plot_3"), width = 10)
     )
   )
 )
@@ -144,6 +153,9 @@ server <- function(input, output) {
                           statement= "SELECT cpsidp, sex, educ, race, hispan, ftotval, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
   )
   
+  output$key <- renderText({
+    print("EDUC - Educational Attainment  /  SEX - Gender  /  FTOTVAL - Family Total Income  /  RACE - Race  /  HISPAN - Hispanic Ethnicity  /  CPSDIP - IPUMS CPS Individual ID");
+  })
 #########################################################
   
 ###################### GENDER ###########################
@@ -1069,6 +1081,42 @@ server <- function(input, output) {
     ggplotly(hispxeduc2015)
   })
 
+  #output$y1_plot_3 <- renderPlotly({
+    # query to get all data from 2010 for sex + educ attain
+    #d2010 <- dbGetQuery(conn,
+     #                   statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
+    
+    # filter NIU for educ
+    #data2010 <- d2010 %>% filter(EDUC != "1")
+    
+    # 2010 filters
+    #data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
+    #data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
+    #data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
+    #data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
+    #data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
+    #data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    #data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
+    #data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
+    #data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
+    #data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
+    #data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
+    #data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    #data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
+    #data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
+    #data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    #data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    #data2010$FTOTVAL[data2010$FTOTVAL == "9999999999"]<-"0"
+    
+    # plot
+    #incxeduc2010 <- ggplot(data2010, aes(EDUC, FTOTVAL)) + 
+      #geom_point() + 
+      #xlab("Level of Educational Attainment") + 
+      #theme(axis.text.x = element_text(angle = 90))
+    
+    #ggplotly(incxeduc2010)
+  #})
 #######################################################
 
 }

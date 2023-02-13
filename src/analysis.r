@@ -38,7 +38,7 @@ dbListFields(conn,"CPS")
 ################################################
 
 # query to display the first 5 rows
-q <- 'SELECT * from CPS;'
+q <- 'SELECT * FROM CPS;'
 result <- dbGetQuery(conn,q)
 
 # filter header out (already there)
@@ -554,6 +554,55 @@ data2014$STATEFIP[data2014$STATEFIP == "35"]<-"NM" #NEW MEXICO
 data2014$STATEFIP[data2014$STATEFIP == "28"]<-"MS" #MISSISSIPPI
 data2014$STATEFIP[data2014$STATEFIP == "30"]<-"MT" #MONTANA
 
+# race filtering
+
+result$RACE[result$RACE == "100"]<-"White"
+result$RACE[result$RACE == "200"]<-"Black"
+result$RACE[result$RACE == "300"]<-"American Indian"
+result$RACE[result$RACE == "651"]<-"Asian"
+result$RACE[result$RACE == "652"]<-"Pacific Islander"
+result$RACE[result$RACE == "801"]<-"Other"
+result$RACE[result$RACE == "802"]<-"Other"
+result$RACE[result$RACE == "803"]<-"Other"
+result$RACE[result$RACE == "804"]<-"Other"
+result$RACE[result$RACE == "805"]<-"Other"
+result$RACE[result$RACE == "806"]<-"Other"
+result$RACE[result$RACE == "807"]<-"Other"
+result$RACE[result$RACE == "808"]<-"Other"
+result$RACE[result$RACE == "809"]<-"Other"
+result$RACE[result$RACE == "810"]<-"Other"
+result$RACE[result$RACE == "811"]<-"Other"
+result$RACE[result$RACE == "812"]<-"Other"
+result$RACE[result$RACE == "813"]<-"Other"
+result$RACE[result$RACE == "814"]<-"Other"
+result$RACE[result$RACE == "815"]<-"Other"
+result$RACE[result$RACE == "816"]<-"Other"
+result$RACE[result$RACE == "817"]<-"Other"
+result$RACE[result$RACE == "818"]<-"Other"
+result$RACE[result$RACE == "819"]<-"Other"
+result$RACE[result$RACE == "820"]<-"Other"
+result$RACE[result$RACE == "830"]<-"Other"
+
+# hispanic filtering
+result$HISPAN[result$HISPAN == "0"]<-"Not Hispanic"
+result$HISPAN[result$HISPAN == "000"]<-"Not Hispanic"
+result$HISPAN[result$HISPAN == "100"]<-"Mexican"
+result$HISPAN[result$HISPAN == "200"]<-"Puerto Rican"
+result$HISPAN[result$HISPAN == "300"]<-"Cuban"
+result$HISPAN[result$HISPAN == "400"]<-"Dominican"
+result$HISPAN[result$HISPAN == "500"]<-"Salvadoran"
+result$HISPAN[result$HISPAN == "600"]<-"Other"
+result$HISPAN[result$HISPAN == "610"]<-"Other"
+result$HISPAN[result$HISPAN == "611"]<-"Other"
+result$HISPAN[result$HISPAN == "612"]<-"Other"
+
+# gender filtering
+result$SEX[result$SEX == "1"]<-"Male"
+result$SEX[result$SEX == "2"]<-"Female"
+
+# income
+result$FTOTVAL[result$FTOTVAL == "9999999999"]<-"0"
+
 #####
 # NY
 #####
@@ -646,6 +695,47 @@ state_count
 # in 2012
 state_count <- data2012 %>% count(STATEFIP, sort = TRUE)
 state_count
+
+
+###################### 
+
+# count
+
+race_count <- result %>% count(RACE, sort = TRUE)
+race_count
+
+gender_count <- result %>% count(SEX, sort = TRUE)
+gender_count
+
+hispan_count <- result %>% count(HISPAN, sort = TRUE)
+hispan_count
+
+# mean
+income_mean <- mean(as.numeric(result$FTOTVAL))
+income_mean
+
+age_mean <- mean(as.numeric(result$AGE))
+age_mean
+
+# sd
+
+income_sd <- sd(as.numeric(result$FTOTVAL))
+income_sd
+
+age_sd <- sd(as.numeric(result$AGE))
+age_sd
+
+# range
+income_rng <- range(as.numeric(result$FTOTVAL))
+income_rng
+
+age_rng <- range(as.numeric(result$AGE))
+age_rng
+
+
+
+####################3
+
 
 
 #################################################################
@@ -925,8 +1015,9 @@ ggplotly(racexeduc2015)
 
 #####################################################
 
-incxeduc2010 <- ggplot(data2010, aes(x=EDUC, y=INCTOT)) + 
-  geom_bar(position = "dodge", stat = "identity") + 
+# plot
+incxeduc2010 <- ggplot(data2010, aes(EDUC, FTOTVAL)) + 
+  geom_point() + 
   xlab("Level of Educational Attainment") + 
   theme(axis.text.x = element_text(angle = 90))
 
