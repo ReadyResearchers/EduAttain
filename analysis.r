@@ -62,6 +62,18 @@ head(result)
 
 View(result)
 
+
+## remove infinite values
+inf <- which(!is.finite(result$FTOTVAL))
+
+result[inf] <- NA
+
+## remove na values
+result <- na.omit(result)
+
+## sample data
+sample_result <- result[sample(nrow(result), 10000), ]
+
 # looking at yr ranges in data
 rng <- range(result$YEAR)
 rng
@@ -274,6 +286,10 @@ result$EDUC[result$EDUC == "92"]<-"Associate's Degree, Academic"
 
 ##### converting educ levels to factor
 result$EDUC <- factor(result$EDUC, levels=c("None/Preschool/Kindergarten","Grades 1-4","Grades 5-6","Grades 7-8","HS, Grade 9", "HS, Grade 10", "HS, Grade 11", "HS, Grade 12, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
+
+
+##### converting income to factor
+result$FTOTVAL <- as.numeric(result$FTOTVAL)
 
 ########### race filtering #################
 
@@ -641,7 +657,7 @@ result$SEX[result$SEX == "1"]<-"Male"
 result$SEX[result$SEX == "2"]<-"Female"
 
 # income
-result$FTOTVAL[result$FTOTVAL == "9999999999"]<-"0"
+result$FTOTVAL[result$FTOTVAL == "9999999999"]<-NA
 
 #####
 # NY
@@ -1178,10 +1194,34 @@ result$otherhispan <- ifelse(result$HISPAN == "600", 1, 0)
 result$centralamer <- ifelse(result$HISPAN == "611", 1, 0)
 result$southamer <- ifelse(result$HISPAN == "612", 1, 0)
 
+## random data points for reg
+inc_sample <- sample(result$FTOTVAL, 1000)
+fem_sample <- sample(result$female, 1000)
+blk_sample <- sample(result$black, 1000)
+ai_sample <- sample(result$amer_indian, 1000)
+an_sample <- sample(result$asian, 1000)
+id_sample <- sample(result$islander, 1000)
+mr_sample <- sample(result$mixed_race, 1000)
+mex_sample <- sample(result$mex, 1000)
+pr_sample <- sample(result$pr, 1000)
+cub_sample <- sample(result$cuban, 1000)
+dom_sample <- sample(result$dom, 1000)
+sal_sample <- sample(result$salv, 1000)
+oh_sample <- sample(result$otherhispan, 1000)
+ca_sample <- sample(result$centralamer, 1000)
+sa_sample <- sample(result$southamer, 1000)
+
 ### SAMPLE ORDINAL LOG REGRESSION
 
 ## fit ordered logit model and store results 'm'
-m <- polr(EDUC ~ female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan + centralamer + southamer, data = result, Hess=TRUE, method = c("logistic"))
+m <- polr(EDUC ~ female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan + centralamer + southamer + FTOTVAL, data = result, Hess=TRUE, method = c("logistic"))
+
+## SAMPLE ORDERED LOGIT 
+# <- polr(EDUC ~ inc_sample + fem_sample + blk_sample + ai_sample + an_sample + id_sample + mr_sample + mex_sample + pr_sample + cub_sample + dom_sample + sal_sample + oh_sample + ca_sample + sa_sample, data = result, Hess=TRUE, method = c("logistic"))
+
+m <- polr(EDUC ~ female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan + centralamer + southamer + as.numeric(FTOTVAL), data = sample_result, Hess=TRUE, method = c("logistic"))
+
+
 # replace sex + race vars with new transformed dummy vars
 # + FTOTVAL -- will not run w this variable STILL!! need to diagnose
 

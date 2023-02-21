@@ -6,7 +6,7 @@
 
 # install needed packages
 # install.packages("shiny")
-# install.packages("shinydashboard")
+#install.packages("shinydashboard")
 #install.packages('rsconnect')
 
 # install libs
@@ -1113,8 +1113,10 @@ server <- function(input, output) {
     
     data2010$FTOTVAL[data2010$FTOTVAL == "9999999999"]<-"0"
     
+    sample_2010 <- data2010[sample(nrow(data2010), 1000),]
+    
     # plot
-    incxeduc2010 <- ggplot(data2010, aes(EDUC, FTOTVAL)) + 
+    incxeduc2010 <- ggplot(sample_2010, aes(EDUC, FTOTVAL)) + 
       geom_point() + 
       xlab("Level of Educational Attainment") + 
       theme(axis.text.x = element_text(angle = 90))
