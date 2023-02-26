@@ -33,6 +33,8 @@ conn <- dbConnect(drv = SQLite(), dbname = db)
 #result = result[-1,]
 #as.numeric(result$AGE)
 #res <- result %>% filter(AGE >= 18)
+
+
 ######################################
 
 

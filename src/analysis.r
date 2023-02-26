@@ -38,7 +38,7 @@ dbListFields(conn,"CPS")
 ################################################
 
 # query to display the first 5 rows
-q <- "SELECT cpsidp, sex, educ, race, hispan, ftotval, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP';"
+q <- "SELECT * FROM CPS;"
 result <- dbGetQuery(conn,q)
 
 # filter header out (already there)
@@ -54,8 +54,11 @@ rng <- range(result$YEAR)
 rng
 
 
-rng <- range(as.numeric(result$AGE))
+rng <- range(result$AGE)
 rng
+
+rng2 <- range(result$FTOTVAL)
+rng2
 
 ###### 
 
@@ -596,6 +599,77 @@ result$HISPAN[result$HISPAN == "610"]<-"Other"
 result$HISPAN[result$HISPAN == "611"]<-"Other"
 result$HISPAN[result$HISPAN == "612"]<-"Other"
 
+data2010$HISPAN[data2010$HISPAN == "0"]<-"Not Hispanic"
+data2010$HISPAN[data2010$HISPAN == "000"]<-"Not Hispanic"
+data2010$HISPAN[data2010$HISPAN == "100"]<-"Mexican"
+data2010$HISPAN[data2010$HISPAN == "200"]<-"Puerto Rican"
+data2010$HISPAN[data2010$HISPAN == "300"]<-"Cuban"
+data2010$HISPAN[data2010$HISPAN == "400"]<-"Dominican"
+data2010$HISPAN[data2010$HISPAN == "500"]<-"Salvadoran"
+data2010$HISPAN[data2010$HISPAN == "600"]<-"Other"
+data2010$HISPAN[data2010$HISPAN == "610"]<-"Other"
+data2010$HISPAN[data2010$HISPAN == "611"]<-"Other"
+data2010$HISPAN[data2010$HISPAN == "612"]<-"Other"
+
+data2011$HISPAN[data2011$HISPAN == "0"]<-"Not Hispanic"
+data2011$HISPAN[data2011$HISPAN == "000"]<-"Not Hispanic"
+data2011$HISPAN[data2011$HISPAN == "100"]<-"Mexican"
+data2011$HISPAN[data2011$HISPAN == "200"]<-"Puerto Rican"
+data2011$HISPAN[data2011$HISPAN == "300"]<-"Cuban"
+data2011$HISPAN[data2011$HISPAN == "400"]<-"Dominican"
+data2011$HISPAN[data2011$HISPAN == "500"]<-"Salvadoran"
+data2011$HISPAN[data2011$HISPAN == "600"]<-"Other"
+data2011$HISPAN[data2011$HISPAN == "610"]<-"Other"
+data2011$HISPAN[data2011$HISPAN == "611"]<-"Other"
+data2011$HISPAN[data2011$HISPAN == "612"]<-"Other"
+
+data2012$HISPAN[data2012$HISPAN == "0"]<-"Not Hispanic"
+data2012$HISPAN[data2012$HISPAN == "000"]<-"Not Hispanic"
+data2012$HISPAN[data2012$HISPAN == "100"]<-"Mexican"
+data2012$HISPAN[data2012$HISPAN == "200"]<-"Puerto Rican"
+data2012$HISPAN[data2012$HISPAN == "300"]<-"Cuban"
+data2012$HISPAN[data2012$HISPAN == "400"]<-"Dominican"
+data2012$HISPAN[data2012$HISPAN == "500"]<-"Salvadoran"
+data2012$HISPAN[data2012$HISPAN == "600"]<-"Other"
+data2012$HISPAN[data2012$HISPAN == "610"]<-"Other"
+data2012$HISPAN[data2012$HISPAN == "611"]<-"Other"
+data2012$HISPAN[data2012$HISPAN == "612"]<-"Other"
+
+data2013$HISPAN[data2013$HISPAN == "0"]<-"Not Hispanic"
+data2013$HISPAN[data2013$HISPAN == "000"]<-"Not Hispanic"
+data2013$HISPAN[data2013$HISPAN == "100"]<-"Mexican"
+data2013$HISPAN[data2013$HISPAN == "200"]<-"Puerto Rican"
+data2013$HISPAN[data2013$HISPAN == "300"]<-"Cuban"
+data2013$HISPAN[data2013$HISPAN == "400"]<-"Dominican"
+data2013$HISPAN[data2013$HISPAN == "500"]<-"Salvadoran"
+data2013$HISPAN[data2013$HISPAN == "600"]<-"Other"
+data2013$HISPAN[data2013$HISPAN == "610"]<-"Other"
+data2013$HISPAN[data2013$HISPAN == "611"]<-"Other"
+data2013$HISPAN[data2013$HISPAN == "612"]<-"Other"
+
+data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
+data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
+data2014$HISPAN[data2014$HISPAN == "100"]<-"Mexican"
+data2014$HISPAN[data2014$HISPAN == "200"]<-"Puerto Rican"
+data2014$HISPAN[data2014$HISPAN == "300"]<-"Cuban"
+data2014$HISPAN[data2014$HISPAN == "400"]<-"Dominican"
+data2014$HISPAN[data2014$HISPAN == "500"]<-"Salvadoran"
+data2014$HISPAN[data2014$HISPAN == "600"]<-"Other"
+data2014$HISPAN[data2014$HISPAN == "610"]<-"Other"
+data2014$HISPAN[data2014$HISPAN == "611"]<-"Other"
+data2014$HISPAN[data2014$HISPAN == "612"]<-"Other"
+
+data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
+data2015$HISPAN[data2015$HISPAN == "000"]<-"Not Hispanic"
+data2015$HISPAN[data2015$HISPAN == "100"]<-"Mexican"
+data2015$HISPAN[data2015$HISPAN == "200"]<-"Puerto Rican"
+data2015$HISPAN[data2015$HISPAN == "300"]<-"Cuban"
+data2015$HISPAN[data2015$HISPAN == "400"]<-"Dominican"
+data2015$HISPAN[data2015$HISPAN == "500"]<-"Salvadoran"
+data2015$HISPAN[data2015$HISPAN == "600"]<-"Other"
+data2015$HISPAN[data2015$HISPAN == "610"]<-"Other"
+data2015$HISPAN[data2015$HISPAN == "611"]<-"Other"
+data2015$HISPAN[data2015$HISPAN == "612"]<-"Other"
 # gender filtering
 result$SEX[result$SEX == "1"]<-"Male"
 result$SEX[result$SEX == "2"]<-"Female"
@@ -710,11 +784,68 @@ gender_count
 hispan_count <- result %>% count(HISPAN, sort = TRUE)
 hispan_count
 
+
+race_count <- data2010 %>% count(RACE, sort = TRUE)
+race_count
+
+gender_count <- data2010 %>% count(SEX, sort = TRUE)
+gender_count
+
+hispan_count <- data2010 %>% count(HISPAN, sort = TRUE)
+hispan_count
+
+race_count <- data2011 %>% count(RACE, sort = TRUE)
+race_count
+
+gender_count <- data2011 %>% count(SEX, sort = TRUE)
+gender_count
+
+hispan_count <- data2011 %>% count(HISPAN, sort = TRUE)
+hispan_count
+
+race_count <- data2012 %>% count(RACE, sort = TRUE)
+race_count
+
+gender_count <- data2012 %>% count(SEX, sort = TRUE)
+gender_count
+
+hispan_count <- data2012 %>% count(HISPAN, sort = TRUE)
+hispan_count
+
+race_count <- data2013 %>% count(RACE, sort = TRUE)
+race_count
+
+gender_count <- data2013 %>% count(SEX, sort = TRUE)
+gender_count
+
+hispan_count <- data2013 %>% count(HISPAN, sort = TRUE)
+hispan_count
+
+race_count <- data2014 %>% count(RACE, sort = TRUE)
+race_count
+
+gender_count <- data2014 %>% count(SEX, sort = TRUE)
+gender_count
+
+hispan_count <- data2014 %>% count(HISPAN, sort = TRUE)
+hispan_count
+
+race_count <- data2015 %>% count(RACE, sort = TRUE)
+race_count
+
+gender_count <- data2015 %>% count(SEX, sort = TRUE)
+gender_count
+
+hispan_count <- data2015 %>% count(HISPAN, sort = TRUE)
+hispan_count
+####
+
+
 # mean
-income_mean <- mean(as.numeric(result$FTOTVAL))
+income_mean <- mean(result$FTOTVAL)
 income_mean
 
-age_mean <- mean(as.numeric(result$AGE))
+age_mean <- mean(result$AGE)
 age_mean
 
 # sd
@@ -828,7 +959,13 @@ test <- lm()
 # pairs.panels(result)
 
 # summary stats
-#summary(data2014)
+summary(result)
+summary(data2010)
+summary(data2011)
+summary(data2012)
+summary(data2013)
+summary(data2014)
+summary(data2015)
 
 # convert from character to factors
 # res1$educ <- as.factor(res1$educ)
