@@ -6,7 +6,7 @@
 
 # install needed packages
 # install.packages("shiny")
-# install.packages("shinydashboard")
+#install.packages("shinydashboard")
 #install.packages('rsconnect')
 
 # install libs
@@ -20,7 +20,10 @@ library(plotly)
 library(rsconnect)
 
 # setting database path
-db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
+#db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
+
+# setting database path -- via USB
+db <- "D:/eduattain/CPS.db"
 
 # connect to database
 conn <- dbConnect(drv = SQLite(), dbname = db)
@@ -33,8 +36,6 @@ conn <- dbConnect(drv = SQLite(), dbname = db)
 #result = result[-1,]
 #as.numeric(result$AGE)
 #res <- result %>% filter(AGE >= 18)
-
-
 ######################################
 
 
@@ -1083,42 +1084,45 @@ server <- function(input, output) {
     ggplotly(hispxeduc2015)
   })
 
-  #output$y1_plot_3 <- renderPlotly({
+################### INCOME ####################
+  output$y1_plot_3 <- renderPlotly({
     # query to get all data from 2010 for sex + educ attain
-    #d2010 <- dbGetQuery(conn,
-     #                   statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
+    d2010 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
     
     # filter NIU for educ
-    #data2010 <- d2010 %>% filter(EDUC != "1")
+    data2010 <- d2010 %>% filter(EDUC != "1")
     
     # 2010 filters
-    #data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
-    #data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    #data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    #data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    #data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    #data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    #data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
-    #data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
-    #data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
-    #data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
-    #data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
-    #data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
-    #data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    #data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    #data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    #data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
+    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
+    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
+    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
+    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
+    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
+    data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
+    data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
+    data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
+    data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
+    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
     
-    #data2010$FTOTVAL[data2010$FTOTVAL == "9999999999"]<-"0"
+    data2010$FTOTVAL[data2010$FTOTVAL == "9999999999"]<-"0"
+    
+    sample_2010 <- data2010[sample(nrow(data2010), 1000),]
     
     # plot
-    #incxeduc2010 <- ggplot(data2010, aes(EDUC, FTOTVAL)) + 
-      #geom_point() + 
-      #xlab("Level of Educational Attainment") + 
-      #theme(axis.text.x = element_text(angle = 90))
+    incxeduc2010 <- ggplot(sample_2010, aes(EDUC, FTOTVAL)) + 
+      geom_point() + 
+      xlab("Level of Educational Attainment") + 
+      theme(axis.text.x = element_text(angle = 90))
     
-    #ggplotly(incxeduc2010)
-  #})
+    ggplotly(incxeduc2010)
+  })
 #######################################################
 
 }
