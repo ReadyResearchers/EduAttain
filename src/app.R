@@ -74,6 +74,8 @@ body <- dashboardBody(
             
             fluidRow(
               column(width = 6,
+                     box(title = NULL, status = "primary", solidHeader = FALSE,
+                         imageOutput("logo"), width = NULL, height = 350),
                      box(title = "Project Description", status = "primary", solidHeader = TRUE, collapsible = FALSE,
                          htmlOutput("description"), width = NULL),
                      box(
@@ -85,7 +87,7 @@ body <- dashboardBody(
                        valueBox(85, "years old, the maximum age in the sample", icon = icon("list"))
                      ),
                      fluidRow(
-                       valueBox(753244, "individuals captured in the sample", icon = icon("list")),
+                       valueBox(753244, "individuals (18+) captured in the sample", icon = icon("list")),
                        box(
                          title = NULL, status = "primary", solidHeader = FALSE, collapsible = FALSE,
                          htmlOutput("name"), width = 8)
@@ -95,9 +97,13 @@ body <- dashboardBody(
     ),
     tabItem(tabName = "genxedu",
             h2("Educational Attainment by Gender from 2010 to 2015"),
-            box(
-              title = "US Educational Attainment by Gender in 2010", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y1_plot"), width = 12),
+            fluidRow(
+              box(
+                title = "US Educational Attainment by Gender in 2010", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+                plotlyOutput("y1_plot"), width = 6),
+              box(title = NULL, status = "primary", solidHeader = FALSE, collapsible = TRUE,
+                  htmlOutput("gen-interpret-10"), width = NULL),
+            ),
             box(
               title = "US Educational Attainment by Gender in 2011", status = "primary", solidHeader = TRUE, collapsible = TRUE,
               plotlyOutput("y2_plot"), width = 12),
@@ -177,6 +183,11 @@ server <- function(input, output) {
   
 ###################### TABLE ###########################
   
+  output$logo <- renderImage({
+    list(src = "www/eduattain.jpg",
+         width = "100%")
+  }, deleteFile = F)
+  
   output$data_table <- renderDataTable(
     #res
     # query to get all data from 2010 for sex + educ attain
@@ -190,8 +201,10 @@ server <- function(input, output) {
   })
   
   output$description <- renderUI({
-    HTML(paste("<b>EduAttain</b>, leveraging data from <a href='https://cps.ipums.org/cps/index.shtml'>IPUMS</a>, attempts to assess how an individual's <em>race, gender, or Hispanic ethnicity</em> influence the level of education attained. <br>
-               <br> The source code for this project is stored in a <a href='https://github.com/ReadyResearchers/EduAttain'>GitHub Repository</a> that can be accessed for review of the code, adhering to fair use practices."))
+    HTML(paste("<b>EduAttain</b>, leverages data from <a href='https://cps.ipums.org/cps/index.shtml'>IPUMS</a>, to assess how an individual's <em>race, gender, or Hispanic ethnicity</em> influence the level of education attained. <br>
+               <br> This project is divided into two main sections: <em>Descriptive Statistics</em> and <em>Statistical Analysis</em>. For the descriptive statistics, barplots and data tables based on counts will depict how
+               educational attainment varies by race, gender, and Hispanic ethnicity. For the statistical analysis, the statistical relationship between educational attainment and each of the explanatory variables will be tested using an ordinal logistic regression 
+               <br> <br>The source code for this project is stored in a <a href='https://github.com/ReadyResearchers/EduAttain'>GitHub Repository</a> that can be accessed for review of the code, adhering to fair use practices."))
   })
   
   output$name <- renderUI({

@@ -752,6 +752,73 @@ state_count
 state_count <- data2012 %>% count(STATEFIP, sort = TRUE)
 state_count
 
+####################
+
+# count of each level of edu by gender
+f_2010_count <- data2010 %>% filter(SEX == 2) %>% count(EDUC, sort = TRUE)
+
+m_2010_count <- data2010 %>% filter(SEX == 1) %>% count(EDUC, sort = TRUE)
+
+f_2011_count <- data2011 %>% filter(SEX == 2) %>% count(EDUC, sort = TRUE)
+
+m_2011_count <- data2011 %>% filter(SEX == 1) %>% count(EDUC, sort = TRUE)
+
+f_2012_count <- data2012 %>% filter(SEX == 2) %>% count(EDUC, sort = TRUE)
+
+m_2012_count <- data2012 %>% filter(SEX == 1) %>% count(EDUC, sort = TRUE)
+
+f_2013_count <- data2013 %>% filter(SEX == 2) %>% count(EDUC, sort = TRUE)
+
+m_2013_count <- data2013 %>% filter(SEX == 1) %>% count(EDUC, sort = TRUE)
+
+f_2014_count <- data2014 %>% filter(SEX == 2) %>% count(EDUC, sort = TRUE)
+
+m_2014_count <- data2014 %>% filter(SEX == 1) %>% count(EDUC, sort = TRUE)
+
+f_2015_count <- data2015 %>% filter(SEX == 2) %>% count(EDUC, sort = TRUE)
+
+m_2015_count <- data2015 %>% filter(SEX == 1) %>% count(EDUC, sort = TRUE)
+
+
+# count of each level of edu by race
+white_2010_count <- data2010 %>% filter(RACE == "White") %>% count(EDUC, sort = TRUE)
+
+black_2010_count <- data2010 %>% filter(RACE == "Black") %>% count(EDUC, sort = TRUE)
+
+indian_2010_count <- data2010 %>% filter(RACE == "American Indian") %>% count(EDUC, sort = TRUE)
+
+asian_2010_count <- data2010 %>% filter(RACE == "Asian") %>% count(EDUC, sort = TRUE)
+
+islander_2010_count <- data2010 %>% filter(RACE == "Pacific Islander") %>% count(EDUC, sort = TRUE)
+
+other_2010_count <- data2010 %>% filter(RACE == "Other") %>% count(EDUC, sort = TRUE)
+
+
+white_2011_count <- data2011 %>% filter(RACE == "White") %>% count(EDUC, sort = TRUE)
+
+black_2011_count <- data2011 %>% filter(RACE == "Black") %>% count(EDUC, sort = TRUE)
+
+indian_2011_count <- data2011 %>% filter(RACE == "American Indian") %>% count(EDUC, sort = TRUE)
+
+asian_2011_count <- data2011 %>% filter(RACE == "Asian") %>% count(EDUC, sort = TRUE)
+
+islander_2011_count <- data2011 %>% filter(RACE == "Pacific Islander") %>% count(EDUC, sort = TRUE)
+
+other_2011_count <- data2011 %>% filter(RACE == "Other") %>% count(EDUC, sort = TRUE)
+
+
+white_2010_count <- data2010 %>% filter(RACE == "White") %>% count(EDUC, sort = TRUE)
+
+black_2010_count <- data2010 %>% filter(RACE == "Black") %>% count(EDUC, sort = TRUE)
+
+indian_2010_count <- data2010 %>% filter(RACE == "American Indian") %>% count(EDUC, sort = TRUE)
+
+asian_2010_count <- data2010 %>% filter(RACE == "Asian") %>% count(EDUC, sort = TRUE)
+
+islander_2010_count <- data2010 %>% filter(RACE == "Pacific Islander") %>% count(EDUC, sort = TRUE)
+
+other_2010_count <- data2010 %>% filter(RACE == "Other") %>% count(EDUC, sort = TRUE)
+
 
 ###################### 
 
