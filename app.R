@@ -67,75 +67,79 @@ body <- dashboardBody(
   tabItems(
     tabItem(tabName = "dash",
             h2("Dataset & Description"),
-            box(
-              title = "IPUMS US CPS Data 2010-2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              dataTableOutput("data_table"), width = 10),
-            box(
+            fluidRow(
+              box(
+                title = "IPUMS US CPS Data 2010-2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+                dataTableOutput("data_table"), width = 6),
+              box(title = "Project Description", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+                  textOutput("description"), width = 6)
+            ),
+           box(
               title = "Data Key", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              textOutput("key"), width = 10)
+              htmlOutput("key"), width = 8)
     ),
     tabItem(tabName = "genxedu",
             h2("Educational Attainment by Gender from 2010 to 2015"),
             box(
               title = "US Educational Attainment by Gender in 2010", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y1_plot"), width = 10),
+              plotlyOutput("y1_plot"), width = 12),
             box(
               title = "US Educational Attainment by Gender in 2011", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y2_plot"), width = 10),
+              plotlyOutput("y2_plot"), width = 12),
             box(
               title = "US Educational Attainment by Gender in 2012", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y3_plot"), width = 10),
+              plotlyOutput("y3_plot"), width = 12),
             box(
               title = "US Educational Attainment by Gender in 2013", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y4_plot"), width = 10),
+              plotlyOutput("y4_plot"), width = 12),
             box(
               title = "US Educational Attainment by Gender in 2014", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y5_plot"), width = 10),
+              plotlyOutput("y5_plot"), width = 12),
             box(
               title = "US Educational Attainment by Gender in 2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y6_plot"), width = 10)
+              plotlyOutput("y6_plot"), width = 12)
     ),
     tabItem(tabName = "racxedu",
             h2("Educational Attainment by Race from 2010 to 2015"),
             box(
               title = "US Educational Attainment by Race in 2010", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y1_plot_1"), width = 10),
+              plotlyOutput("y1_plot_1"), width = 12),
             box(
               title = "US Educational Attainment by Race in 2011", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y2_plot_1"), width = 10),
+              plotlyOutput("y2_plot_1"), width = 12),
             box(
               title = "US Educational Attainment by Race in 2012", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y3_plot_1"), width = 10),
+              plotlyOutput("y3_plot_1"), width = 12),
             box(
               title = "US Educational Attainment by Race in 2013", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y4_plot_1"), width = 10),
+              plotlyOutput("y4_plot_1"), width = 12),
             box(
               title = "US Educational Attainment by Race in 2014", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y5_plot_1"), width = 10),
+              plotlyOutput("y5_plot_1"), width = 12),
             box(
               title = "US Educational Attainment by Race in 2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y6_plot_1"), width = 10)
+              plotlyOutput("y6_plot_1"), width = 12)
     ),
     tabItem(tabName = "hisxedu",
             h2("US Hispanic/Latino Educational Attainment from 2010 to 2015"),
             box(
               title = "US Educational Attainment by Hispanic Ethnicity in 2010", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y1_plot_2"), width = 10),
+              plotlyOutput("y1_plot_2"), width = 12),
             box(
               title = "US Educational Attainment by Hispanic Ethnicity in 2011", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y2_plot_2"), width = 10),
+              plotlyOutput("y2_plot_2"), width = 12),
             box(
               title = "US Educational Attainment by Hispanic Ethnicity in 2012", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y3_plot_2"), width = 10),
+              plotlyOutput("y3_plot_2"), width = 12),
             box(
               title = "US Educational Attainment by Hispanic Ethnicity in 2013", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y4_plot_2"), width = 10),
+              plotlyOutput("y4_plot_2"), width = 12),
             box(
               title = "US Educational Attainment by Hispanic Ethnicity in 2014", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y5_plot_2"), width = 10),
+              plotlyOutput("y5_plot_2"), width = 12),
             box(
               title = "US Educational Attainment by Hispanic Ethnicity in 2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y6_plot_2"), width = 10)
+              plotlyOutput("y6_plot_2"), width = 12)
     ),
     tabItem(tabName = "reg",
             h2("Ordinal Logistic Regression Results"), 
@@ -165,8 +169,8 @@ server <- function(input, output) {
                           statement= "SELECT cpsidp, sex, educ, race, hispan, ftotval, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
   )
   
-  output$key <- renderText({
-    print("EDUC - Educational Attainment  /  SEX - Gender  /  FTOTVAL - Family Total Income  /  RACE - Race  /  HISPAN - Hispanic Ethnicity  /  CPSDIP - IPUMS CPS Individual ID");
+  output$key <- renderUI({
+    HTML(paste("<b>EDUC</b> - Educational Attainment  /  <b>SEX</b> - Gender  /  <b>RACE</b> - Race  /  <b>HISPAN</b> - Hispanic Ethnicity  /  <b>CPSDIP</b> - IPUMS CPS Individual ID"))
   })
 #########################################################
   
@@ -1095,7 +1099,7 @@ server <- function(input, output) {
   output$summary <- renderPrint({
     # query to display the first 5 rows
     result <- dbGetQuery(conn,
-                         statement= "SELECT cpsidp, sex, educ, race, hispan, ftotval, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
+                         statement= "SELECT cpsidp, sex, educ, race, hispan, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
     
     
     # all yrs
