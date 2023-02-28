@@ -67,16 +67,31 @@ body <- dashboardBody(
   tabItems(
     tabItem(tabName = "dash",
             h2("Dataset & Description"),
+            box(
+              title = "IPUMS US CPS Data 2010-2015", status = "primary", solidHeader = TRUE, collapsible = FALSE,
+              dataTableOutput("data_table"), width = 6),
+            
+            
             fluidRow(
-              box(
-                title = "IPUMS US CPS Data 2010-2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-                dataTableOutput("data_table"), width = 6),
-              box(title = "Project Description", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-                  textOutput("description"), width = 6)
+              column(width = 6,
+                     box(title = "Project Description", status = "primary", solidHeader = TRUE, collapsible = FALSE,
+                         htmlOutput("description"), width = NULL),
+                     box(
+                       title = "Data Key", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+                       htmlOutput("key"), width = NULL),
+                     fluidRow(
+                       valueBox(18, "years old, the minimum age in the sample", icon = icon("list")),
+                       valueBox(45, "years old, the median age in the sample", icon = icon("list")),
+                       valueBox(85, "years old, the maximum age in the sample", icon = icon("list"))
+                     ),
+                     fluidRow(
+                       valueBox(753244, "individuals captured in the sample", icon = icon("list")),
+                       box(
+                         title = NULL, status = "primary", solidHeader = FALSE, collapsible = FALSE,
+                         htmlOutput("name"), width = 8)
+                     )
+              )
             ),
-           box(
-              title = "Data Key", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              htmlOutput("key"), width = 8)
     ),
     tabItem(tabName = "genxedu",
             h2("Educational Attainment by Gender from 2010 to 2015"),
@@ -166,11 +181,21 @@ server <- function(input, output) {
     #res
     # query to get all data from 2010 for sex + educ attain
     df <- dbGetQuery(conn,
-                          statement= "SELECT cpsidp, sex, educ, race, hispan, ftotval, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
+                          statement= "SELECT cpsidp, sex, educ, race, hispan, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
   )
   
   output$key <- renderUI({
-    HTML(paste("<b>EDUC</b> - Educational Attainment  /  <b>SEX</b> - Gender  /  <b>RACE</b> - Race  /  <b>HISPAN</b> - Hispanic Ethnicity  /  <b>CPSDIP</b> - IPUMS CPS Individual ID"))
+    HTML(paste("<b>EDUC</b> - Educational Attainment  <br>  <b>SEX</b> - Gender  <br>  <b>RACE</b> - Race  <br>  <b>HISPAN</b> - Hispanic Ethnicity  <br>  <b>CPSDIP</b> - IPUMS CPS Individual ID <br>
+               <br> The numerical assignments used within the variables in the dataset are listed on IPUMS to use when identifying each category present in the data."))
+  })
+  
+  output$description <- renderUI({
+    HTML(paste("<b>EduAttain</b>, leveraging data from <a href='https://cps.ipums.org/cps/index.shtml'>IPUMS</a>, attempts to assess how an individual's <em>race, gender, or Hispanic ethnicity</em> influence the level of education attained. <br>
+               <br> The source code for this project is stored in a <a href='https://github.com/ReadyResearchers/EduAttain'>GitHub Repository</a> that can be accessed for review of the code, adhering to fair use practices."))
+  })
+  
+  output$name <- renderUI({
+    HTML(paste("Developed by <b>Kyrie Doniz</b>, under the advisement of <b>Dr. Janyl Jumadinova</b> and <b>Dr. Timothy Bianco</b>, in partial fulfillment of the <a href = 'https://sites.allegheny.edu/academics/senior-project/'>Senior Thesis Project</a> for the Computer Science and Business and Economics Departments at <a href = 'https://allegheny.edu'>Allegheny College</a>."))
   })
 #########################################################
   
