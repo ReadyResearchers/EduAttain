@@ -8,8 +8,19 @@
 # install.packages("shiny")
 #install.packages("shinydashboard")
 #install.packages('rsconnect')
+#install.packages("RSQLite")
+#install.packages("vtable")
+#install.packages("plotly")
+#install.packages("foreign")
+#install.packages("MASS")
+#install.packages("Hmsic")
+#install.packages("reshape2")
 
 # install libs
+
+require(foreign)
+require(MASS)
+
 library(shiny)
 library(shinydashboard)
 library(RSQLite)
@@ -23,7 +34,7 @@ library(rsconnect)
 #db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
 
 # setting database path -- via USB
-db <- "D:/eduattain/CPS.db"
+db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
 
 # connect to database
 conn <- dbConnect(drv = SQLite(), dbname = db)
@@ -47,7 +58,6 @@ sidebar <- dashboardSidebar(
     menuItem("Gender x Educational Attainment", tabName = "genxedu", icon = icon("chart-column")),
     menuItem("Race x Educational Attainment", tabName = "racxedu", icon = icon("chart-column")),
     menuItem("Hispanic x Educational Attainment", tabName = "hisxedu", icon = icon("chart-column")),
-    menuItem("Income x Educational Attainment", tabName = "incxedu", icon = icon("chart-column")),
     menuItem("Regression", tabName = "reg", icon = icon("chart-line"))
   )
 )
@@ -88,22 +98,22 @@ body <- dashboardBody(
     tabItem(tabName = "racxedu",
             h2("Educational Attainment by Race from 2010 to 2015"),
             box(
-              title = "US Educational Attainment by Gender in 2010", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              title = "US Educational Attainment by Race in 2010", status = "primary", solidHeader = TRUE, collapsible = TRUE,
               plotlyOutput("y1_plot_1"), width = 10),
             box(
-              title = "US Educational Attainment by Gender in 2011", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              title = "US Educational Attainment by Race in 2011", status = "primary", solidHeader = TRUE, collapsible = TRUE,
               plotlyOutput("y2_plot_1"), width = 10),
             box(
-              title = "US Educational Attainment by Gender in 2012", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              title = "US Educational Attainment by Race in 2012", status = "primary", solidHeader = TRUE, collapsible = TRUE,
               plotlyOutput("y3_plot_1"), width = 10),
             box(
-              title = "US Educational Attainment by Gender in 2013", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              title = "US Educational Attainment by Race in 2013", status = "primary", solidHeader = TRUE, collapsible = TRUE,
               plotlyOutput("y4_plot_1"), width = 10),
             box(
-              title = "US Educational Attainment by Gender in 2014", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              title = "US Educational Attainment by Race in 2014", status = "primary", solidHeader = TRUE, collapsible = TRUE,
               plotlyOutput("y5_plot_1"), width = 10),
             box(
-              title = "US Educational Attainment by Gender in 2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
+              title = "US Educational Attainment by Race in 2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
               plotlyOutput("y6_plot_1"), width = 10)
     ),
     tabItem(tabName = "hisxedu",
@@ -127,11 +137,10 @@ body <- dashboardBody(
               title = "US Educational Attainment by Hispanic Ethnicity in 2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
               plotlyOutput("y6_plot_2"), width = 10)
     ),
-    tabItem(tabName = "incxedu",
-            h2("Educational Attainment by Income from 2010 to 2015"),
+    tabItem(tabName = "reg",
+            h2("Ordinal Logistic Regression Results"), 
             box(
-              title = "US Educational Attainment by Income in 2010", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y1_plot_3"), width = 10)
+              title = "Model Summary", status = "primary", solidHeader = TRUE, collapsible = FALSE, verbatimTextOutput("summary"))
     )
   )
 )
@@ -1083,49 +1092,95 @@ server <- function(input, output) {
     
     ggplotly(hispxeduc2015)
   })
-
-################### INCOME ####################
-  output$y1_plot_3 <- renderPlotly({
-    # query to get all data from 2010 for sex + educ attain
-    d2010 <- dbGetQuery(conn,
-                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
+  output$summary <- renderPrint({
+    # query to display the first 5 rows
+    result <- dbGetQuery(conn,
+                         statement= "SELECT cpsidp, sex, educ, race, hispan, ftotval, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
     
-    # filter NIU for educ
-    data2010 <- d2010 %>% filter(EDUC != "1")
     
-    # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
-    data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
-    data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
-    data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
-    data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    # all yrs
+    result$EDUC[result$EDUC == "10"]<-"Grades 1-4"
+    result$EDUC[result$EDUC == "111"]<-"Bachelor's Degree"
+    result$EDUC[result$EDUC == "123"]<-"Master's Degree"
+    result$EDUC[result$EDUC == "124"]<-"Professional School Degree"
+    result$EDUC[result$EDUC == "125"]<-"Doctorate Degree"
+    result$EDUC[result$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    result$EDUC[result$EDUC == "20"]<-"Grades 5-6"
+    result$EDUC[result$EDUC == "30"]<-"Grades 7-8"
+    result$EDUC[result$EDUC == "40"]<-"HS, Grade 9"
+    result$EDUC[result$EDUC == "50"]<-"HS, Grade 10"
+    result$EDUC[result$EDUC == "60"]<-"HS, Grade 11"
+    result$EDUC[result$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    result$EDUC[result$EDUC == "73"]<-"HS Diploma or Equiv."
+    result$EDUC[result$EDUC == "81"]<-"Some college, no degree"
+    result$EDUC[result$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    result$EDUC[result$EDUC == "92"]<-"Associate's Degree, Academic"
     
-    data2010$FTOTVAL[data2010$FTOTVAL == "9999999999"]<-"0"
+    ##### converting educ levels to factor
+    result$EDUC <- factor(result$EDUC, levels=c("None/Preschool/Kindergarten","Grades 1-4","Grades 5-6","Grades 7-8","HS, Grade 9", "HS, Grade 10", "HS, Grade 11", "HS, Grade 12, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
     
-    sample_2010 <- data2010[sample(nrow(data2010), 1000),]
     
-    # plot
-    incxeduc2010 <- ggplot(sample_2010, aes(EDUC, FTOTVAL)) + 
-      geom_point() + 
-      xlab("Level of Educational Attainment") + 
-      theme(axis.text.x = element_text(angle = 90))
+    # filtering
+    result$RACE[result$RACE == "801"]<-"999" #white black
+    result$RACE[result$RACE == "802"]<-"999" #white american indian
+    result$RACE[result$RACE == "803"]<-"999" #white asian
+    result$RACE[result$RACE == "804"]<-"999" #white pacific islander
+    result$RACE[result$RACE == "805"]<-"999" #black american indian
+    result$RACE[result$RACE == "806"]<-"999" #black asian
+    result$RACE[result$RACE == "807"]<-"999" #black pacific islander
+    result$RACE[result$RACE == "808"]<-"999" #american indian asian
+    result$RACE[result$RACE == "809"]<-"999" #asian pacific islander
+    result$RACE[result$RACE == "810"]<-"999" #white black american indian
+    result$RACE[result$RACE == "811"]<-"999" #white black asian
+    result$RACE[result$RACE == "812"]<-"999" #white american indian asian
+    result$RACE[result$RACE == "813"]<-"999" #white asian pacific islander
+    result$RACE[result$RACE == "814"]<-"999" #white black american indian asian
+    result$RACE[result$RACE == "815"]<-"999" #american indian
+    result$RACE[result$RACE == "816"]<-"999" #white black pacific islander
+    result$RACE[result$RACE == "817"]<-"999" #white american indian pacific islander
+    result$RACE[result$RACE == "818"]<-"999" #black american indian asian
+    result$RACE[result$RACE == "819"]<-"999" #white american indian asian pacific islander
+    result$RACE[result$RACE == "820"]<-"999" #mixed race, 2-3, unspecified
+    result$RACE[result$RACE == "830"]<-"999" #mixed race, 4-5, unspecified
     
-    ggplotly(incxeduc2010)
+    
+    # hispanic filtering
+    result$HISPAN[result$HISPAN == "0"]<-"000"
+    
+    #dummy variable recoding
+    
+    # sex
+    result$female <- ifelse(result$SEX == "2", 1, 0)
+    
+    # race
+    result$black <- ifelse(result$RACE == "200", 1, 0)
+    result$amer_indian <- ifelse(result$RACE == "300", 1, 0)
+    result$asian <- ifelse(result$RACE == "651", 1, 0)
+    result$islander <- ifelse(result$RACE == "652", 1, 0)
+    result$mixed_race <- ifelse(result$RACE == "999", 1, 0)
+    
+    # hispanic
+    result$mex <- ifelse(result$HISPAN == "100", 1, 0)
+    result$pr <- ifelse(result$HISPAN == "200", 1, 0)
+    result$cuban <- ifelse(result$HISPAN == "300", 1, 0)
+    result$dom <- ifelse(result$HISPAN == "400", 1, 0)
+    result$salv <- ifelse(result$HISPAN == "500", 1, 0)
+    result$otherhispan <- ifelse(result$HISPAN == "600", 1, 0)
+    result$centralamer <- ifelse(result$HISPAN == "611", 1, 0)
+    result$southamer <- ifelse(result$HISPAN == "612", 1, 0)
+    
+    
+    ## fit ordered logit model and store results 'm'
+    model <- polr(EDUC ~ female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan + centralamer + southamer, data = result, Hess=TRUE, method = c("logistic"))
+    
+    # summary
+    summary(model)
   })
-#######################################################
-
 }
+
+onStop(function() {
+  dbDisconnect(conn)
+})
 
 # view app
 shinyApp(ui, server)
