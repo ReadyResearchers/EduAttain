@@ -208,24 +208,68 @@ body <- dashboardBody(
     ),
     tabItem(tabName = "hisxedu",
             h2("US Hispanic/Latino Educational Attainment from 2010 to 2015"),
-            box(
-              title = "US Educational Attainment by Hispanic Ethnicity in 2010", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y1_plot_2"), width = 12),
-            box(
-              title = "US Educational Attainment by Hispanic Ethnicity in 2011", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y2_plot_2"), width = 12),
-            box(
-              title = "US Educational Attainment by Hispanic Ethnicity in 2012", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y3_plot_2"), width = 12),
-            box(
-              title = "US Educational Attainment by Hispanic Ethnicity in 2013", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y4_plot_2"), width = 12),
-            box(
-              title = "US Educational Attainment by Hispanic Ethnicity in 2014", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y5_plot_2"), width = 12),
-            box(
-              title = "US Educational Attainment by Hispanic Ethnicity in 2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y6_plot_2"), width = 12)
+            fluidRow(
+              column(width = 12,
+                     tabBox(
+                       title = "US Educational Attainment by Hispanic Origin in 2010",
+                       height = "500px", width = NULL,
+                       tabPanel("Not Hispanic", plotlyOutput("nh2010pie")),
+                       tabPanel("Mexican", plotlyOutput("mx2010pie")),
+                       tabPanel("Puerto Rican", plotlyOutput("pr2010pie")),
+                       tabPanel("Cuban", plotlyOutput("c2010pie")),
+                       tabPanel("Other Hispanic", plotlyOutput("oh2010pie"))
+                     ),
+                     tabBox(
+                       title = "US Educational Attainment by Hispanic Origin in 2011",
+                       height = "500px", width = NULL,
+                       tabPanel("Not Hispanic", plotlyOutput("nh2011pie")),
+                       tabPanel("Mexican", plotlyOutput("mx2011pie")),
+                       tabPanel("Puerto Rican", plotlyOutput("pr2011pie")),
+                       tabPanel("Cuban", plotlyOutput("c2011pie")),
+                       tabPanel("Other Hispanic", plotlyOutput("oh2011pie"))
+                     ),
+                     tabBox(
+                       title = "US Educational Attainment by Hispanic Origin in 2012",
+                       height = "500px", width = NULL,
+                       tabPanel("Not Hispanic", plotlyOutput("nh2012pie")),
+                       tabPanel("Mexican", plotlyOutput("mx2012pie")),
+                       tabPanel("Puerto Rican", plotlyOutput("pr2012pie")),
+                       tabPanel("Cuban", plotlyOutput("c2012pie")),
+                       tabPanel("Other Hispanic", plotlyOutput("oh2012pie"))
+                     ),
+                     tabBox(
+                       title = "US Educational Attainment by Hispanic Origin in 2013",
+                       height = "500px", width = NULL,
+                       tabPanel("Not Hispanic", plotlyOutput("nh2013pie")),
+                       tabPanel("Mexican", plotlyOutput("mx2013pie")),
+                       tabPanel("Puerto Rican", plotlyOutput("pr2013pie")),
+                       tabPanel("Cuban", plotlyOutput("c2013pie")),
+                       tabPanel("Other Hispanic", plotlyOutput("oh2013pie"))
+                     ),
+                     tabBox(
+                       title = "US Educational Attainment by Hispanic Origin in 2014",
+                       height = "500px", width = NULL,
+                       tabPanel("Not Hispanic", plotlyOutput("nh2014pie")),
+                       tabPanel("Mexican", plotlyOutput("mx2014pie")),
+                       tabPanel("Puerto Rican", plotlyOutput("pr2014pie")),
+                       tabPanel("Cuban", plotlyOutput("c2014pie")),
+                       tabPanel("Dominican", plotlyOutput("d2014pie")),
+                       tabPanel("Salvadorian", plotlyOutput("s2014pie")),
+                       tabPanel("Other Hispanic", plotlyOutput("oh2014pie"))
+                     ),
+                     tabBox(
+                       title = "US Educational Attainment by Hispanic Origin in 2015",
+                       height = "500px", width = NULL,
+                       tabPanel("Not Hispanic", plotlyOutput("nh2015pie")),
+                       tabPanel("Mexican", plotlyOutput("mx2015pie")),
+                       tabPanel("Puerto Rican", plotlyOutput("pr2015pie")),
+                       tabPanel("Cuban", plotlyOutput("c2015pie")),
+                       tabPanel("Dominican", plotlyOutput("d2015pie")),
+                       tabPanel("Salvadorian", plotlyOutput("s2015pie")),
+                       tabPanel("Other Hispanic", plotlyOutput("oh2015pie"))
+                     )
+              )
+            )
     ),
     tabItem(tabName = "reg",
             h2("Ordinal Logistic Regression Results"), 
@@ -3444,8 +3488,9 @@ server <- function(input, output) {
   })
   
   ###################### HISPANIC ######################
-  # 2010 Hispanic
-  output$y1_plot_2 <- renderPlotly({
+  
+  # 2010 HISPAN
+  output$nh2010pie <- renderPlotly({
     # query to get all data from 2010 for sex + educ attain
     d2010 <- dbGetQuery(conn,
                         statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
@@ -3483,17 +3528,251 @@ server <- function(input, output) {
     data2010$HISPAN[data2010$HISPAN == "611"]<-"Other"
     data2010$HISPAN[data2010$HISPAN == "612"]<-"Other"
     
-    # plot
-    hispxeduc2010 <- ggplot(data2010, aes(x=EDUC, fill=HISPAN)) + 
-      geom_bar(position = "dodge", stat = "count") + 
-      xlab("Level of Educational Attainment") + 
-      theme(axis.text.x = element_text(angle = 90))
+    df <- data2010 %>%
+      filter(HISPAN =="Not Hispanic") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
     
-    ggplotly(hispxeduc2010)
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
   
-  # 2011
-  output$y2_plot_2 <- renderPlotly({
+  output$mx2010pie <- renderPlotly({
+    # query to get all data from 2010 for sex + educ attain
+    d2010 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
+    
+    # filter NIU for educ
+    data2010 <- d2010 %>% filter(EDUC != "1")
+    
+    # 2010 filters
+    data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
+    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
+    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
+    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
+    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
+    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
+    data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
+    data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
+    data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
+    data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
+    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2010$HISPAN[data2010$HISPAN == "0"]<-"Not Hispanic"
+    data2010$HISPAN[data2010$HISPAN == "000"]<-"Not Hispanic"
+    data2010$HISPAN[data2010$HISPAN == "100"]<-"Mexican"
+    data2010$HISPAN[data2010$HISPAN == "200"]<-"Puerto Rican"
+    data2010$HISPAN[data2010$HISPAN == "300"]<-"Cuban"
+    data2010$HISPAN[data2010$HISPAN == "400"]<-"Dominican"
+    data2010$HISPAN[data2010$HISPAN == "500"]<-"Salvadoran"
+    data2010$HISPAN[data2010$HISPAN == "600"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "610"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "611"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "612"]<-"Other"
+    
+    df <- data2010 %>%
+      filter(HISPAN=="Mexican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$pr2010pie <- renderPlotly({
+    # query to get all data from 2010 for sex + educ attain
+    d2010 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
+    
+    # filter NIU for educ
+    data2010 <- d2010 %>% filter(EDUC != "1")
+    
+    # 2010 filters
+    data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
+    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
+    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
+    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
+    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
+    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
+    data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
+    data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
+    data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
+    data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
+    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2010$HISPAN[data2010$HISPAN == "0"]<-"Not Hispanic"
+    data2010$HISPAN[data2010$HISPAN == "000"]<-"Not Hispanic"
+    data2010$HISPAN[data2010$HISPAN == "100"]<-"Mexican"
+    data2010$HISPAN[data2010$HISPAN == "200"]<-"Puerto Rican"
+    data2010$HISPAN[data2010$HISPAN == "300"]<-"Cuban"
+    data2010$HISPAN[data2010$HISPAN == "400"]<-"Dominican"
+    data2010$HISPAN[data2010$HISPAN == "500"]<-"Salvadoran"
+    data2010$HISPAN[data2010$HISPAN == "600"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "610"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "611"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "612"]<-"Other"
+    
+    df <- data2010 %>%
+      filter(HISPAN =="Puerto Rican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$c2010pie <- renderPlotly({
+    # query to get all data from 2010 for sex + educ attain
+    d2010 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
+    
+    # filter NIU for educ
+    data2010 <- d2010 %>% filter(EDUC != "1")
+    
+    # 2010 filters
+    data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
+    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
+    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
+    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
+    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
+    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
+    data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
+    data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
+    data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
+    data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
+    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2010$HISPAN[data2010$HISPAN == "0"]<-"Not Hispanic"
+    data2010$HISPAN[data2010$HISPAN == "000"]<-"Not Hispanic"
+    data2010$HISPAN[data2010$HISPAN == "100"]<-"Mexican"
+    data2010$HISPAN[data2010$HISPAN == "200"]<-"Puerto Rican"
+    data2010$HISPAN[data2010$HISPAN == "300"]<-"Cuban"
+    data2010$HISPAN[data2010$HISPAN == "400"]<-"Dominican"
+    data2010$HISPAN[data2010$HISPAN == "500"]<-"Salvadoran"
+    data2010$HISPAN[data2010$HISPAN == "600"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "610"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "611"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "612"]<-"Other"
+    
+    df <- data2010 %>%
+      filter(HISPAN =="Cuban") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$oh2010pie <- renderPlotly({
+    # query to get all data from 2010 for sex + educ attain
+    d2010 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
+    
+    # filter NIU for educ
+    data2010 <- d2010 %>% filter(EDUC != "1")
+    
+    # 2010 filters
+    data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
+    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
+    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
+    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
+    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
+    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
+    data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
+    data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
+    data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
+    data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
+    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2010$HISPAN[data2010$HISPAN == "0"]<-"Not Hispanic"
+    data2010$HISPAN[data2010$HISPAN == "000"]<-"Not Hispanic"
+    data2010$HISPAN[data2010$HISPAN == "100"]<-"Mexican"
+    data2010$HISPAN[data2010$HISPAN == "200"]<-"Puerto Rican"
+    data2010$HISPAN[data2010$HISPAN == "300"]<-"Cuban"
+    data2010$HISPAN[data2010$HISPAN == "400"]<-"Dominican"
+    data2010$HISPAN[data2010$HISPAN == "500"]<-"Salvadoran"
+    data2010$HISPAN[data2010$HISPAN == "600"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "610"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "611"]<-"Other"
+    data2010$HISPAN[data2010$HISPAN == "612"]<-"Other"
+    
+    df <- data2010 %>%
+      filter(HISPAN =="Other") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  ##2011 HISPAN
+  
+  output$nh2011pie <- renderPlotly({
     # query to get all data from 2011 for sex + educ attain
     d2011 <- dbGetQuery(conn,
                         statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2011 AND age >= 18 ORDER BY cpsidp')
@@ -3531,17 +3810,251 @@ server <- function(input, output) {
     data2011$HISPAN[data2011$HISPAN == "611"]<-"Other"
     data2011$HISPAN[data2011$HISPAN == "612"]<-"Other"
     
-    # plot
-    hispxeduc2011 <- ggplot(data2011, aes(x=EDUC, fill=HISPAN)) + 
-      geom_bar(position = "dodge", stat = "count") + 
-      xlab("Level of Educational Attainment") + 
-      theme(axis.text.x = element_text(angle = 90))
+    df <- data2011 %>%
+      filter(HISPAN =="Not Hispanic") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
     
-    ggplotly(hispxeduc2011)
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
   
-  # 2012
-  output$y3_plot_2 <- renderPlotly({
+  output$mx2011pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2011 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2011 AND age >= 18 ORDER BY cpsidp')
+    
+    # filter NIU for educ
+    data2011 <- d2011 %>% filter(EDUC != "1")
+    
+    # 2011 filters
+    data2011$EDUC[data2011$EDUC == "10"]<-"Grades 1-4"
+    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
+    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
+    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
+    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
+    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Grades 5-6"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Grades 7-8"
+    data2011$EDUC[data2011$EDUC == "40"]<-"HS, Grade 9"
+    data2011$EDUC[data2011$EDUC == "50"]<-"HS, Grade 10"
+    data2011$EDUC[data2011$EDUC == "60"]<-"HS, Grade 11"
+    data2011$EDUC[data2011$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
+    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2011$HISPAN[data2011$HISPAN == "0"]<-"Not Hispanic"
+    data2011$HISPAN[data2011$HISPAN == "000"]<-"Not Hispanic"
+    data2011$HISPAN[data2011$HISPAN == "100"]<-"Mexican"
+    data2011$HISPAN[data2011$HISPAN == "200"]<-"Puerto Rican"
+    data2011$HISPAN[data2011$HISPAN == "300"]<-"Cuban"
+    data2011$HISPAN[data2011$HISPAN == "400"]<-"Dominican"
+    data2011$HISPAN[data2011$HISPAN == "500"]<-"Salvadoran"
+    data2011$HISPAN[data2011$HISPAN == "600"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "610"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "611"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "612"]<-"Other"
+    
+    df <- data2011 %>%
+      filter(HISPAN =="Mexican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$pr2011pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2011 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2011 AND age >= 18 ORDER BY cpsidp')
+    
+    # filter NIU for educ
+    data2011 <- d2011 %>% filter(EDUC != "1")
+    
+    # 2011 filters
+    data2011$EDUC[data2011$EDUC == "10"]<-"Grades 1-4"
+    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
+    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
+    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
+    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
+    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Grades 5-6"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Grades 7-8"
+    data2011$EDUC[data2011$EDUC == "40"]<-"HS, Grade 9"
+    data2011$EDUC[data2011$EDUC == "50"]<-"HS, Grade 10"
+    data2011$EDUC[data2011$EDUC == "60"]<-"HS, Grade 11"
+    data2011$EDUC[data2011$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
+    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2011$HISPAN[data2011$HISPAN == "0"]<-"Not Hispanic"
+    data2011$HISPAN[data2011$HISPAN == "000"]<-"Not Hispanic"
+    data2011$HISPAN[data2011$HISPAN == "100"]<-"Mexican"
+    data2011$HISPAN[data2011$HISPAN == "200"]<-"Puerto Rican"
+    data2011$HISPAN[data2011$HISPAN == "300"]<-"Cuban"
+    data2011$HISPAN[data2011$HISPAN == "400"]<-"Dominican"
+    data2011$HISPAN[data2011$HISPAN == "500"]<-"Salvadoran"
+    data2011$HISPAN[data2011$HISPAN == "600"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "610"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "611"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "612"]<-"Other"
+    
+    df <- data2011 %>%
+      filter(HISPAN =="Puerto Rican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$c2011pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2011 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2011 AND age >= 18 ORDER BY cpsidp')
+    
+    # filter NIU for educ
+    data2011 <- d2011 %>% filter(EDUC != "1")
+    
+    # 2011 filters
+    data2011$EDUC[data2011$EDUC == "10"]<-"Grades 1-4"
+    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
+    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
+    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
+    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
+    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Grades 5-6"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Grades 7-8"
+    data2011$EDUC[data2011$EDUC == "40"]<-"HS, Grade 9"
+    data2011$EDUC[data2011$EDUC == "50"]<-"HS, Grade 10"
+    data2011$EDUC[data2011$EDUC == "60"]<-"HS, Grade 11"
+    data2011$EDUC[data2011$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
+    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2011$HISPAN[data2011$HISPAN == "0"]<-"Not Hispanic"
+    data2011$HISPAN[data2011$HISPAN == "000"]<-"Not Hispanic"
+    data2011$HISPAN[data2011$HISPAN == "100"]<-"Mexican"
+    data2011$HISPAN[data2011$HISPAN == "200"]<-"Puerto Rican"
+    data2011$HISPAN[data2011$HISPAN == "300"]<-"Cuban"
+    data2011$HISPAN[data2011$HISPAN == "400"]<-"Dominican"
+    data2011$HISPAN[data2011$HISPAN == "500"]<-"Salvadoran"
+    data2011$HISPAN[data2011$HISPAN == "600"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "610"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "611"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "612"]<-"Other"
+    
+    df <- data2011 %>%
+      filter(HISPAN =="Cuban") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+ 
+  output$oh2011pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2011 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2011 AND age >= 18 ORDER BY cpsidp')
+    
+    # filter NIU for educ
+    data2011 <- d2011 %>% filter(EDUC != "1")
+    
+    # 2011 filters
+    data2011$EDUC[data2011$EDUC == "10"]<-"Grades 1-4"
+    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
+    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
+    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
+    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
+    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Grades 5-6"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Grades 7-8"
+    data2011$EDUC[data2011$EDUC == "40"]<-"HS, Grade 9"
+    data2011$EDUC[data2011$EDUC == "50"]<-"HS, Grade 10"
+    data2011$EDUC[data2011$EDUC == "60"]<-"HS, Grade 11"
+    data2011$EDUC[data2011$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
+    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2011$HISPAN[data2011$HISPAN == "0"]<-"Not Hispanic"
+    data2011$HISPAN[data2011$HISPAN == "000"]<-"Not Hispanic"
+    data2011$HISPAN[data2011$HISPAN == "100"]<-"Mexican"
+    data2011$HISPAN[data2011$HISPAN == "200"]<-"Puerto Rican"
+    data2011$HISPAN[data2011$HISPAN == "300"]<-"Cuban"
+    data2011$HISPAN[data2011$HISPAN == "400"]<-"Dominican"
+    data2011$HISPAN[data2011$HISPAN == "500"]<-"Salvadoran"
+    data2011$HISPAN[data2011$HISPAN == "600"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "610"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "611"]<-"Other"
+    data2011$HISPAN[data2011$HISPAN == "612"]<-"Other"
+    
+    df <- data2011 %>%
+      filter(HISPAN =="Other") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  ##2012 HISPAN
+  
+  output$nh2012pie <- renderPlotly({
     # query to get all data from 2011 for sex + educ attain
     d2012 <- dbGetQuery(conn,
                         statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18')
@@ -3580,18 +4093,255 @@ server <- function(input, output) {
     data2012$HISPAN[data2012$HISPAN == "611"]<-"Other"
     data2012$HISPAN[data2012$HISPAN == "612"]<-"Other"
     
-    # plot
-    hispxeduc2012 <- ggplot(data2012, aes(x=EDUC, fill=HISPAN)) + 
-      geom_bar(position = "dodge", stat = "count") + 
-      xlab("Level of Educational Attainment") + 
-      theme(axis.text.x = element_text(angle = 90))
+    df <- data2012 %>%
+      filter(HISPAN =="Not Hispanic") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
     
-    ggplotly(hispxeduc2012)
     
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
   
-  # 2013
-  output$y4_plot_2 <- renderPlotly({
+  output$mx2012pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2012 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18')
+    
+    # filter NIU for educ
+    data2012 <- d2012 %>% filter(EDUC != "1")
+    
+    # 2012 filters
+    data2012$EDUC[data2012$EDUC == "1"]<-"NIU"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Grades 1-4"
+    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
+    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
+    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
+    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
+    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Grades 5-6"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Grades 7-8"
+    data2012$EDUC[data2012$EDUC == "40"]<-"HS, Grade 9"
+    data2012$EDUC[data2012$EDUC == "50"]<-"HS, Grade 10"
+    data2012$EDUC[data2012$EDUC == "60"]<-"HS, Grade 11"
+    data2012$EDUC[data2012$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
+    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2012$HISPAN[data2012$HISPAN == "0"]<-"Not Hispanic"
+    data2012$HISPAN[data2012$HISPAN == "000"]<-"Not Hispanic"
+    data2012$HISPAN[data2012$HISPAN == "100"]<-"Mexican"
+    data2012$HISPAN[data2012$HISPAN == "200"]<-"Puerto Rican"
+    data2012$HISPAN[data2012$HISPAN == "300"]<-"Cuban"
+    data2012$HISPAN[data2012$HISPAN == "400"]<-"Dominican"
+    data2012$HISPAN[data2012$HISPAN == "500"]<-"Salvadoran"
+    data2012$HISPAN[data2012$HISPAN == "600"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "610"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "611"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "612"]<-"Other"
+    
+    df <- data2012 %>%
+      filter(HISPAN =="Mexican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$pr2012pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2012 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18')
+    
+    # filter NIU for educ
+    data2012 <- d2012 %>% filter(EDUC != "1")
+    
+    # 2012 filters
+    data2012$EDUC[data2012$EDUC == "1"]<-"NIU"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Grades 1-4"
+    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
+    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
+    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
+    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
+    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Grades 5-6"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Grades 7-8"
+    data2012$EDUC[data2012$EDUC == "40"]<-"HS, Grade 9"
+    data2012$EDUC[data2012$EDUC == "50"]<-"HS, Grade 10"
+    data2012$EDUC[data2012$EDUC == "60"]<-"HS, Grade 11"
+    data2012$EDUC[data2012$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
+    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2012$HISPAN[data2012$HISPAN == "0"]<-"Not Hispanic"
+    data2012$HISPAN[data2012$HISPAN == "000"]<-"Not Hispanic"
+    data2012$HISPAN[data2012$HISPAN == "100"]<-"Mexican"
+    data2012$HISPAN[data2012$HISPAN == "200"]<-"Puerto Rican"
+    data2012$HISPAN[data2012$HISPAN == "300"]<-"Cuban"
+    data2012$HISPAN[data2012$HISPAN == "400"]<-"Dominican"
+    data2012$HISPAN[data2012$HISPAN == "500"]<-"Salvadoran"
+    data2012$HISPAN[data2012$HISPAN == "600"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "610"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "611"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "612"]<-"Other"
+    
+    df <- data2012 %>%
+      filter(HISPAN =="Puerto Rican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$c2012pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2012 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18')
+    
+    # filter NIU for educ
+    data2012 <- d2012 %>% filter(EDUC != "1")
+    
+    # 2012 filters
+    data2012$EDUC[data2012$EDUC == "1"]<-"NIU"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Grades 1-4"
+    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
+    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
+    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
+    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
+    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Grades 5-6"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Grades 7-8"
+    data2012$EDUC[data2012$EDUC == "40"]<-"HS, Grade 9"
+    data2012$EDUC[data2012$EDUC == "50"]<-"HS, Grade 10"
+    data2012$EDUC[data2012$EDUC == "60"]<-"HS, Grade 11"
+    data2012$EDUC[data2012$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
+    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2012$HISPAN[data2012$HISPAN == "0"]<-"Not Hispanic"
+    data2012$HISPAN[data2012$HISPAN == "000"]<-"Not Hispanic"
+    data2012$HISPAN[data2012$HISPAN == "100"]<-"Mexican"
+    data2012$HISPAN[data2012$HISPAN == "200"]<-"Puerto Rican"
+    data2012$HISPAN[data2012$HISPAN == "300"]<-"Cuban"
+    data2012$HISPAN[data2012$HISPAN == "400"]<-"Dominican"
+    data2012$HISPAN[data2012$HISPAN == "500"]<-"Salvadoran"
+    data2012$HISPAN[data2012$HISPAN == "600"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "610"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "611"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "612"]<-"Other"
+    
+    df <- data2012 %>%
+      filter(HISPAN =="Cuban") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$oh2012pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2012 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18')
+    
+    # filter NIU for educ
+    data2012 <- d2012 %>% filter(EDUC != "1")
+    
+    # 2012 filters
+    data2012$EDUC[data2012$EDUC == "1"]<-"NIU"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Grades 1-4"
+    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
+    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
+    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
+    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
+    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Grades 5-6"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Grades 7-8"
+    data2012$EDUC[data2012$EDUC == "40"]<-"HS, Grade 9"
+    data2012$EDUC[data2012$EDUC == "50"]<-"HS, Grade 10"
+    data2012$EDUC[data2012$EDUC == "60"]<-"HS, Grade 11"
+    data2012$EDUC[data2012$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
+    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2012$HISPAN[data2012$HISPAN == "0"]<-"Not Hispanic"
+    data2012$HISPAN[data2012$HISPAN == "000"]<-"Not Hispanic"
+    data2012$HISPAN[data2012$HISPAN == "100"]<-"Mexican"
+    data2012$HISPAN[data2012$HISPAN == "200"]<-"Puerto Rican"
+    data2012$HISPAN[data2012$HISPAN == "300"]<-"Cuban"
+    data2012$HISPAN[data2012$HISPAN == "400"]<-"Dominican"
+    data2012$HISPAN[data2012$HISPAN == "500"]<-"Salvadoran"
+    data2012$HISPAN[data2012$HISPAN == "600"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "610"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "611"]<-"Other"
+    data2012$HISPAN[data2012$HISPAN == "612"]<-"Other"
+    
+    df <- data2012 %>%
+      filter(HISPAN =="Other") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  ## 2013 HISPAN
+  
+  output$nh2013pie <- renderPlotly({
     # query to get all data from 2011 for sex + educ attain
     d2013 <- dbGetQuery(conn,
                         statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18')
@@ -3630,18 +4380,255 @@ server <- function(input, output) {
     data2013$HISPAN[data2013$HISPAN == "611"]<-"Other"
     data2013$HISPAN[data2013$HISPAN == "612"]<-"Other"
     
-    # plot
-    hispxeduc2013 <- ggplot(data2013, aes(x=EDUC, fill=HISPAN)) + 
-      geom_bar(position = "dodge", stat = "count") + 
-      xlab("Level of Educational Attainment") + 
-      theme(axis.text.x = element_text(angle = 90))
+    df <- data2013 %>%
+      filter(HISPAN =="Not Hispanic") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
     
-    ggplotly(hispxeduc2013)
     
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
   
-  # 2014
-  output$y5_plot_2 <- renderPlotly({
+  output$mx2013pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2013 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18')
+    
+    # filter NIU for educ
+    data2013 <- d2013 %>% filter(EDUC != "1")
+    
+    # 2013 filters
+    data2013$EDUC[data2013$EDUC == "1"]<-"NIU"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Grades 1-4"
+    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
+    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
+    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
+    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
+    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Grades 5-6"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Grades 7-8"
+    data2013$EDUC[data2013$EDUC == "40"]<-"HS, Grade 9"
+    data2013$EDUC[data2013$EDUC == "50"]<-"HS, Grade 10"
+    data2013$EDUC[data2013$EDUC == "60"]<-"HS, Grade 11"
+    data2013$EDUC[data2013$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
+    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2013$HISPAN[data2013$HISPAN == "0"]<-"Not Hispanic"
+    data2013$HISPAN[data2013$HISPAN == "000"]<-"Not Hispanic"
+    data2013$HISPAN[data2013$HISPAN == "100"]<-"Mexican"
+    data2013$HISPAN[data2013$HISPAN == "200"]<-"Puerto Rican"
+    data2013$HISPAN[data2013$HISPAN == "300"]<-"Cuban"
+    data2013$HISPAN[data2013$HISPAN == "400"]<-"Dominican"
+    data2013$HISPAN[data2013$HISPAN == "500"]<-"Salvadoran"
+    data2013$HISPAN[data2013$HISPAN == "600"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "610"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "611"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "612"]<-"Other"
+    
+    df <- data2013 %>%
+      filter(HISPAN =="Mexican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$pr2013pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2013 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18')
+    
+    # filter NIU for educ
+    data2013 <- d2013 %>% filter(EDUC != "1")
+    
+    # 2013 filters
+    data2013$EDUC[data2013$EDUC == "1"]<-"NIU"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Grades 1-4"
+    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
+    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
+    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
+    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
+    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Grades 5-6"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Grades 7-8"
+    data2013$EDUC[data2013$EDUC == "40"]<-"HS, Grade 9"
+    data2013$EDUC[data2013$EDUC == "50"]<-"HS, Grade 10"
+    data2013$EDUC[data2013$EDUC == "60"]<-"HS, Grade 11"
+    data2013$EDUC[data2013$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
+    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2013$HISPAN[data2013$HISPAN == "0"]<-"Not Hispanic"
+    data2013$HISPAN[data2013$HISPAN == "000"]<-"Not Hispanic"
+    data2013$HISPAN[data2013$HISPAN == "100"]<-"Mexican"
+    data2013$HISPAN[data2013$HISPAN == "200"]<-"Puerto Rican"
+    data2013$HISPAN[data2013$HISPAN == "300"]<-"Cuban"
+    data2013$HISPAN[data2013$HISPAN == "400"]<-"Dominican"
+    data2013$HISPAN[data2013$HISPAN == "500"]<-"Salvadoran"
+    data2013$HISPAN[data2013$HISPAN == "600"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "610"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "611"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "612"]<-"Other"
+    
+    df <- data2013 %>%
+      filter(HISPAN =="Puerto Rican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$c2013pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2013 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18')
+    
+    # filter NIU for educ
+    data2013 <- d2013 %>% filter(EDUC != "1")
+    
+    # 2013 filters
+    data2013$EDUC[data2013$EDUC == "1"]<-"NIU"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Grades 1-4"
+    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
+    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
+    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
+    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
+    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Grades 5-6"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Grades 7-8"
+    data2013$EDUC[data2013$EDUC == "40"]<-"HS, Grade 9"
+    data2013$EDUC[data2013$EDUC == "50"]<-"HS, Grade 10"
+    data2013$EDUC[data2013$EDUC == "60"]<-"HS, Grade 11"
+    data2013$EDUC[data2013$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
+    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2013$HISPAN[data2013$HISPAN == "0"]<-"Not Hispanic"
+    data2013$HISPAN[data2013$HISPAN == "000"]<-"Not Hispanic"
+    data2013$HISPAN[data2013$HISPAN == "100"]<-"Mexican"
+    data2013$HISPAN[data2013$HISPAN == "200"]<-"Puerto Rican"
+    data2013$HISPAN[data2013$HISPAN == "300"]<-"Cuban"
+    data2013$HISPAN[data2013$HISPAN == "400"]<-"Dominican"
+    data2013$HISPAN[data2013$HISPAN == "500"]<-"Salvadoran"
+    data2013$HISPAN[data2013$HISPAN == "600"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "610"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "611"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "612"]<-"Other"
+    
+    df <- data2013 %>%
+      filter(HISPAN =="Cuban") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+ 
+  output$oh2013pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2013 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18')
+    
+    # filter NIU for educ
+    data2013 <- d2013 %>% filter(EDUC != "1")
+    
+    # 2013 filters
+    data2013$EDUC[data2013$EDUC == "1"]<-"NIU"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Grades 1-4"
+    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
+    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
+    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
+    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
+    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Grades 5-6"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Grades 7-8"
+    data2013$EDUC[data2013$EDUC == "40"]<-"HS, Grade 9"
+    data2013$EDUC[data2013$EDUC == "50"]<-"HS, Grade 10"
+    data2013$EDUC[data2013$EDUC == "60"]<-"HS, Grade 11"
+    data2013$EDUC[data2013$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
+    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2013$HISPAN[data2013$HISPAN == "0"]<-"Not Hispanic"
+    data2013$HISPAN[data2013$HISPAN == "000"]<-"Not Hispanic"
+    data2013$HISPAN[data2013$HISPAN == "100"]<-"Mexican"
+    data2013$HISPAN[data2013$HISPAN == "200"]<-"Puerto Rican"
+    data2013$HISPAN[data2013$HISPAN == "300"]<-"Cuban"
+    data2013$HISPAN[data2013$HISPAN == "400"]<-"Dominican"
+    data2013$HISPAN[data2013$HISPAN == "500"]<-"Salvadoran"
+    data2013$HISPAN[data2013$HISPAN == "600"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "610"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "611"]<-"Other"
+    data2013$HISPAN[data2013$HISPAN == "612"]<-"Other"
+    
+    df <- data2013 %>%
+      filter(HISPAN =="Other") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  ## 2014 HISPAN
+  
+  output$nh2014pie <- renderPlotly({
     # query to get all data from 2011 for sex + educ attain
     d2014 <- dbGetQuery(conn,
                         statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
@@ -3680,17 +4667,369 @@ server <- function(input, output) {
     data2014$HISPAN[data2014$HISPAN == "611"]<-"Other"
     data2014$HISPAN[data2014$HISPAN == "612"]<-"Other"
     
-    # plot
-    hispxeduc2014 <- ggplot(data2014, aes(x=EDUC, fill=HISPAN)) + 
-      geom_bar(position = "dodge", stat = "count") + 
-      xlab("Level of Educational Attainment") + 
-      theme(axis.text.x = element_text(angle = 90))
+    df <- data2014 %>%
+      filter(HISPAN =="Not Hispanic") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
     
-    ggplotly(hispxeduc2014)
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
   
-  # 2015
-  output$y6_plot_2 <- renderPlotly({
+  output$mx2014pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2014 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
+    
+    # filter NIU for educ
+    data2014 <- d2014 %>% filter(EDUC != "1")
+    
+    # 2014 filters
+    
+    data2014$EDUC[data2014$EDUC == "10"]<-"Grades 1-4"
+    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
+    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
+    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
+    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
+    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Grades 5-6"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Grades 7-8"
+    data2014$EDUC[data2014$EDUC == "40"]<-"HS, Grade 9"
+    data2014$EDUC[data2014$EDUC == "50"]<-"HS, Grade 10"
+    data2014$EDUC[data2014$EDUC == "60"]<-"HS, Grade 11"
+    data2014$EDUC[data2014$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
+    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "100"]<-"Mexican"
+    data2014$HISPAN[data2014$HISPAN == "200"]<-"Puerto Rican"
+    data2014$HISPAN[data2014$HISPAN == "300"]<-"Cuban"
+    data2014$HISPAN[data2014$HISPAN == "400"]<-"Dominican"
+    data2014$HISPAN[data2014$HISPAN == "500"]<-"Salvadoran"
+    data2014$HISPAN[data2014$HISPAN == "600"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "610"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "611"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "612"]<-"Other"
+    
+    df <- data2014 %>%
+      filter(HISPAN =="Mexican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$pr2014pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2014 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
+    
+    # filter NIU for educ
+    data2014 <- d2014 %>% filter(EDUC != "1")
+    
+    # 2014 filters
+    
+    data2014$EDUC[data2014$EDUC == "10"]<-"Grades 1-4"
+    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
+    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
+    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
+    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
+    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Grades 5-6"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Grades 7-8"
+    data2014$EDUC[data2014$EDUC == "40"]<-"HS, Grade 9"
+    data2014$EDUC[data2014$EDUC == "50"]<-"HS, Grade 10"
+    data2014$EDUC[data2014$EDUC == "60"]<-"HS, Grade 11"
+    data2014$EDUC[data2014$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
+    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "100"]<-"Mexican"
+    data2014$HISPAN[data2014$HISPAN == "200"]<-"Puerto Rican"
+    data2014$HISPAN[data2014$HISPAN == "300"]<-"Cuban"
+    data2014$HISPAN[data2014$HISPAN == "400"]<-"Dominican"
+    data2014$HISPAN[data2014$HISPAN == "500"]<-"Salvadoran"
+    data2014$HISPAN[data2014$HISPAN == "600"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "610"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "611"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "612"]<-"Other"
+    
+    df <- data2014 %>%
+      filter(HISPAN =="Puerto Rican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$c2014pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2014 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
+    
+    # filter NIU for educ
+    data2014 <- d2014 %>% filter(EDUC != "1")
+    
+    # 2014 filters
+    
+    data2014$EDUC[data2014$EDUC == "10"]<-"Grades 1-4"
+    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
+    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
+    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
+    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
+    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Grades 5-6"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Grades 7-8"
+    data2014$EDUC[data2014$EDUC == "40"]<-"HS, Grade 9"
+    data2014$EDUC[data2014$EDUC == "50"]<-"HS, Grade 10"
+    data2014$EDUC[data2014$EDUC == "60"]<-"HS, Grade 11"
+    data2014$EDUC[data2014$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
+    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "100"]<-"Mexican"
+    data2014$HISPAN[data2014$HISPAN == "200"]<-"Puerto Rican"
+    data2014$HISPAN[data2014$HISPAN == "300"]<-"Cuban"
+    data2014$HISPAN[data2014$HISPAN == "400"]<-"Dominican"
+    data2014$HISPAN[data2014$HISPAN == "500"]<-"Salvadoran"
+    data2014$HISPAN[data2014$HISPAN == "600"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "610"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "611"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "612"]<-"Other"
+    
+    df <- data2014 %>%
+      filter(HISPAN =="Cuban") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$d2014pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2014 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
+    
+    # filter NIU for educ
+    data2014 <- d2014 %>% filter(EDUC != "1")
+    
+    # 2014 filters
+    
+    data2014$EDUC[data2014$EDUC == "10"]<-"Grades 1-4"
+    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
+    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
+    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
+    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
+    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Grades 5-6"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Grades 7-8"
+    data2014$EDUC[data2014$EDUC == "40"]<-"HS, Grade 9"
+    data2014$EDUC[data2014$EDUC == "50"]<-"HS, Grade 10"
+    data2014$EDUC[data2014$EDUC == "60"]<-"HS, Grade 11"
+    data2014$EDUC[data2014$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
+    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "100"]<-"Mexican"
+    data2014$HISPAN[data2014$HISPAN == "200"]<-"Puerto Rican"
+    data2014$HISPAN[data2014$HISPAN == "300"]<-"Cuban"
+    data2014$HISPAN[data2014$HISPAN == "400"]<-"Dominican"
+    data2014$HISPAN[data2014$HISPAN == "500"]<-"Salvadoran"
+    data2014$HISPAN[data2014$HISPAN == "600"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "610"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "611"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "612"]<-"Other"
+    
+    df <- data2014 %>%
+      filter(HISPAN =="Dominican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$s2014pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2014 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
+    
+    # filter NIU for educ
+    data2014 <- d2014 %>% filter(EDUC != "1")
+    
+    # 2014 filters
+    
+    data2014$EDUC[data2014$EDUC == "10"]<-"Grades 1-4"
+    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
+    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
+    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
+    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
+    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Grades 5-6"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Grades 7-8"
+    data2014$EDUC[data2014$EDUC == "40"]<-"HS, Grade 9"
+    data2014$EDUC[data2014$EDUC == "50"]<-"HS, Grade 10"
+    data2014$EDUC[data2014$EDUC == "60"]<-"HS, Grade 11"
+    data2014$EDUC[data2014$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
+    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "100"]<-"Mexican"
+    data2014$HISPAN[data2014$HISPAN == "200"]<-"Puerto Rican"
+    data2014$HISPAN[data2014$HISPAN == "300"]<-"Cuban"
+    data2014$HISPAN[data2014$HISPAN == "400"]<-"Dominican"
+    data2014$HISPAN[data2014$HISPAN == "500"]<-"Salvadoran"
+    data2014$HISPAN[data2014$HISPAN == "600"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "610"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "611"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "612"]<-"Other"
+    
+    df <- data2014 %>%
+      filter(HISPAN =="Salvadoran") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$oh2014pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2014 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
+    
+    # filter NIU for educ
+    data2014 <- d2014 %>% filter(EDUC != "1")
+    
+    # 2014 filters
+    
+    data2014$EDUC[data2014$EDUC == "10"]<-"Grades 1-4"
+    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
+    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
+    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
+    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
+    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Grades 5-6"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Grades 7-8"
+    data2014$EDUC[data2014$EDUC == "40"]<-"HS, Grade 9"
+    data2014$EDUC[data2014$EDUC == "50"]<-"HS, Grade 10"
+    data2014$EDUC[data2014$EDUC == "60"]<-"HS, Grade 11"
+    data2014$EDUC[data2014$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
+    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
+    data2014$HISPAN[data2014$HISPAN == "100"]<-"Mexican"
+    data2014$HISPAN[data2014$HISPAN == "200"]<-"Puerto Rican"
+    data2014$HISPAN[data2014$HISPAN == "300"]<-"Cuban"
+    data2014$HISPAN[data2014$HISPAN == "400"]<-"Dominican"
+    data2014$HISPAN[data2014$HISPAN == "500"]<-"Salvadoran"
+    data2014$HISPAN[data2014$HISPAN == "600"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "610"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "611"]<-"Other"
+    data2014$HISPAN[data2014$HISPAN == "612"]<-"Other"
+    
+    df <- data2014 %>%
+      filter(HISPAN =="Other") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  ## 2015 HISPAN
+  
+  output$nh2015pie <- renderPlotly({
     # query to get all data from 2011 for sex + educ attain
     d2015 <- dbGetQuery(conn,
                         statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
@@ -3729,14 +5068,366 @@ server <- function(input, output) {
     data2015$HISPAN[data2015$HISPAN == "611"]<-"Other"
     data2015$HISPAN[data2015$HISPAN == "612"]<-"Other"
     
-    # plot
-    hispxeduc2015 <- ggplot(data2015, aes(x=EDUC, fill=HISPAN)) + 
-      geom_bar(position = "dodge", stat = "count") + 
-      xlab("Level of Educational Attainment") + 
-      theme(axis.text.x = element_text(angle = 90))
+    df <- data2015 %>%
+      filter(HISPAN =="Not Hispanic") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
     
-    ggplotly(hispxeduc2015)
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
+  
+  output$mx2015pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2015 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
+    
+    # filter NIU for educ
+    data2015 <- d2015 %>% filter(EDUC != "1")
+    
+    # 2015 filters
+    
+    data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
+    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
+    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
+    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
+    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
+    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Grades 5-6"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Grades 7-8"
+    data2015$EDUC[data2015$EDUC == "40"]<-"HS, Grade 9"
+    data2015$EDUC[data2015$EDUC == "50"]<-"HS, Grade 10"
+    data2015$EDUC[data2015$EDUC == "60"]<-"HS, Grade 11"
+    data2015$EDUC[data2015$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
+    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "000"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "100"]<-"Mexican"
+    data2015$HISPAN[data2015$HISPAN == "200"]<-"Puerto Rican"
+    data2015$HISPAN[data2015$HISPAN == "300"]<-"Cuban"
+    data2015$HISPAN[data2015$HISPAN == "400"]<-"Dominican"
+    data2015$HISPAN[data2015$HISPAN == "500"]<-"Salvadoran"
+    data2015$HISPAN[data2015$HISPAN == "600"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "610"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "611"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "612"]<-"Other"
+    
+    df <- data2015 %>%
+      filter(HISPAN =="Mexican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$pr2015pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2015 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
+    
+    # filter NIU for educ
+    data2015 <- d2015 %>% filter(EDUC != "1")
+    
+    # 2015 filters
+    
+    data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
+    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
+    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
+    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
+    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
+    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Grades 5-6"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Grades 7-8"
+    data2015$EDUC[data2015$EDUC == "40"]<-"HS, Grade 9"
+    data2015$EDUC[data2015$EDUC == "50"]<-"HS, Grade 10"
+    data2015$EDUC[data2015$EDUC == "60"]<-"HS, Grade 11"
+    data2015$EDUC[data2015$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
+    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "000"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "100"]<-"Mexican"
+    data2015$HISPAN[data2015$HISPAN == "200"]<-"Puerto Rican"
+    data2015$HISPAN[data2015$HISPAN == "300"]<-"Cuban"
+    data2015$HISPAN[data2015$HISPAN == "400"]<-"Dominican"
+    data2015$HISPAN[data2015$HISPAN == "500"]<-"Salvadoran"
+    data2015$HISPAN[data2015$HISPAN == "600"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "610"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "611"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "612"]<-"Other"
+    
+    df <- data2015 %>%
+      filter(HISPAN =="Puerto Rican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$c2015pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2015 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
+    
+    # filter NIU for educ
+    data2015 <- d2015 %>% filter(EDUC != "1")
+    
+    # 2015 filters
+    
+    data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
+    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
+    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
+    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
+    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
+    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Grades 5-6"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Grades 7-8"
+    data2015$EDUC[data2015$EDUC == "40"]<-"HS, Grade 9"
+    data2015$EDUC[data2015$EDUC == "50"]<-"HS, Grade 10"
+    data2015$EDUC[data2015$EDUC == "60"]<-"HS, Grade 11"
+    data2015$EDUC[data2015$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
+    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "000"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "100"]<-"Mexican"
+    data2015$HISPAN[data2015$HISPAN == "200"]<-"Puerto Rican"
+    data2015$HISPAN[data2015$HISPAN == "300"]<-"Cuban"
+    data2015$HISPAN[data2015$HISPAN == "400"]<-"Dominican"
+    data2015$HISPAN[data2015$HISPAN == "500"]<-"Salvadoran"
+    data2015$HISPAN[data2015$HISPAN == "600"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "610"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "611"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "612"]<-"Other"
+    
+    df <- data2015 %>%
+      filter(HISPAN =="Cuban") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$d2015pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2015 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
+    
+    # filter NIU for educ
+    data2015 <- d2015 %>% filter(EDUC != "1")
+    
+    # 2015 filters
+    
+    data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
+    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
+    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
+    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
+    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
+    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Grades 5-6"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Grades 7-8"
+    data2015$EDUC[data2015$EDUC == "40"]<-"HS, Grade 9"
+    data2015$EDUC[data2015$EDUC == "50"]<-"HS, Grade 10"
+    data2015$EDUC[data2015$EDUC == "60"]<-"HS, Grade 11"
+    data2015$EDUC[data2015$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
+    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "000"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "100"]<-"Mexican"
+    data2015$HISPAN[data2015$HISPAN == "200"]<-"Puerto Rican"
+    data2015$HISPAN[data2015$HISPAN == "300"]<-"Cuban"
+    data2015$HISPAN[data2015$HISPAN == "400"]<-"Dominican"
+    data2015$HISPAN[data2015$HISPAN == "500"]<-"Salvadoran"
+    data2015$HISPAN[data2015$HISPAN == "600"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "610"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "611"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "612"]<-"Other"
+    
+    df <- data2015 %>%
+      filter(HISPAN =="Dominican") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$s2015pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2015 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
+    
+    # filter NIU for educ
+    data2015 <- d2015 %>% filter(EDUC != "1")
+    
+    # 2015 filters
+    
+    data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
+    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
+    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
+    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
+    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
+    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Grades 5-6"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Grades 7-8"
+    data2015$EDUC[data2015$EDUC == "40"]<-"HS, Grade 9"
+    data2015$EDUC[data2015$EDUC == "50"]<-"HS, Grade 10"
+    data2015$EDUC[data2015$EDUC == "60"]<-"HS, Grade 11"
+    data2015$EDUC[data2015$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
+    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "000"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "100"]<-"Mexican"
+    data2015$HISPAN[data2015$HISPAN == "200"]<-"Puerto Rican"
+    data2015$HISPAN[data2015$HISPAN == "300"]<-"Cuban"
+    data2015$HISPAN[data2015$HISPAN == "400"]<-"Dominican"
+    data2015$HISPAN[data2015$HISPAN == "500"]<-"Salvadoran"
+    data2015$HISPAN[data2015$HISPAN == "600"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "610"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "611"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "612"]<-"Other"
+    
+    df <- data2015 %>%
+      filter(HISPAN =="Salvadoran") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$oh2015pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2015 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
+    
+    # filter NIU for educ
+    data2015 <- d2015 %>% filter(EDUC != "1")
+    
+    # 2015 filters
+    
+    data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
+    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
+    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
+    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
+    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
+    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Grades 5-6"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Grades 7-8"
+    data2015$EDUC[data2015$EDUC == "40"]<-"HS, Grade 9"
+    data2015$EDUC[data2015$EDUC == "50"]<-"HS, Grade 10"
+    data2015$EDUC[data2015$EDUC == "60"]<-"HS, Grade 11"
+    data2015$EDUC[data2015$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
+    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "000"]<-"Not Hispanic"
+    data2015$HISPAN[data2015$HISPAN == "100"]<-"Mexican"
+    data2015$HISPAN[data2015$HISPAN == "200"]<-"Puerto Rican"
+    data2015$HISPAN[data2015$HISPAN == "300"]<-"Cuban"
+    data2015$HISPAN[data2015$HISPAN == "400"]<-"Dominican"
+    data2015$HISPAN[data2015$HISPAN == "500"]<-"Salvadoran"
+    data2015$HISPAN[data2015$HISPAN == "600"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "610"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "611"]<-"Other"
+    data2015$HISPAN[data2015$HISPAN == "612"]<-"Other"
+    
+    df <- data2015 %>%
+      filter(HISPAN =="Other") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+    
+    
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
   output$summary <- renderPrint({
     # query to display the first 5 rows
     result <- dbGetQuery(conn,
