@@ -85,28 +85,28 @@ rng
 ###### 
 
 # query to get all data from 2014 for sex + educ attain
-q1 <- 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18'
+q1 <- 'SELECT cpsidp, sex, educ, race, hispan, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18'
 d2014 <- dbGetQuery(conn, q1)
 data2014 <- d2014 %>% filter(EDUC != "1")
 
 ###### 
 
 # query to get all data from 2010 for sex + educ attain
-q2 <- 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18'
+q2 <- 'SELECT cpsidp, sex, educ, race, hispan, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18'
 d2010 <- dbGetQuery(conn, q2)
 data2010 <- d2010 %>% filter(EDUC != "1")
 
 ########
 
 # query to get all data from 2010 for sex + educ attain
-q3 <- 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18'
+q3 <- 'SELECT cpsidp, sex, educ, race, hispan, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18'
 d2012 <- dbGetQuery(conn, q3)
 data2012 <- d2012 %>% filter(EDUC != "1")
 
 #########
 
 # query to get all data from 2010 for sex + educ attain
-q4 <- 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18'
+q4 <- 'SELECT cpsidp, sex, educ, race, hispan, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18'
 d2013 <- dbGetQuery(conn, q4)
 data2013 <- d2013 %>% filter(EDUC != "1")
 
@@ -286,6 +286,12 @@ result$EDUC[result$EDUC == "92"]<-"Associate's Degree, Academic"
 
 ##### converting educ levels to factor
 result$EDUC <- factor(result$EDUC, levels=c("None/Preschool/Kindergarten","Grades 1-4","Grades 5-6","Grades 7-8","HS, Grade 9", "HS, Grade 10", "HS, Grade 11", "HS, Grade 12, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
+data2010$EDUC <- factor(data2010$EDUC, levels=c("None/Preschool/Kindergarten","Grades 1-4","Grades 5-6","Grades 7-8","HS, Grade 9", "HS, Grade 10", "HS, Grade 11", "HS, Grade 12, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
+data2011$EDUC <- factor(data2011$EDUC, levels=c("None/Preschool/Kindergarten","Grades 1-4","Grades 5-6","Grades 7-8","HS, Grade 9", "HS, Grade 10", "HS, Grade 11", "HS, Grade 12, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
+data2012$EDUC <- factor(data2012$EDUC, levels=c("None/Preschool/Kindergarten","Grades 1-4","Grades 5-6","Grades 7-8","HS, Grade 9", "HS, Grade 10", "HS, Grade 11", "HS, Grade 12, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
+data2013$EDUC <- factor(data2013$EDUC, levels=c("None/Preschool/Kindergarten","Grades 1-4","Grades 5-6","Grades 7-8","HS, Grade 9", "HS, Grade 10", "HS, Grade 11", "HS, Grade 12, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
+data2014$EDUC <- factor(data2014$EDUC, levels=c("None/Preschool/Kindergarten","Grades 1-4","Grades 5-6","Grades 7-8","HS, Grade 9", "HS, Grade 10", "HS, Grade 11", "HS, Grade 12, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
+data2015$EDUC <- factor(data2015$EDUC, levels=c("None/Preschool/Kindergarten","Grades 1-4","Grades 5-6","Grades 7-8","HS, Grade 9", "HS, Grade 10", "HS, Grade 11", "HS, Grade 12, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
 
 
 ##### converting income to factor
@@ -652,6 +658,92 @@ result$HISPAN[result$HISPAN == "610"]<-"Other"
 result$HISPAN[result$HISPAN == "611"]<-"Other"
 result$HISPAN[result$HISPAN == "612"]<-"Other"
 
+
+data2010$HISPAN[data2010$HISPAN == "0"]<-"000"
+
+data2010$HISPAN[data2010$HISPAN == "0"]<-"Not Hispanic"
+data2010$HISPAN[data2010$HISPAN == "000"]<-"Not Hispanic"
+data2010$HISPAN[data2010$HISPAN == "100"]<-"Mexican"
+data2010$HISPAN[data2010$HISPAN == "200"]<-"Puerto Rican"
+data2010$HISPAN[data2010$HISPAN == "300"]<-"Cuban"
+data2010$HISPAN[data2010$HISPAN == "400"]<-"Dominican"
+data2010$HISPAN[data2010$HISPAN == "500"]<-"Salvadoran"
+data2010$HISPAN[data2010$HISPAN == "600"]<-"Other"
+data2010$HISPAN[data2010$HISPAN == "610"]<-"Other"
+data2010$HISPAN[data2010$HISPAN == "611"]<-"Other"
+data2010$HISPAN[data2010$HISPAN == "612"]<-"Other"
+
+data2011$HISPAN[data2011$HISPAN == "0"]<-"000"
+
+data2011$HISPAN[data2011$HISPAN == "0"]<-"Not Hispanic"
+data2011$HISPAN[data2011$HISPAN == "000"]<-"Not Hispanic"
+data2011$HISPAN[data2011$HISPAN == "100"]<-"Mexican"
+data2011$HISPAN[data2011$HISPAN == "200"]<-"Puerto Rican"
+data2011$HISPAN[data2011$HISPAN == "300"]<-"Cuban"
+data2011$HISPAN[data2011$HISPAN == "400"]<-"Dominican"
+data2011$HISPAN[data2011$HISPAN == "500"]<-"Salvadoran"
+data2011$HISPAN[data2011$HISPAN == "600"]<-"Other"
+data2011$HISPAN[data2011$HISPAN == "610"]<-"Other"
+data2011$HISPAN[data2011$HISPAN == "611"]<-"Other"
+data2011$HISPAN[data2011$HISPAN == "612"]<-"Other"
+
+data2012$HISPAN[data2012$HISPAN == "0"]<-"000"
+
+data2012$HISPAN[data2012$HISPAN == "0"]<-"Not Hispanic"
+data2012$HISPAN[data2012$HISPAN == "000"]<-"Not Hispanic"
+data2012$HISPAN[data2012$HISPAN == "100"]<-"Mexican"
+data2012$HISPAN[data2012$HISPAN == "200"]<-"Puerto Rican"
+data2012$HISPAN[data2012$HISPAN == "300"]<-"Cuban"
+data2012$HISPAN[data2012$HISPAN == "400"]<-"Dominican"
+data2012$HISPAN[data2012$HISPAN == "500"]<-"Salvadoran"
+data2012$HISPAN[data2012$HISPAN == "600"]<-"Other"
+data2012$HISPAN[data2012$HISPAN == "610"]<-"Other"
+data2012$HISPAN[data2012$HISPAN == "611"]<-"Other"
+data2012$HISPAN[data2012$HISPAN == "612"]<-"Other"
+
+
+data2013$HISPAN[data2013$HISPAN == "0"]<-"000"
+
+data2013$HISPAN[data2013$HISPAN == "0"]<-"Not Hispanic"
+data2013$HISPAN[data2013$HISPAN == "000"]<-"Not Hispanic"
+data2013$HISPAN[data2013$HISPAN == "100"]<-"Mexican"
+data2013$HISPAN[data2013$HISPAN == "200"]<-"Puerto Rican"
+data2013$HISPAN[data2013$HISPAN == "300"]<-"Cuban"
+data2013$HISPAN[data2013$HISPAN == "400"]<-"Dominican"
+data2013$HISPAN[data2013$HISPAN == "500"]<-"Salvadoran"
+data2013$HISPAN[data2013$HISPAN == "600"]<-"Other"
+data2013$HISPAN[data2013$HISPAN == "610"]<-"Other"
+data2013$HISPAN[data2013$HISPAN == "611"]<-"Other"
+data2013$HISPAN[data2013$HISPAN == "612"]<-"Other"
+
+data2014$HISPAN[data2014$HISPAN == "0"]<-"000"
+
+data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
+data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
+data2014$HISPAN[data2014$HISPAN == "100"]<-"Mexican"
+data2014$HISPAN[data2014$HISPAN == "200"]<-"Puerto Rican"
+data2014$HISPAN[data2014$HISPAN == "300"]<-"Cuban"
+data2014$HISPAN[data2014$HISPAN == "400"]<-"Dominican"
+data2014$HISPAN[data2014$HISPAN == "500"]<-"Salvadoran"
+data2014$HISPAN[data2014$HISPAN == "600"]<-"Other"
+data2014$HISPAN[data2014$HISPAN == "610"]<-"Other"
+data2014$HISPAN[data2014$HISPAN == "611"]<-"Other"
+data2014$HISPAN[data2014$HISPAN == "612"]<-"Other"
+
+data2015$HISPAN[data2015$HISPAN == "0"]<-"000"
+
+data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
+data2015$HISPAN[data2015$HISPAN == "000"]<-"Not Hispanic"
+data2015$HISPAN[data2015$HISPAN == "100"]<-"Mexican"
+data2015$HISPAN[data2015$HISPAN == "200"]<-"Puerto Rican"
+data2015$HISPAN[data2015$HISPAN == "300"]<-"Cuban"
+data2015$HISPAN[data2015$HISPAN == "400"]<-"Dominican"
+data2015$HISPAN[data2015$HISPAN == "500"]<-"Salvadoran"
+data2015$HISPAN[data2015$HISPAN == "600"]<-"Other"
+data2015$HISPAN[data2015$HISPAN == "610"]<-"Other"
+data2015$HISPAN[data2015$HISPAN == "611"]<-"Other"
+data2015$HISPAN[data2015$HISPAN == "612"]<-"Other"
+
 # gender filtering
 result$SEX[result$SEX == "1"]<-"Male"
 result$SEX[result$SEX == "2"]<-"Female"
@@ -780,46 +872,6 @@ f_2015_count <- data2015 %>% filter(SEX == 2) %>% count(EDUC, sort = TRUE)
 m_2015_count <- data2015 %>% filter(SEX == 1) %>% count(EDUC, sort = TRUE)
 
 
-# count of each level of edu by race
-white_2010_count <- data2010 %>% filter(RACE == "White") %>% count(EDUC, sort = TRUE)
-
-black_2010_count <- data2010 %>% filter(RACE == "Black") %>% count(EDUC, sort = TRUE)
-
-indian_2010_count <- data2010 %>% filter(RACE == "American Indian") %>% count(EDUC, sort = TRUE)
-
-asian_2010_count <- data2010 %>% filter(RACE == "Asian") %>% count(EDUC, sort = TRUE)
-
-islander_2010_count <- data2010 %>% filter(RACE == "Pacific Islander") %>% count(EDUC, sort = TRUE)
-
-other_2010_count <- data2010 %>% filter(RACE == "Other") %>% count(EDUC, sort = TRUE)
-
-
-white_2011_count <- data2011 %>% filter(RACE == "White") %>% count(EDUC, sort = TRUE)
-
-black_2011_count <- data2011 %>% filter(RACE == "Black") %>% count(EDUC, sort = TRUE)
-
-indian_2011_count <- data2011 %>% filter(RACE == "American Indian") %>% count(EDUC, sort = TRUE)
-
-asian_2011_count <- data2011 %>% filter(RACE == "Asian") %>% count(EDUC, sort = TRUE)
-
-islander_2011_count <- data2011 %>% filter(RACE == "Pacific Islander") %>% count(EDUC, sort = TRUE)
-
-other_2011_count <- data2011 %>% filter(RACE == "Other") %>% count(EDUC, sort = TRUE)
-
-
-white_2010_count <- data2010 %>% filter(RACE == "White") %>% count(EDUC, sort = TRUE)
-
-black_2010_count <- data2010 %>% filter(RACE == "Black") %>% count(EDUC, sort = TRUE)
-
-indian_2010_count <- data2010 %>% filter(RACE == "American Indian") %>% count(EDUC, sort = TRUE)
-
-asian_2010_count <- data2010 %>% filter(RACE == "Asian") %>% count(EDUC, sort = TRUE)
-
-islander_2010_count <- data2010 %>% filter(RACE == "Pacific Islander") %>% count(EDUC, sort = TRUE)
-
-other_2010_count <- data2010 %>% filter(RACE == "Other") %>% count(EDUC, sort = TRUE)
-
-
 ###################### 
 
 # count
@@ -937,6 +989,170 @@ test <- lm()
 ################################################
 # PLOTS 
 ################################################
+
+
+### data transformation for female pie chart
+
+df <- data2010 %>% 
+  filter(SEX == "Female") %>%
+  group_by(EDUC) %>% # Variable to be transformed
+  count() %>% 
+  ungroup() %>% 
+  mutate(perc = `n` / sum(`n`)) %>% 
+  arrange(perc) %>%
+  mutate(labels = scales::percent(perc))
+
+plot_ly(data=df,values=~n,labels=~factor(EDUC),
+        textposition="outside",textinfo = 'label+percent',
+        hoverinfo='label',outsidetextfont = list(color = 'red'),
+        marker=list(colors=c("grey", 'blue', 'yellow'),
+                    line=list(color="white",width=2)),type="pie") %>%
+  layout(title="Percentage of Female Educational Attainment in 2010")
+
+### data transform for male pie chart
+
+df <- data2010 %>% 
+  filter(SEX =="Male") %>%
+  group_by(EDUC) %>% # Variable to be transformed
+  count() %>% 
+  ungroup() %>% 
+  mutate(perc = `n` / sum(`n`)) %>% 
+  arrange(perc) %>%
+  mutate(labels = scales::percent(perc))
+
+plot_ly(data=df,values=~n,labels=~factor(EDUC),
+        textposition="outside",textinfo = 'label+percent',
+        hoverinfo='label',outsidetextfont = list(color = 'red'),
+        marker=list(colors=c("grey", 'blue', 'yellow'),
+                    line=list(color="white",width=2)),type="pie") %>%
+  layout(title="Percentage of Male Educational Attainment in 2010")
+
+
+#### race
+
+## white
+
+df <- data2010 %>% 
+  filter(RACE =="White") %>%
+  group_by(EDUC) %>% # Variable to be transformed
+  count() %>% 
+  ungroup() %>% 
+  mutate(perc = `n` / sum(`n`)) %>% 
+  arrange(perc) %>%
+  mutate(labels = scales::percent(perc))
+
+View(df)
+
+plot_ly(data=df,values=~n,labels=~factor(EDUC),
+        textposition="outside",textinfo = 'label+percent',
+        hoverinfo='label',outsidetextfont = list(color = 'red'),
+        marker=list(colors=c("grey", 'blue', 'yellow'),
+                    line=list(color="white",width=2)),type="pie") %>%
+  layout(title="Percentage of White Educational Attainment in 2010")
+
+
+## black
+
+df <- data2010 %>% 
+  filter(RACE =="Black") %>%
+  group_by(EDUC) %>% # Variable to be transformed
+  count() %>% 
+  ungroup() %>% 
+  mutate(perc = `n` / sum(`n`)) %>% 
+  arrange(perc) %>%
+  mutate(labels = scales::percent(perc))
+
+View(df)
+
+plot_ly(data=df,values=~n,labels=~factor(EDUC),
+        textposition="outside",textinfo = 'label+percent',
+        hoverinfo='label',outsidetextfont = list(color = 'red'),
+        marker=list(colors=c("grey", 'blue', 'yellow'),
+                    line=list(color="white",width=2)),type="pie") %>%
+  layout(title="Percentage of Black Educational Attainment in 2010")
+
+## american indian
+
+df <- data2010 %>% 
+  filter(RACE =="American Indian") %>%
+  group_by(EDUC) %>% # Variable to be transformed
+  count() %>% 
+  ungroup() %>% 
+  mutate(perc = `n` / sum(`n`)) %>% 
+  arrange(perc) %>%
+  mutate(labels = scales::percent(perc))
+
+View(df)
+
+plot_ly(data=df,values=~n,labels=~factor(EDUC),
+        textposition="outside",textinfo = 'label+percent',
+        hoverinfo='label',outsidetextfont = list(color = 'red'),
+        marker=list(colors=c("grey", 'blue', 'yellow'),
+                    line=list(color="white",width=2)),type="pie") %>%
+  layout(title="Percentage of American Indian Educational Attainment in 2010")
+
+
+## asian
+
+df <- data2010 %>% 
+  filter(RACE =="Asian") %>%
+  group_by(EDUC) %>% # Variable to be transformed
+  count() %>% 
+  ungroup() %>% 
+  mutate(perc = `n` / sum(`n`)) %>% 
+  arrange(perc) %>%
+  mutate(labels = scales::percent(perc))
+
+View(df)
+
+plot_ly(data=df,values=~n,labels=~factor(EDUC),
+        textposition="outside",textinfo = 'label+percent',
+        hoverinfo='label',outsidetextfont = list(color = 'red'),
+        marker=list(colors=c("grey", 'blue', 'yellow'),
+                    line=list(color="white",width=2)),type="pie") %>%
+  layout(title="Percentage of Asian Educational Attainment in 2010")
+
+## pacific islander
+
+df <- data2010 %>% 
+  filter(RACE =="Pacific Islander") %>%
+  group_by(EDUC) %>% # Variable to be transformed
+  count() %>% 
+  ungroup() %>% 
+  mutate(perc = `n` / sum(`n`)) %>% 
+  arrange(perc) %>%
+  mutate(labels = scales::percent(perc))
+
+View(df)
+
+plot_ly(data=df,values=~n,labels=~factor(EDUC),
+        textposition="outside",textinfo = 'label+percent',
+        hoverinfo='label',outsidetextfont = list(color = 'red'),
+        marker=list(colors=c("grey", 'blue', 'yellow'),
+                    line=list(color="white",width=2)),type="pie") %>%
+  layout(title="Percentage of Pacific Islander Educational Attainment in 2010")
+
+## other -- mixed race
+
+df <- data2010 %>% 
+  filter(RACE =="Other") %>%
+  group_by(EDUC) %>% # Variable to be transformed
+  count() %>% 
+  ungroup() %>% 
+  mutate(perc = `n` / sum(`n`)) %>% 
+  arrange(perc) %>%
+  mutate(labels = scales::percent(perc))
+
+View(df)
+
+plot_ly(data=df,values=~n,labels=~factor(EDUC),
+        textposition="outside",textinfo = 'label+percent',
+        hoverinfo='label',outsidetextfont = list(color = 'red'),
+        marker=list(colors=c("grey", 'blue', 'yellow'),
+                    line=list(color="white",width=2)),type="pie") %>%
+  layout(title="Percentage of Other/Mixed Race Educational Attainment in 2010")
+
+
 
 
 ################################## SAMPLE CODE + TESTING --- DELETE ##########################################
