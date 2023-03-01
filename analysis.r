@@ -12,15 +12,12 @@ install.packages("RSQLite")
 install.packages("vtable")
 install.packages("plotly")
 
-install.packages("foreign")
 install.packages("MASS")
-install.packages("Hmsic")
-install.packages("reshape2")
+install.packages("brant")
+install.packages("VGAM")
 
-require(foreign)
 require(MASS)
-require(Hmisc)
-require(reshape2)
+
 
 # load necessary libraries
 library(RSQLite)
@@ -30,6 +27,8 @@ library(tidyverse)
 library(psych)
 library(vtable)
 library(plotly)
+library(brant)
+library(VGAM)
 
 # setting database path
 db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
@@ -846,6 +845,8 @@ state_count
 
 ####################
 
+female_count <- result %>% filter(SEX==2) 
+
 # count of each level of edu by gender
 f_2010_count <- data2010 %>% filter(SEX == 2) %>% count(EDUC, sort = TRUE)
 
@@ -1497,7 +1498,7 @@ sa_sample <- sample(result$southamer, 1000)
 ### SAMPLE ORDINAL LOG REGRESSION
 
 ## fit ordered logit model and store results 'm'
-m <- polr(EDUC ~ female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan + centralamer + southamer + FTOTVAL, data = result, Hess=TRUE, method = c("logistic"))
+m <- polr(EDUC ~ female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan + centralamer + southamer, data = result, Hess=TRUE, method = c("logistic"))
 
 ## SAMPLE ORDERED LOGIT 
 # <- polr(EDUC ~ inc_sample + fem_sample + blk_sample + ai_sample + an_sample + id_sample + mr_sample + mex_sample + pr_sample + cub_sample + dom_sample + sal_sample + oh_sample + ca_sample + sa_sample, data = result, Hess=TRUE, method = c("logistic"))
@@ -1507,6 +1508,18 @@ m <- polr(EDUC ~ female + black + amer_indian + asian + islander + mixed_race + 
 
 # replace sex + race vars with new transformed dummy vars
 # + FTOTVAL -- will not run w this variable STILL!! need to diagnose
+
+# brant test
+brant(m) ## failed so replace polr w vglm
+
+## sample data
+sample_result <- result[sample(nrow(result), 10000), ]
+
+# to fix error: response should be ordinal -- see ordered()
+result$EDUC <- ordered(result$EDUC)
+
+m <- vglm(EDUC ~ RACE + SEX + HISPAN, family = cumulative(parallel = TRUE), data = sample_result)
+
 
 ## view a summary of the model
 summary(m)

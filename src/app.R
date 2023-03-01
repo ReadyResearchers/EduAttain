@@ -141,24 +141,70 @@ body <- dashboardBody(
     ),
     tabItem(tabName = "racxedu",
             h2("Educational Attainment by Race from 2010 to 2015"),
-            box(
-              title = "US Educational Attainment by Race in 2010", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y1_plot_1"), width = 12),
-            box(
-              title = "US Educational Attainment by Race in 2011", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y2_plot_1"), width = 12),
-            box(
-              title = "US Educational Attainment by Race in 2012", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y3_plot_1"), width = 12),
-            box(
-              title = "US Educational Attainment by Race in 2013", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y4_plot_1"), width = 12),
-            box(
-              title = "US Educational Attainment by Race in 2014", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y5_plot_1"), width = 12),
-            box(
-              title = "US Educational Attainment by Race in 2015", status = "primary", solidHeader = TRUE, collapsible = TRUE,
-              plotlyOutput("y6_plot_1"), width = 12)
+            fluidRow(
+              column(width = 12,
+                     tabBox(
+                       title = "US Educational Attainment by Race in 2010",
+                       height = "500px", width = NULL,
+                       tabPanel("White", plotlyOutput("w2010pie")),
+                       tabPanel("Black", plotlyOutput("b2010pie")),
+                       tabPanel("American Indian", plotlyOutput("ai2010pie")),
+                       tabPanel("Asian", plotlyOutput("a2010pie")),
+                       tabPanel("Pacific Islander", plotlyOutput("pi2010pie")),
+                       tabPanel("Mixed Race", plotlyOutput("o2010pie"))
+                     ),
+                     tabBox(
+                       title = "US Educational Attainment by Race in 2011",
+                       height = "500px", width = NULL,
+                       tabPanel("White", plotlyOutput("w2011pie")),
+                       tabPanel("Black", plotlyOutput("b2011pie")),
+                       tabPanel("American Indian", plotlyOutput("ai2011pie")),
+                       tabPanel("Asian", plotlyOutput("a2011pie")),
+                       tabPanel("Pacific Islander", plotlyOutput("pi2011pie")),
+                       tabPanel("Mixed Race", plotlyOutput("o2011pie"))
+                     ),
+                     tabBox(
+                       title = "US Educational Attainment by Race in 2012",
+                       height = "500px", width = NULL,
+                       tabPanel("White", plotlyOutput("w2012pie")),
+                       tabPanel("Black", plotlyOutput("b2012pie")),
+                       tabPanel("American Indian", plotlyOutput("ai2012pie")),
+                       tabPanel("Asian", plotlyOutput("a2012pie")),
+                       tabPanel("Pacific Islander", plotlyOutput("pi2012pie")),
+                       tabPanel("Mixed Race", plotlyOutput("o2012pie"))
+                     ),
+                     tabBox(
+                       title = "US Educational Attainment by Race in 2013",
+                       height = "500px", width = NULL,
+                       tabPanel("White", plotlyOutput("w2013pie")),
+                       tabPanel("Black", plotlyOutput("b2013pie")),
+                       tabPanel("American Indian", plotlyOutput("ai2013pie")),
+                       tabPanel("Asian", plotlyOutput("a2013pie")),
+                       tabPanel("Pacific Islander", plotlyOutput("pi2013pie")),
+                       tabPanel("Mixed Race", plotlyOutput("o2013pie"))
+                     ),
+                     tabBox(
+                       title = "US Educational Attainment by Race in 2014",
+                       height = "500px", width = NULL,
+                       tabPanel("White", plotlyOutput("w2014pie")),
+                       tabPanel("Black", plotlyOutput("b2014pie")),
+                       tabPanel("American Indian", plotlyOutput("ai2014pie")),
+                       tabPanel("Asian", plotlyOutput("a2014pie")),
+                       tabPanel("Pacific Islander", plotlyOutput("pi2014pie")),
+                       tabPanel("Mixed Race", plotlyOutput("o2014pie"))
+                     ),
+                     tabBox(
+                       title = "US Educational Attainment by Race in 2015",
+                       height = "500px", width = NULL,
+                       tabPanel("White", plotlyOutput("w2015pie")),
+                       tabPanel("Black", plotlyOutput("b2015pie")),
+                       tabPanel("American Indian", plotlyOutput("ai2015pie")),
+                       tabPanel("Asian", plotlyOutput("a2015pie")),
+                       tabPanel("Pacific Islander", plotlyOutput("pi2015pie")),
+                       tabPanel("Mixed Race", plotlyOutput("o2015pie"))
+                     )
+              )
+            )
     ),
     tabItem(tabName = "hisxedu",
             h2("US Hispanic/Latino Educational Attainment from 2010 to 2015"),
@@ -803,15 +849,17 @@ server <- function(input, output) {
   
   
 ###################### RACE ###########################
-  # 2010 race
-  output$y1_plot_1 <- renderPlotly({
+  
+  ##2010 RACE
+
+  output$w2010pie <- renderPlotly({
     # query to get all data from 2010 for sex + educ attain
     d2010 <- dbGetQuery(conn,
                         statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
-    
+
     # filter NIU for educ
     data2010 <- d2010 %>% filter(EDUC != "1")
-    
+
     # 2010 filters
     data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
     data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
@@ -829,7 +877,7 @@ server <- function(input, output) {
     data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
     data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
     data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
-    
+
     data2010$RACE[data2010$RACE == "100"]<-"White"
     data2010$RACE[data2010$RACE == "200"]<-"Black"
     data2010$RACE[data2010$RACE == "300"]<-"American Indian"
@@ -856,25 +904,387 @@ server <- function(input, output) {
     data2010$RACE[data2010$RACE == "819"]<-"Other"
     data2010$RACE[data2010$RACE == "820"]<-"Other"
     data2010$RACE[data2010$RACE == "830"]<-"Other"
-    
-    # plot
-    racexeduc2010 <- ggplot(data2010, aes(x=EDUC, fill=RACE)) + 
-      geom_bar(position = "dodge", stat = "count") + 
-      xlab("Level of Educational Attainment") + 
-      theme(axis.text.x = element_text(angle = 90))
-    
-    ggplotly(racexeduc2010)
+
+    df <- data2010 %>%
+      filter(RACE =="White") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
-  
-  # 2011 race
-  output$y2_plot_1 <- renderPlotly({
+
+  output$b2010pie <- renderPlotly({
+    # query to get all data from 2010 for sex + educ attain
+    d2010 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
+
+    # filter NIU for educ
+    data2010 <- d2010 %>% filter(EDUC != "1")
+
+    # 2010 filters
+    data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
+    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
+    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
+    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
+    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
+    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
+    data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
+    data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
+    data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
+    data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
+    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2010$RACE[data2010$RACE == "100"]<-"White"
+    data2010$RACE[data2010$RACE == "200"]<-"Black"
+    data2010$RACE[data2010$RACE == "300"]<-"American Indian"
+    data2010$RACE[data2010$RACE == "651"]<-"Asian"
+    data2010$RACE[data2010$RACE == "652"]<-"Pacific Islander"
+    data2010$RACE[data2010$RACE == "801"]<-"Other"
+    data2010$RACE[data2010$RACE == "802"]<-"Other"
+    data2010$RACE[data2010$RACE == "803"]<-"Other"
+    data2010$RACE[data2010$RACE == "804"]<-"Other"
+    data2010$RACE[data2010$RACE == "805"]<-"Other"
+    data2010$RACE[data2010$RACE == "806"]<-"Other"
+    data2010$RACE[data2010$RACE == "807"]<-"Other"
+    data2010$RACE[data2010$RACE == "808"]<-"Other"
+    data2010$RACE[data2010$RACE == "809"]<-"Other"
+    data2010$RACE[data2010$RACE == "810"]<-"Other"
+    data2010$RACE[data2010$RACE == "811"]<-"Other"
+    data2010$RACE[data2010$RACE == "812"]<-"Other"
+    data2010$RACE[data2010$RACE == "813"]<-"Other"
+    data2010$RACE[data2010$RACE == "814"]<-"Other"
+    data2010$RACE[data2010$RACE == "815"]<-"Other"
+    data2010$RACE[data2010$RACE == "816"]<-"Other"
+    data2010$RACE[data2010$RACE == "817"]<-"Other"
+    data2010$RACE[data2010$RACE == "818"]<-"Other"
+    data2010$RACE[data2010$RACE == "819"]<-"Other"
+    data2010$RACE[data2010$RACE == "820"]<-"Other"
+    data2010$RACE[data2010$RACE == "830"]<-"Other"
+
+    df <- data2010 %>%
+      filter(RACE =="Black") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$ai2010pie <- renderPlotly({
+    # query to get all data from 2010 for sex + educ attain
+    d2010 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
+
+    # filter NIU for educ
+    data2010 <- d2010 %>% filter(EDUC != "1")
+
+    # 2010 filters
+    data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
+    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
+    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
+    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
+    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
+    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
+    data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
+    data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
+    data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
+    data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
+    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2010$RACE[data2010$RACE == "100"]<-"White"
+    data2010$RACE[data2010$RACE == "200"]<-"Black"
+    data2010$RACE[data2010$RACE == "300"]<-"American Indian"
+    data2010$RACE[data2010$RACE == "651"]<-"Asian"
+    data2010$RACE[data2010$RACE == "652"]<-"Pacific Islander"
+    data2010$RACE[data2010$RACE == "801"]<-"Other"
+    data2010$RACE[data2010$RACE == "802"]<-"Other"
+    data2010$RACE[data2010$RACE == "803"]<-"Other"
+    data2010$RACE[data2010$RACE == "804"]<-"Other"
+    data2010$RACE[data2010$RACE == "805"]<-"Other"
+    data2010$RACE[data2010$RACE == "806"]<-"Other"
+    data2010$RACE[data2010$RACE == "807"]<-"Other"
+    data2010$RACE[data2010$RACE == "808"]<-"Other"
+    data2010$RACE[data2010$RACE == "809"]<-"Other"
+    data2010$RACE[data2010$RACE == "810"]<-"Other"
+    data2010$RACE[data2010$RACE == "811"]<-"Other"
+    data2010$RACE[data2010$RACE == "812"]<-"Other"
+    data2010$RACE[data2010$RACE == "813"]<-"Other"
+    data2010$RACE[data2010$RACE == "814"]<-"Other"
+    data2010$RACE[data2010$RACE == "815"]<-"Other"
+    data2010$RACE[data2010$RACE == "816"]<-"Other"
+    data2010$RACE[data2010$RACE == "817"]<-"Other"
+    data2010$RACE[data2010$RACE == "818"]<-"Other"
+    data2010$RACE[data2010$RACE == "819"]<-"Other"
+    data2010$RACE[data2010$RACE == "820"]<-"Other"
+    data2010$RACE[data2010$RACE == "830"]<-"Other"
+
+    df <- data2010 %>%
+      filter(RACE =="American Indian") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$a2010pie <- renderPlotly({
+    # query to get all data from 2010 for sex + educ attain
+    d2010 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
+
+    # filter NIU for educ
+    data2010 <- d2010 %>% filter(EDUC != "1")
+
+    # 2010 filters
+    data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
+    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
+    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
+    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
+    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
+    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
+    data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
+    data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
+    data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
+    data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
+    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2010$RACE[data2010$RACE == "100"]<-"White"
+    data2010$RACE[data2010$RACE == "200"]<-"Black"
+    data2010$RACE[data2010$RACE == "300"]<-"American Indian"
+    data2010$RACE[data2010$RACE == "651"]<-"Asian"
+    data2010$RACE[data2010$RACE == "652"]<-"Pacific Islander"
+    data2010$RACE[data2010$RACE == "801"]<-"Other"
+    data2010$RACE[data2010$RACE == "802"]<-"Other"
+    data2010$RACE[data2010$RACE == "803"]<-"Other"
+    data2010$RACE[data2010$RACE == "804"]<-"Other"
+    data2010$RACE[data2010$RACE == "805"]<-"Other"
+    data2010$RACE[data2010$RACE == "806"]<-"Other"
+    data2010$RACE[data2010$RACE == "807"]<-"Other"
+    data2010$RACE[data2010$RACE == "808"]<-"Other"
+    data2010$RACE[data2010$RACE == "809"]<-"Other"
+    data2010$RACE[data2010$RACE == "810"]<-"Other"
+    data2010$RACE[data2010$RACE == "811"]<-"Other"
+    data2010$RACE[data2010$RACE == "812"]<-"Other"
+    data2010$RACE[data2010$RACE == "813"]<-"Other"
+    data2010$RACE[data2010$RACE == "814"]<-"Other"
+    data2010$RACE[data2010$RACE == "815"]<-"Other"
+    data2010$RACE[data2010$RACE == "816"]<-"Other"
+    data2010$RACE[data2010$RACE == "817"]<-"Other"
+    data2010$RACE[data2010$RACE == "818"]<-"Other"
+    data2010$RACE[data2010$RACE == "819"]<-"Other"
+    data2010$RACE[data2010$RACE == "820"]<-"Other"
+    data2010$RACE[data2010$RACE == "830"]<-"Other"
+
+    df <- data2010 %>%
+      filter(RACE =="Asian") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$pi2010pie <- renderPlotly({
+    # query to get all data from 2010 for sex + educ attain
+    d2010 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
+
+    # filter NIU for educ
+    data2010 <- d2010 %>% filter(EDUC != "1")
+
+    # 2010 filters
+    data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
+    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
+    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
+    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
+    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
+    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
+    data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
+    data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
+    data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
+    data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
+    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2010$RACE[data2010$RACE == "100"]<-"White"
+    data2010$RACE[data2010$RACE == "200"]<-"Black"
+    data2010$RACE[data2010$RACE == "300"]<-"American Indian"
+    data2010$RACE[data2010$RACE == "651"]<-"Asian"
+    data2010$RACE[data2010$RACE == "652"]<-"Pacific Islander"
+    data2010$RACE[data2010$RACE == "801"]<-"Other"
+    data2010$RACE[data2010$RACE == "802"]<-"Other"
+    data2010$RACE[data2010$RACE == "803"]<-"Other"
+    data2010$RACE[data2010$RACE == "804"]<-"Other"
+    data2010$RACE[data2010$RACE == "805"]<-"Other"
+    data2010$RACE[data2010$RACE == "806"]<-"Other"
+    data2010$RACE[data2010$RACE == "807"]<-"Other"
+    data2010$RACE[data2010$RACE == "808"]<-"Other"
+    data2010$RACE[data2010$RACE == "809"]<-"Other"
+    data2010$RACE[data2010$RACE == "810"]<-"Other"
+    data2010$RACE[data2010$RACE == "811"]<-"Other"
+    data2010$RACE[data2010$RACE == "812"]<-"Other"
+    data2010$RACE[data2010$RACE == "813"]<-"Other"
+    data2010$RACE[data2010$RACE == "814"]<-"Other"
+    data2010$RACE[data2010$RACE == "815"]<-"Other"
+    data2010$RACE[data2010$RACE == "816"]<-"Other"
+    data2010$RACE[data2010$RACE == "817"]<-"Other"
+    data2010$RACE[data2010$RACE == "818"]<-"Other"
+    data2010$RACE[data2010$RACE == "819"]<-"Other"
+    data2010$RACE[data2010$RACE == "820"]<-"Other"
+    data2010$RACE[data2010$RACE == "830"]<-"Other"
+
+    df <- data2010 %>%
+      filter(RACE =="Pacific Islander") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$o2010pie <- renderPlotly({
+    # query to get all data from 2010 for sex + educ attain
+    d2010 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2010 AND age >= 18')
+
+    # filter NIU for educ
+    data2010 <- d2010 %>% filter(EDUC != "1")
+
+    # 2010 filters
+    data2010$EDUC[data2010$EDUC == "10"]<-"Grades 1-4"
+    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
+    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
+    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
+    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
+    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Grades 5-6"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Grades 7-8"
+    data2010$EDUC[data2010$EDUC == "40"]<-"HS, Grade 9"
+    data2010$EDUC[data2010$EDUC == "50"]<-"HS, Grade 10"
+    data2010$EDUC[data2010$EDUC == "60"]<-"HS, Grade 11"
+    data2010$EDUC[data2010$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
+    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2010$RACE[data2010$RACE == "100"]<-"White"
+    data2010$RACE[data2010$RACE == "200"]<-"Black"
+    data2010$RACE[data2010$RACE == "300"]<-"American Indian"
+    data2010$RACE[data2010$RACE == "651"]<-"Asian"
+    data2010$RACE[data2010$RACE == "652"]<-"Pacific Islander"
+    data2010$RACE[data2010$RACE == "801"]<-"Other"
+    data2010$RACE[data2010$RACE == "802"]<-"Other"
+    data2010$RACE[data2010$RACE == "803"]<-"Other"
+    data2010$RACE[data2010$RACE == "804"]<-"Other"
+    data2010$RACE[data2010$RACE == "805"]<-"Other"
+    data2010$RACE[data2010$RACE == "806"]<-"Other"
+    data2010$RACE[data2010$RACE == "807"]<-"Other"
+    data2010$RACE[data2010$RACE == "808"]<-"Other"
+    data2010$RACE[data2010$RACE == "809"]<-"Other"
+    data2010$RACE[data2010$RACE == "810"]<-"Other"
+    data2010$RACE[data2010$RACE == "811"]<-"Other"
+    data2010$RACE[data2010$RACE == "812"]<-"Other"
+    data2010$RACE[data2010$RACE == "813"]<-"Other"
+    data2010$RACE[data2010$RACE == "814"]<-"Other"
+    data2010$RACE[data2010$RACE == "815"]<-"Other"
+    data2010$RACE[data2010$RACE == "816"]<-"Other"
+    data2010$RACE[data2010$RACE == "817"]<-"Other"
+    data2010$RACE[data2010$RACE == "818"]<-"Other"
+    data2010$RACE[data2010$RACE == "819"]<-"Other"
+    data2010$RACE[data2010$RACE == "820"]<-"Other"
+    data2010$RACE[data2010$RACE == "830"]<-"Other"
+
+    df <- data2010 %>%
+      filter(RACE =="Other") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  ## 2011 RACE
+
+  output$w2011pie <- renderPlotly({
     # query to get all data from 2011 for sex + educ attain
     d2011 <- dbGetQuery(conn,
                         statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2011 AND age >= 18 ORDER BY cpsidp')
-    
+
     # filter NIU for educ
     data2011 <- d2011 %>% filter(EDUC != "1")
-    
+
     # 2011 filters
     data2011$EDUC[data2011$EDUC == "10"]<-"Grades 1-4"
     data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
@@ -892,7 +1302,7 @@ server <- function(input, output) {
     data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
     data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
     data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
-    
+
     data2011$RACE[data2011$RACE == "100"]<-"White"
     data2011$RACE[data2011$RACE == "200"]<-"Black"
     data2011$RACE[data2011$RACE == "300"]<-"American Indian"
@@ -919,25 +1329,395 @@ server <- function(input, output) {
     data2011$RACE[data2011$RACE == "819"]<-"Other"
     data2011$RACE[data2011$RACE == "820"]<-"Other"
     data2011$RACE[data2011$RACE == "830"]<-"Other"
-    
-    # plot
-    racexeduc2011 <- ggplot(data2011, aes(x=EDUC, fill=RACE)) + 
-      geom_bar(position = "dodge", stat = "count") + 
-      xlab("Level of Educational Attainment") + 
-      theme(axis.text.x = element_text(angle = 90))
-    
-    ggplotly(racexeduc2011)
+
+
+    df <- data2011 %>%
+      filter(RACE =="White") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
-  
-  # 2012 race
-  output$y3_plot_1 <- renderPlotly({
+
+  output$b2011pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2011 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2011 AND age >= 18 ORDER BY cpsidp')
+
+    # filter NIU for educ
+    data2011 <- d2011 %>% filter(EDUC != "1")
+
+    # 2011 filters
+    data2011$EDUC[data2011$EDUC == "10"]<-"Grades 1-4"
+    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
+    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
+    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
+    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
+    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Grades 5-6"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Grades 7-8"
+    data2011$EDUC[data2011$EDUC == "40"]<-"HS, Grade 9"
+    data2011$EDUC[data2011$EDUC == "50"]<-"HS, Grade 10"
+    data2011$EDUC[data2011$EDUC == "60"]<-"HS, Grade 11"
+    data2011$EDUC[data2011$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
+    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2011$RACE[data2011$RACE == "100"]<-"White"
+    data2011$RACE[data2011$RACE == "200"]<-"Black"
+    data2011$RACE[data2011$RACE == "300"]<-"American Indian"
+    data2011$RACE[data2011$RACE == "651"]<-"Asian"
+    data2011$RACE[data2011$RACE == "652"]<-"Pacific Islander"
+    data2011$RACE[data2011$RACE == "801"]<-"Other"
+    data2011$RACE[data2011$RACE == "802"]<-"Other"
+    data2011$RACE[data2011$RACE == "803"]<-"Other"
+    data2011$RACE[data2011$RACE == "804"]<-"Other"
+    data2011$RACE[data2011$RACE == "805"]<-"Other"
+    data2011$RACE[data2011$RACE == "806"]<-"Other"
+    data2011$RACE[data2011$RACE == "807"]<-"Other"
+    data2011$RACE[data2011$RACE == "808"]<-"Other"
+    data2011$RACE[data2011$RACE == "809"]<-"Other"
+    data2011$RACE[data2011$RACE == "810"]<-"Other"
+    data2011$RACE[data2011$RACE == "811"]<-"Other"
+    data2011$RACE[data2011$RACE == "812"]<-"Other"
+    data2011$RACE[data2011$RACE == "813"]<-"Other"
+    data2011$RACE[data2011$RACE == "814"]<-"Other"
+    data2011$RACE[data2011$RACE == "815"]<-"Other"
+    data2011$RACE[data2011$RACE == "816"]<-"Other"
+    data2011$RACE[data2011$RACE == "817"]<-"Other"
+    data2011$RACE[data2011$RACE == "818"]<-"Other"
+    data2011$RACE[data2011$RACE == "819"]<-"Other"
+    data2011$RACE[data2011$RACE == "820"]<-"Other"
+    data2011$RACE[data2011$RACE == "830"]<-"Other"
+
+
+    df <- data2011 %>%
+      filter(RACE =="Black") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$ai2011pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2011 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2011 AND age >= 18 ORDER BY cpsidp')
+
+    # filter NIU for educ
+    data2011 <- d2011 %>% filter(EDUC != "1")
+
+    # 2011 filters
+    data2011$EDUC[data2011$EDUC == "10"]<-"Grades 1-4"
+    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
+    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
+    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
+    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
+    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Grades 5-6"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Grades 7-8"
+    data2011$EDUC[data2011$EDUC == "40"]<-"HS, Grade 9"
+    data2011$EDUC[data2011$EDUC == "50"]<-"HS, Grade 10"
+    data2011$EDUC[data2011$EDUC == "60"]<-"HS, Grade 11"
+    data2011$EDUC[data2011$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
+    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2011$RACE[data2011$RACE == "100"]<-"White"
+    data2011$RACE[data2011$RACE == "200"]<-"Black"
+    data2011$RACE[data2011$RACE == "300"]<-"American Indian"
+    data2011$RACE[data2011$RACE == "651"]<-"Asian"
+    data2011$RACE[data2011$RACE == "652"]<-"Pacific Islander"
+    data2011$RACE[data2011$RACE == "801"]<-"Other"
+    data2011$RACE[data2011$RACE == "802"]<-"Other"
+    data2011$RACE[data2011$RACE == "803"]<-"Other"
+    data2011$RACE[data2011$RACE == "804"]<-"Other"
+    data2011$RACE[data2011$RACE == "805"]<-"Other"
+    data2011$RACE[data2011$RACE == "806"]<-"Other"
+    data2011$RACE[data2011$RACE == "807"]<-"Other"
+    data2011$RACE[data2011$RACE == "808"]<-"Other"
+    data2011$RACE[data2011$RACE == "809"]<-"Other"
+    data2011$RACE[data2011$RACE == "810"]<-"Other"
+    data2011$RACE[data2011$RACE == "811"]<-"Other"
+    data2011$RACE[data2011$RACE == "812"]<-"Other"
+    data2011$RACE[data2011$RACE == "813"]<-"Other"
+    data2011$RACE[data2011$RACE == "814"]<-"Other"
+    data2011$RACE[data2011$RACE == "815"]<-"Other"
+    data2011$RACE[data2011$RACE == "816"]<-"Other"
+    data2011$RACE[data2011$RACE == "817"]<-"Other"
+    data2011$RACE[data2011$RACE == "818"]<-"Other"
+    data2011$RACE[data2011$RACE == "819"]<-"Other"
+    data2011$RACE[data2011$RACE == "820"]<-"Other"
+    data2011$RACE[data2011$RACE == "830"]<-"Other"
+
+
+    df <- data2011 %>%
+      filter(RACE =="American Indian") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$a2011pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2011 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2011 AND age >= 18 ORDER BY cpsidp')
+
+    # filter NIU for educ
+    data2011 <- d2011 %>% filter(EDUC != "1")
+
+    # 2011 filters
+    data2011$EDUC[data2011$EDUC == "10"]<-"Grades 1-4"
+    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
+    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
+    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
+    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
+    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Grades 5-6"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Grades 7-8"
+    data2011$EDUC[data2011$EDUC == "40"]<-"HS, Grade 9"
+    data2011$EDUC[data2011$EDUC == "50"]<-"HS, Grade 10"
+    data2011$EDUC[data2011$EDUC == "60"]<-"HS, Grade 11"
+    data2011$EDUC[data2011$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
+    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2011$RACE[data2011$RACE == "100"]<-"White"
+    data2011$RACE[data2011$RACE == "200"]<-"Black"
+    data2011$RACE[data2011$RACE == "300"]<-"American Indian"
+    data2011$RACE[data2011$RACE == "651"]<-"Asian"
+    data2011$RACE[data2011$RACE == "652"]<-"Pacific Islander"
+    data2011$RACE[data2011$RACE == "801"]<-"Other"
+    data2011$RACE[data2011$RACE == "802"]<-"Other"
+    data2011$RACE[data2011$RACE == "803"]<-"Other"
+    data2011$RACE[data2011$RACE == "804"]<-"Other"
+    data2011$RACE[data2011$RACE == "805"]<-"Other"
+    data2011$RACE[data2011$RACE == "806"]<-"Other"
+    data2011$RACE[data2011$RACE == "807"]<-"Other"
+    data2011$RACE[data2011$RACE == "808"]<-"Other"
+    data2011$RACE[data2011$RACE == "809"]<-"Other"
+    data2011$RACE[data2011$RACE == "810"]<-"Other"
+    data2011$RACE[data2011$RACE == "811"]<-"Other"
+    data2011$RACE[data2011$RACE == "812"]<-"Other"
+    data2011$RACE[data2011$RACE == "813"]<-"Other"
+    data2011$RACE[data2011$RACE == "814"]<-"Other"
+    data2011$RACE[data2011$RACE == "815"]<-"Other"
+    data2011$RACE[data2011$RACE == "816"]<-"Other"
+    data2011$RACE[data2011$RACE == "817"]<-"Other"
+    data2011$RACE[data2011$RACE == "818"]<-"Other"
+    data2011$RACE[data2011$RACE == "819"]<-"Other"
+    data2011$RACE[data2011$RACE == "820"]<-"Other"
+    data2011$RACE[data2011$RACE == "830"]<-"Other"
+
+
+    df <- data2011 %>%
+      filter(RACE =="Asian") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$pi2011pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2011 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2011 AND age >= 18 ORDER BY cpsidp')
+
+    # filter NIU for educ
+    data2011 <- d2011 %>% filter(EDUC != "1")
+
+    # 2011 filters
+    data2011$EDUC[data2011$EDUC == "10"]<-"Grades 1-4"
+    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
+    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
+    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
+    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
+    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Grades 5-6"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Grades 7-8"
+    data2011$EDUC[data2011$EDUC == "40"]<-"HS, Grade 9"
+    data2011$EDUC[data2011$EDUC == "50"]<-"HS, Grade 10"
+    data2011$EDUC[data2011$EDUC == "60"]<-"HS, Grade 11"
+    data2011$EDUC[data2011$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
+    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2011$RACE[data2011$RACE == "100"]<-"White"
+    data2011$RACE[data2011$RACE == "200"]<-"Black"
+    data2011$RACE[data2011$RACE == "300"]<-"American Indian"
+    data2011$RACE[data2011$RACE == "651"]<-"Asian"
+    data2011$RACE[data2011$RACE == "652"]<-"Pacific Islander"
+    data2011$RACE[data2011$RACE == "801"]<-"Other"
+    data2011$RACE[data2011$RACE == "802"]<-"Other"
+    data2011$RACE[data2011$RACE == "803"]<-"Other"
+    data2011$RACE[data2011$RACE == "804"]<-"Other"
+    data2011$RACE[data2011$RACE == "805"]<-"Other"
+    data2011$RACE[data2011$RACE == "806"]<-"Other"
+    data2011$RACE[data2011$RACE == "807"]<-"Other"
+    data2011$RACE[data2011$RACE == "808"]<-"Other"
+    data2011$RACE[data2011$RACE == "809"]<-"Other"
+    data2011$RACE[data2011$RACE == "810"]<-"Other"
+    data2011$RACE[data2011$RACE == "811"]<-"Other"
+    data2011$RACE[data2011$RACE == "812"]<-"Other"
+    data2011$RACE[data2011$RACE == "813"]<-"Other"
+    data2011$RACE[data2011$RACE == "814"]<-"Other"
+    data2011$RACE[data2011$RACE == "815"]<-"Other"
+    data2011$RACE[data2011$RACE == "816"]<-"Other"
+    data2011$RACE[data2011$RACE == "817"]<-"Other"
+    data2011$RACE[data2011$RACE == "818"]<-"Other"
+    data2011$RACE[data2011$RACE == "819"]<-"Other"
+    data2011$RACE[data2011$RACE == "820"]<-"Other"
+    data2011$RACE[data2011$RACE == "830"]<-"Other"
+
+
+    df <- data2011 %>%
+      filter(RACE =="Pacific Islander") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$o2011pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2011 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2011 AND age >= 18 ORDER BY cpsidp')
+
+    # filter NIU for educ
+    data2011 <- d2011 %>% filter(EDUC != "1")
+
+    # 2011 filters
+    data2011$EDUC[data2011$EDUC == "10"]<-"Grades 1-4"
+    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
+    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
+    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
+    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
+    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Grades 5-6"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Grades 7-8"
+    data2011$EDUC[data2011$EDUC == "40"]<-"HS, Grade 9"
+    data2011$EDUC[data2011$EDUC == "50"]<-"HS, Grade 10"
+    data2011$EDUC[data2011$EDUC == "60"]<-"HS, Grade 11"
+    data2011$EDUC[data2011$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
+    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2011$RACE[data2011$RACE == "100"]<-"White"
+    data2011$RACE[data2011$RACE == "200"]<-"Black"
+    data2011$RACE[data2011$RACE == "300"]<-"American Indian"
+    data2011$RACE[data2011$RACE == "651"]<-"Asian"
+    data2011$RACE[data2011$RACE == "652"]<-"Pacific Islander"
+    data2011$RACE[data2011$RACE == "801"]<-"Other"
+    data2011$RACE[data2011$RACE == "802"]<-"Other"
+    data2011$RACE[data2011$RACE == "803"]<-"Other"
+    data2011$RACE[data2011$RACE == "804"]<-"Other"
+    data2011$RACE[data2011$RACE == "805"]<-"Other"
+    data2011$RACE[data2011$RACE == "806"]<-"Other"
+    data2011$RACE[data2011$RACE == "807"]<-"Other"
+    data2011$RACE[data2011$RACE == "808"]<-"Other"
+    data2011$RACE[data2011$RACE == "809"]<-"Other"
+    data2011$RACE[data2011$RACE == "810"]<-"Other"
+    data2011$RACE[data2011$RACE == "811"]<-"Other"
+    data2011$RACE[data2011$RACE == "812"]<-"Other"
+    data2011$RACE[data2011$RACE == "813"]<-"Other"
+    data2011$RACE[data2011$RACE == "814"]<-"Other"
+    data2011$RACE[data2011$RACE == "815"]<-"Other"
+    data2011$RACE[data2011$RACE == "816"]<-"Other"
+    data2011$RACE[data2011$RACE == "817"]<-"Other"
+    data2011$RACE[data2011$RACE == "818"]<-"Other"
+    data2011$RACE[data2011$RACE == "819"]<-"Other"
+    data2011$RACE[data2011$RACE == "820"]<-"Other"
+    data2011$RACE[data2011$RACE == "830"]<-"Other"
+
+
+    df <- data2011 %>%
+      filter(RACE =="Other") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  ##2012 RACE
+
+  output$w2012pie <- renderPlotly({
     # query to get all data from 2011 for sex + educ attain
     d2012 <- dbGetQuery(conn,
                         statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18')
-    
+
     # filter NIU for educ
     data2012 <- d2012 %>% filter(EDUC != "1")
-    
+
     # 2012 filters
     data2012$EDUC[data2012$EDUC == "1"]<-"NIU"
     data2012$EDUC[data2012$EDUC == "10"]<-"Grades 1-4"
@@ -956,7 +1736,7 @@ server <- function(input, output) {
     data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
     data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
     data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
-    
+
     data2012$RACE[data2012$RACE == "100"]<-"White"
     data2012$RACE[data2012$RACE == "200"]<-"Black"
     data2012$RACE[data2012$RACE == "300"]<-"American Indian"
@@ -983,26 +1763,397 @@ server <- function(input, output) {
     data2012$RACE[data2012$RACE == "819"]<-"Other"
     data2012$RACE[data2012$RACE == "820"]<-"Other"
     data2012$RACE[data2012$RACE == "830"]<-"Other"
-    
-    # plot
-    racexeduc2012 <- ggplot(data2012, aes(x=EDUC, fill=RACE)) + 
-      geom_bar(position = "dodge", stat = "count") + 
-      xlab("Level of Educational Attainment") + 
-      theme(axis.text.x = element_text(angle = 90))
-    
-    ggplotly(racexeduc2012)
-    
+
+    df <- data2012 %>%
+      filter(RACE =="White") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
-  
-  # 2013 race
-  output$y4_plot_1 <- renderPlotly({
+
+  output$b2012pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2012 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18')
+
+    # filter NIU for educ
+    data2012 <- d2012 %>% filter(EDUC != "1")
+
+    # 2012 filters
+    data2012$EDUC[data2012$EDUC == "1"]<-"NIU"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Grades 1-4"
+    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
+    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
+    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
+    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
+    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Grades 5-6"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Grades 7-8"
+    data2012$EDUC[data2012$EDUC == "40"]<-"HS, Grade 9"
+    data2012$EDUC[data2012$EDUC == "50"]<-"HS, Grade 10"
+    data2012$EDUC[data2012$EDUC == "60"]<-"HS, Grade 11"
+    data2012$EDUC[data2012$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
+    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2012$RACE[data2012$RACE == "100"]<-"White"
+    data2012$RACE[data2012$RACE == "200"]<-"Black"
+    data2012$RACE[data2012$RACE == "300"]<-"American Indian"
+    data2012$RACE[data2012$RACE == "651"]<-"Asian"
+    data2012$RACE[data2012$RACE == "652"]<-"Pacific Islander"
+    data2012$RACE[data2012$RACE == "801"]<-"Other"
+    data2012$RACE[data2012$RACE == "802"]<-"Other"
+    data2012$RACE[data2012$RACE == "803"]<-"Other"
+    data2012$RACE[data2012$RACE == "804"]<-"Other"
+    data2012$RACE[data2012$RACE == "805"]<-"Other"
+    data2012$RACE[data2012$RACE == "806"]<-"Other"
+    data2012$RACE[data2012$RACE == "807"]<-"Other"
+    data2012$RACE[data2012$RACE == "808"]<-"Other"
+    data2012$RACE[data2012$RACE == "809"]<-"Other"
+    data2012$RACE[data2012$RACE == "810"]<-"Other"
+    data2012$RACE[data2012$RACE == "811"]<-"Other"
+    data2012$RACE[data2012$RACE == "812"]<-"Other"
+    data2012$RACE[data2012$RACE == "813"]<-"Other"
+    data2012$RACE[data2012$RACE == "814"]<-"Other"
+    data2012$RACE[data2012$RACE == "815"]<-"Other"
+    data2012$RACE[data2012$RACE == "816"]<-"Other"
+    data2012$RACE[data2012$RACE == "817"]<-"Other"
+    data2012$RACE[data2012$RACE == "818"]<-"Other"
+    data2012$RACE[data2012$RACE == "819"]<-"Other"
+    data2012$RACE[data2012$RACE == "820"]<-"Other"
+    data2012$RACE[data2012$RACE == "830"]<-"Other"
+
+    df <- data2012 %>%
+      filter(RACE =="Black") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$ai2012pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2012 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18')
+
+    # filter NIU for educ
+    data2012 <- d2012 %>% filter(EDUC != "1")
+
+    # 2012 filters
+    data2012$EDUC[data2012$EDUC == "1"]<-"NIU"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Grades 1-4"
+    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
+    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
+    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
+    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
+    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Grades 5-6"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Grades 7-8"
+    data2012$EDUC[data2012$EDUC == "40"]<-"HS, Grade 9"
+    data2012$EDUC[data2012$EDUC == "50"]<-"HS, Grade 10"
+    data2012$EDUC[data2012$EDUC == "60"]<-"HS, Grade 11"
+    data2012$EDUC[data2012$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
+    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2012$RACE[data2012$RACE == "100"]<-"White"
+    data2012$RACE[data2012$RACE == "200"]<-"Black"
+    data2012$RACE[data2012$RACE == "300"]<-"American Indian"
+    data2012$RACE[data2012$RACE == "651"]<-"Asian"
+    data2012$RACE[data2012$RACE == "652"]<-"Pacific Islander"
+    data2012$RACE[data2012$RACE == "801"]<-"Other"
+    data2012$RACE[data2012$RACE == "802"]<-"Other"
+    data2012$RACE[data2012$RACE == "803"]<-"Other"
+    data2012$RACE[data2012$RACE == "804"]<-"Other"
+    data2012$RACE[data2012$RACE == "805"]<-"Other"
+    data2012$RACE[data2012$RACE == "806"]<-"Other"
+    data2012$RACE[data2012$RACE == "807"]<-"Other"
+    data2012$RACE[data2012$RACE == "808"]<-"Other"
+    data2012$RACE[data2012$RACE == "809"]<-"Other"
+    data2012$RACE[data2012$RACE == "810"]<-"Other"
+    data2012$RACE[data2012$RACE == "811"]<-"Other"
+    data2012$RACE[data2012$RACE == "812"]<-"Other"
+    data2012$RACE[data2012$RACE == "813"]<-"Other"
+    data2012$RACE[data2012$RACE == "814"]<-"Other"
+    data2012$RACE[data2012$RACE == "815"]<-"Other"
+    data2012$RACE[data2012$RACE == "816"]<-"Other"
+    data2012$RACE[data2012$RACE == "817"]<-"Other"
+    data2012$RACE[data2012$RACE == "818"]<-"Other"
+    data2012$RACE[data2012$RACE == "819"]<-"Other"
+    data2012$RACE[data2012$RACE == "820"]<-"Other"
+    data2012$RACE[data2012$RACE == "830"]<-"Other"
+
+    df <- data2012 %>%
+      filter(RACE =="American Indian") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$a2012pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2012 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18')
+
+    # filter NIU for educ
+    data2012 <- d2012 %>% filter(EDUC != "1")
+
+    # 2012 filters
+    data2012$EDUC[data2012$EDUC == "1"]<-"NIU"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Grades 1-4"
+    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
+    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
+    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
+    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
+    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Grades 5-6"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Grades 7-8"
+    data2012$EDUC[data2012$EDUC == "40"]<-"HS, Grade 9"
+    data2012$EDUC[data2012$EDUC == "50"]<-"HS, Grade 10"
+    data2012$EDUC[data2012$EDUC == "60"]<-"HS, Grade 11"
+    data2012$EDUC[data2012$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
+    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2012$RACE[data2012$RACE == "100"]<-"White"
+    data2012$RACE[data2012$RACE == "200"]<-"Black"
+    data2012$RACE[data2012$RACE == "300"]<-"American Indian"
+    data2012$RACE[data2012$RACE == "651"]<-"Asian"
+    data2012$RACE[data2012$RACE == "652"]<-"Pacific Islander"
+    data2012$RACE[data2012$RACE == "801"]<-"Other"
+    data2012$RACE[data2012$RACE == "802"]<-"Other"
+    data2012$RACE[data2012$RACE == "803"]<-"Other"
+    data2012$RACE[data2012$RACE == "804"]<-"Other"
+    data2012$RACE[data2012$RACE == "805"]<-"Other"
+    data2012$RACE[data2012$RACE == "806"]<-"Other"
+    data2012$RACE[data2012$RACE == "807"]<-"Other"
+    data2012$RACE[data2012$RACE == "808"]<-"Other"
+    data2012$RACE[data2012$RACE == "809"]<-"Other"
+    data2012$RACE[data2012$RACE == "810"]<-"Other"
+    data2012$RACE[data2012$RACE == "811"]<-"Other"
+    data2012$RACE[data2012$RACE == "812"]<-"Other"
+    data2012$RACE[data2012$RACE == "813"]<-"Other"
+    data2012$RACE[data2012$RACE == "814"]<-"Other"
+    data2012$RACE[data2012$RACE == "815"]<-"Other"
+    data2012$RACE[data2012$RACE == "816"]<-"Other"
+    data2012$RACE[data2012$RACE == "817"]<-"Other"
+    data2012$RACE[data2012$RACE == "818"]<-"Other"
+    data2012$RACE[data2012$RACE == "819"]<-"Other"
+    data2012$RACE[data2012$RACE == "820"]<-"Other"
+    data2012$RACE[data2012$RACE == "830"]<-"Other"
+
+    df <- data2012 %>%
+      filter(RACE =="Asian") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$pi2012pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2012 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18')
+
+    # filter NIU for educ
+    data2012 <- d2012 %>% filter(EDUC != "1")
+
+    # 2012 filters
+    data2012$EDUC[data2012$EDUC == "1"]<-"NIU"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Grades 1-4"
+    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
+    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
+    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
+    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
+    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Grades 5-6"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Grades 7-8"
+    data2012$EDUC[data2012$EDUC == "40"]<-"HS, Grade 9"
+    data2012$EDUC[data2012$EDUC == "50"]<-"HS, Grade 10"
+    data2012$EDUC[data2012$EDUC == "60"]<-"HS, Grade 11"
+    data2012$EDUC[data2012$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
+    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2012$RACE[data2012$RACE == "100"]<-"White"
+    data2012$RACE[data2012$RACE == "200"]<-"Black"
+    data2012$RACE[data2012$RACE == "300"]<-"American Indian"
+    data2012$RACE[data2012$RACE == "651"]<-"Asian"
+    data2012$RACE[data2012$RACE == "652"]<-"Pacific Islander"
+    data2012$RACE[data2012$RACE == "801"]<-"Other"
+    data2012$RACE[data2012$RACE == "802"]<-"Other"
+    data2012$RACE[data2012$RACE == "803"]<-"Other"
+    data2012$RACE[data2012$RACE == "804"]<-"Other"
+    data2012$RACE[data2012$RACE == "805"]<-"Other"
+    data2012$RACE[data2012$RACE == "806"]<-"Other"
+    data2012$RACE[data2012$RACE == "807"]<-"Other"
+    data2012$RACE[data2012$RACE == "808"]<-"Other"
+    data2012$RACE[data2012$RACE == "809"]<-"Other"
+    data2012$RACE[data2012$RACE == "810"]<-"Other"
+    data2012$RACE[data2012$RACE == "811"]<-"Other"
+    data2012$RACE[data2012$RACE == "812"]<-"Other"
+    data2012$RACE[data2012$RACE == "813"]<-"Other"
+    data2012$RACE[data2012$RACE == "814"]<-"Other"
+    data2012$RACE[data2012$RACE == "815"]<-"Other"
+    data2012$RACE[data2012$RACE == "816"]<-"Other"
+    data2012$RACE[data2012$RACE == "817"]<-"Other"
+    data2012$RACE[data2012$RACE == "818"]<-"Other"
+    data2012$RACE[data2012$RACE == "819"]<-"Other"
+    data2012$RACE[data2012$RACE == "820"]<-"Other"
+    data2012$RACE[data2012$RACE == "830"]<-"Other"
+
+    df <- data2012 %>%
+      filter(RACE =="Pacific Islander") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$o2012pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2012 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2012 AND age >= 18')
+
+    # filter NIU for educ
+    data2012 <- d2012 %>% filter(EDUC != "1")
+
+    # 2012 filters
+    data2012$EDUC[data2012$EDUC == "1"]<-"NIU"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Grades 1-4"
+    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
+    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
+    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
+    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
+    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Grades 5-6"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Grades 7-8"
+    data2012$EDUC[data2012$EDUC == "40"]<-"HS, Grade 9"
+    data2012$EDUC[data2012$EDUC == "50"]<-"HS, Grade 10"
+    data2012$EDUC[data2012$EDUC == "60"]<-"HS, Grade 11"
+    data2012$EDUC[data2012$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
+    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2012$RACE[data2012$RACE == "100"]<-"White"
+    data2012$RACE[data2012$RACE == "200"]<-"Black"
+    data2012$RACE[data2012$RACE == "300"]<-"American Indian"
+    data2012$RACE[data2012$RACE == "651"]<-"Asian"
+    data2012$RACE[data2012$RACE == "652"]<-"Pacific Islander"
+    data2012$RACE[data2012$RACE == "801"]<-"Other"
+    data2012$RACE[data2012$RACE == "802"]<-"Other"
+    data2012$RACE[data2012$RACE == "803"]<-"Other"
+    data2012$RACE[data2012$RACE == "804"]<-"Other"
+    data2012$RACE[data2012$RACE == "805"]<-"Other"
+    data2012$RACE[data2012$RACE == "806"]<-"Other"
+    data2012$RACE[data2012$RACE == "807"]<-"Other"
+    data2012$RACE[data2012$RACE == "808"]<-"Other"
+    data2012$RACE[data2012$RACE == "809"]<-"Other"
+    data2012$RACE[data2012$RACE == "810"]<-"Other"
+    data2012$RACE[data2012$RACE == "811"]<-"Other"
+    data2012$RACE[data2012$RACE == "812"]<-"Other"
+    data2012$RACE[data2012$RACE == "813"]<-"Other"
+    data2012$RACE[data2012$RACE == "814"]<-"Other"
+    data2012$RACE[data2012$RACE == "815"]<-"Other"
+    data2012$RACE[data2012$RACE == "816"]<-"Other"
+    data2012$RACE[data2012$RACE == "817"]<-"Other"
+    data2012$RACE[data2012$RACE == "818"]<-"Other"
+    data2012$RACE[data2012$RACE == "819"]<-"Other"
+    data2012$RACE[data2012$RACE == "820"]<-"Other"
+    data2012$RACE[data2012$RACE == "830"]<-"Other"
+
+    df <- data2012 %>%
+      filter(RACE =="Other") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  ##2013 RACE
+
+  output$w2013pie <- renderPlotly({
     # query to get all data from 2011 for sex + educ attain
     d2013 <- dbGetQuery(conn,
                         statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18')
-    
+
     # filter NIU for educ
     data2013 <- d2013 %>% filter(EDUC != "1")
-    
+
     # 2013 filters
     data2013$EDUC[data2013$EDUC == "1"]<-"NIU"
     data2013$EDUC[data2013$EDUC == "10"]<-"Grades 1-4"
@@ -1021,7 +2172,7 @@ server <- function(input, output) {
     data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
     data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
     data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
-    
+
     data2013$RACE[data2013$RACE == "100"]<-"White"
     data2013$RACE[data2013$RACE == "200"]<-"Black"
     data2013$RACE[data2013$RACE == "300"]<-"American Indian"
@@ -1048,28 +2199,397 @@ server <- function(input, output) {
     data2013$RACE[data2013$RACE == "819"]<-"Other"
     data2013$RACE[data2013$RACE == "820"]<-"Other"
     data2013$RACE[data2013$RACE == "830"]<-"Other"
-    
-    # plot
-    racexeduc2013 <- ggplot(data2013, aes(x=EDUC, fill=RACE)) + 
-      geom_bar(position = "dodge", stat = "count") + 
-      xlab("Level of Educational Attainment") + 
-      theme(axis.text.x = element_text(angle = 90))
-    
-    ggplotly(racexeduc2013)
-    
+
+    df <- data2013 %>%
+      filter(RACE =="White") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
-  
-  # 2014 race
-  output$y5_plot_1 <- renderPlotly({
+
+  output$b2013pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2013 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18')
+
+    # filter NIU for educ
+    data2013 <- d2013 %>% filter(EDUC != "1")
+
+    # 2013 filters
+    data2013$EDUC[data2013$EDUC == "1"]<-"NIU"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Grades 1-4"
+    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
+    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
+    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
+    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
+    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Grades 5-6"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Grades 7-8"
+    data2013$EDUC[data2013$EDUC == "40"]<-"HS, Grade 9"
+    data2013$EDUC[data2013$EDUC == "50"]<-"HS, Grade 10"
+    data2013$EDUC[data2013$EDUC == "60"]<-"HS, Grade 11"
+    data2013$EDUC[data2013$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
+    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2013$RACE[data2013$RACE == "100"]<-"White"
+    data2013$RACE[data2013$RACE == "200"]<-"Black"
+    data2013$RACE[data2013$RACE == "300"]<-"American Indian"
+    data2013$RACE[data2013$RACE == "651"]<-"Asian"
+    data2013$RACE[data2013$RACE == "652"]<-"Pacific Islander"
+    data2013$RACE[data2013$RACE == "801"]<-"Other"
+    data2013$RACE[data2013$RACE == "802"]<-"Other"
+    data2013$RACE[data2013$RACE == "803"]<-"Other"
+    data2013$RACE[data2013$RACE == "804"]<-"Other"
+    data2013$RACE[data2013$RACE == "805"]<-"Other"
+    data2013$RACE[data2013$RACE == "806"]<-"Other"
+    data2013$RACE[data2013$RACE == "807"]<-"Other"
+    data2013$RACE[data2013$RACE == "808"]<-"Other"
+    data2013$RACE[data2013$RACE == "809"]<-"Other"
+    data2013$RACE[data2013$RACE == "810"]<-"Other"
+    data2013$RACE[data2013$RACE == "811"]<-"Other"
+    data2013$RACE[data2013$RACE == "812"]<-"Other"
+    data2013$RACE[data2013$RACE == "813"]<-"Other"
+    data2013$RACE[data2013$RACE == "814"]<-"Other"
+    data2013$RACE[data2013$RACE == "815"]<-"Other"
+    data2013$RACE[data2013$RACE == "816"]<-"Other"
+    data2013$RACE[data2013$RACE == "817"]<-"Other"
+    data2013$RACE[data2013$RACE == "818"]<-"Other"
+    data2013$RACE[data2013$RACE == "819"]<-"Other"
+    data2013$RACE[data2013$RACE == "820"]<-"Other"
+    data2013$RACE[data2013$RACE == "830"]<-"Other"
+
+    df <- data2013 %>%
+      filter(RACE =="Black") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$ai2013pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2013 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18')
+
+    # filter NIU for educ
+    data2013 <- d2013 %>% filter(EDUC != "1")
+
+    # 2013 filters
+    data2013$EDUC[data2013$EDUC == "1"]<-"NIU"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Grades 1-4"
+    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
+    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
+    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
+    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
+    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Grades 5-6"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Grades 7-8"
+    data2013$EDUC[data2013$EDUC == "40"]<-"HS, Grade 9"
+    data2013$EDUC[data2013$EDUC == "50"]<-"HS, Grade 10"
+    data2013$EDUC[data2013$EDUC == "60"]<-"HS, Grade 11"
+    data2013$EDUC[data2013$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
+    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2013$RACE[data2013$RACE == "100"]<-"White"
+    data2013$RACE[data2013$RACE == "200"]<-"Black"
+    data2013$RACE[data2013$RACE == "300"]<-"American Indian"
+    data2013$RACE[data2013$RACE == "651"]<-"Asian"
+    data2013$RACE[data2013$RACE == "652"]<-"Pacific Islander"
+    data2013$RACE[data2013$RACE == "801"]<-"Other"
+    data2013$RACE[data2013$RACE == "802"]<-"Other"
+    data2013$RACE[data2013$RACE == "803"]<-"Other"
+    data2013$RACE[data2013$RACE == "804"]<-"Other"
+    data2013$RACE[data2013$RACE == "805"]<-"Other"
+    data2013$RACE[data2013$RACE == "806"]<-"Other"
+    data2013$RACE[data2013$RACE == "807"]<-"Other"
+    data2013$RACE[data2013$RACE == "808"]<-"Other"
+    data2013$RACE[data2013$RACE == "809"]<-"Other"
+    data2013$RACE[data2013$RACE == "810"]<-"Other"
+    data2013$RACE[data2013$RACE == "811"]<-"Other"
+    data2013$RACE[data2013$RACE == "812"]<-"Other"
+    data2013$RACE[data2013$RACE == "813"]<-"Other"
+    data2013$RACE[data2013$RACE == "814"]<-"Other"
+    data2013$RACE[data2013$RACE == "815"]<-"Other"
+    data2013$RACE[data2013$RACE == "816"]<-"Other"
+    data2013$RACE[data2013$RACE == "817"]<-"Other"
+    data2013$RACE[data2013$RACE == "818"]<-"Other"
+    data2013$RACE[data2013$RACE == "819"]<-"Other"
+    data2013$RACE[data2013$RACE == "820"]<-"Other"
+    data2013$RACE[data2013$RACE == "830"]<-"Other"
+
+    df <- data2013 %>%
+      filter(RACE =="American Indian") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$a2013pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2013 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18')
+
+    # filter NIU for educ
+    data2013 <- d2013 %>% filter(EDUC != "1")
+
+    # 2013 filters
+    data2013$EDUC[data2013$EDUC == "1"]<-"NIU"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Grades 1-4"
+    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
+    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
+    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
+    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
+    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Grades 5-6"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Grades 7-8"
+    data2013$EDUC[data2013$EDUC == "40"]<-"HS, Grade 9"
+    data2013$EDUC[data2013$EDUC == "50"]<-"HS, Grade 10"
+    data2013$EDUC[data2013$EDUC == "60"]<-"HS, Grade 11"
+    data2013$EDUC[data2013$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
+    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2013$RACE[data2013$RACE == "100"]<-"White"
+    data2013$RACE[data2013$RACE == "200"]<-"Black"
+    data2013$RACE[data2013$RACE == "300"]<-"American Indian"
+    data2013$RACE[data2013$RACE == "651"]<-"Asian"
+    data2013$RACE[data2013$RACE == "652"]<-"Pacific Islander"
+    data2013$RACE[data2013$RACE == "801"]<-"Other"
+    data2013$RACE[data2013$RACE == "802"]<-"Other"
+    data2013$RACE[data2013$RACE == "803"]<-"Other"
+    data2013$RACE[data2013$RACE == "804"]<-"Other"
+    data2013$RACE[data2013$RACE == "805"]<-"Other"
+    data2013$RACE[data2013$RACE == "806"]<-"Other"
+    data2013$RACE[data2013$RACE == "807"]<-"Other"
+    data2013$RACE[data2013$RACE == "808"]<-"Other"
+    data2013$RACE[data2013$RACE == "809"]<-"Other"
+    data2013$RACE[data2013$RACE == "810"]<-"Other"
+    data2013$RACE[data2013$RACE == "811"]<-"Other"
+    data2013$RACE[data2013$RACE == "812"]<-"Other"
+    data2013$RACE[data2013$RACE == "813"]<-"Other"
+    data2013$RACE[data2013$RACE == "814"]<-"Other"
+    data2013$RACE[data2013$RACE == "815"]<-"Other"
+    data2013$RACE[data2013$RACE == "816"]<-"Other"
+    data2013$RACE[data2013$RACE == "817"]<-"Other"
+    data2013$RACE[data2013$RACE == "818"]<-"Other"
+    data2013$RACE[data2013$RACE == "819"]<-"Other"
+    data2013$RACE[data2013$RACE == "820"]<-"Other"
+    data2013$RACE[data2013$RACE == "830"]<-"Other"
+
+    df <- data2013 %>%
+      filter(RACE =="Asian") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$pi2013pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2013 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18')
+
+    # filter NIU for educ
+    data2013 <- d2013 %>% filter(EDUC != "1")
+
+    # 2013 filters
+    data2013$EDUC[data2013$EDUC == "1"]<-"NIU"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Grades 1-4"
+    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
+    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
+    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
+    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
+    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Grades 5-6"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Grades 7-8"
+    data2013$EDUC[data2013$EDUC == "40"]<-"HS, Grade 9"
+    data2013$EDUC[data2013$EDUC == "50"]<-"HS, Grade 10"
+    data2013$EDUC[data2013$EDUC == "60"]<-"HS, Grade 11"
+    data2013$EDUC[data2013$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
+    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2013$RACE[data2013$RACE == "100"]<-"White"
+    data2013$RACE[data2013$RACE == "200"]<-"Black"
+    data2013$RACE[data2013$RACE == "300"]<-"American Indian"
+    data2013$RACE[data2013$RACE == "651"]<-"Asian"
+    data2013$RACE[data2013$RACE == "652"]<-"Pacific Islander"
+    data2013$RACE[data2013$RACE == "801"]<-"Other"
+    data2013$RACE[data2013$RACE == "802"]<-"Other"
+    data2013$RACE[data2013$RACE == "803"]<-"Other"
+    data2013$RACE[data2013$RACE == "804"]<-"Other"
+    data2013$RACE[data2013$RACE == "805"]<-"Other"
+    data2013$RACE[data2013$RACE == "806"]<-"Other"
+    data2013$RACE[data2013$RACE == "807"]<-"Other"
+    data2013$RACE[data2013$RACE == "808"]<-"Other"
+    data2013$RACE[data2013$RACE == "809"]<-"Other"
+    data2013$RACE[data2013$RACE == "810"]<-"Other"
+    data2013$RACE[data2013$RACE == "811"]<-"Other"
+    data2013$RACE[data2013$RACE == "812"]<-"Other"
+    data2013$RACE[data2013$RACE == "813"]<-"Other"
+    data2013$RACE[data2013$RACE == "814"]<-"Other"
+    data2013$RACE[data2013$RACE == "815"]<-"Other"
+    data2013$RACE[data2013$RACE == "816"]<-"Other"
+    data2013$RACE[data2013$RACE == "817"]<-"Other"
+    data2013$RACE[data2013$RACE == "818"]<-"Other"
+    data2013$RACE[data2013$RACE == "819"]<-"Other"
+    data2013$RACE[data2013$RACE == "820"]<-"Other"
+    data2013$RACE[data2013$RACE == "830"]<-"Other"
+
+    df <- data2013 %>%
+      filter(RACE =="Pacific Islander") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$o2013pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2013 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2013 AND age >= 18')
+
+    # filter NIU for educ
+    data2013 <- d2013 %>% filter(EDUC != "1")
+
+    # 2013 filters
+    data2013$EDUC[data2013$EDUC == "1"]<-"NIU"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Grades 1-4"
+    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
+    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
+    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
+    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
+    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Grades 5-6"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Grades 7-8"
+    data2013$EDUC[data2013$EDUC == "40"]<-"HS, Grade 9"
+    data2013$EDUC[data2013$EDUC == "50"]<-"HS, Grade 10"
+    data2013$EDUC[data2013$EDUC == "60"]<-"HS, Grade 11"
+    data2013$EDUC[data2013$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
+    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2013$RACE[data2013$RACE == "100"]<-"White"
+    data2013$RACE[data2013$RACE == "200"]<-"Black"
+    data2013$RACE[data2013$RACE == "300"]<-"American Indian"
+    data2013$RACE[data2013$RACE == "651"]<-"Asian"
+    data2013$RACE[data2013$RACE == "652"]<-"Pacific Islander"
+    data2013$RACE[data2013$RACE == "801"]<-"Other"
+    data2013$RACE[data2013$RACE == "802"]<-"Other"
+    data2013$RACE[data2013$RACE == "803"]<-"Other"
+    data2013$RACE[data2013$RACE == "804"]<-"Other"
+    data2013$RACE[data2013$RACE == "805"]<-"Other"
+    data2013$RACE[data2013$RACE == "806"]<-"Other"
+    data2013$RACE[data2013$RACE == "807"]<-"Other"
+    data2013$RACE[data2013$RACE == "808"]<-"Other"
+    data2013$RACE[data2013$RACE == "809"]<-"Other"
+    data2013$RACE[data2013$RACE == "810"]<-"Other"
+    data2013$RACE[data2013$RACE == "811"]<-"Other"
+    data2013$RACE[data2013$RACE == "812"]<-"Other"
+    data2013$RACE[data2013$RACE == "813"]<-"Other"
+    data2013$RACE[data2013$RACE == "814"]<-"Other"
+    data2013$RACE[data2013$RACE == "815"]<-"Other"
+    data2013$RACE[data2013$RACE == "816"]<-"Other"
+    data2013$RACE[data2013$RACE == "817"]<-"Other"
+    data2013$RACE[data2013$RACE == "818"]<-"Other"
+    data2013$RACE[data2013$RACE == "819"]<-"Other"
+    data2013$RACE[data2013$RACE == "820"]<-"Other"
+    data2013$RACE[data2013$RACE == "830"]<-"Other"
+
+    df <- data2013 %>%
+      filter(RACE =="Other") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  ##2014 RACE
+
+  output$w2014pie <- renderPlotly({
     # query to get all data from 2011 for sex + educ attain
     d2014 <- dbGetQuery(conn,
                         statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
-    
+
     # filter NIU for educ
     data2014 <- d2014 %>% filter(EDUC != "1")
-    
+
     # 2014 filters
-    
+
     data2014$EDUC[data2014$EDUC == "10"]<-"Grades 1-4"
     data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
     data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
@@ -1086,7 +2606,7 @@ server <- function(input, output) {
     data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
     data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
     data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
-    
+
     data2014$RACE[data2014$RACE == "100"]<-"White"
     data2014$RACE[data2014$RACE == "200"]<-"Black"
     data2014$RACE[data2014$RACE == "300"]<-"American Indian"
@@ -1113,27 +2633,396 @@ server <- function(input, output) {
     data2014$RACE[data2014$RACE == "819"]<-"Other"
     data2014$RACE[data2014$RACE == "820"]<-"Other"
     data2014$RACE[data2014$RACE == "830"]<-"Other"
-    
-    # plot
-    racexeduc2014 <- ggplot(data2014, aes(x=EDUC, fill=RACE)) + 
-      geom_bar(position = "dodge", stat = "count") + 
-      xlab("Level of Educational Attainment") + 
-      theme(axis.text.x = element_text(angle = 90))
-    
-    ggplotly(racexeduc2014)
+
+    df <- data2014 %>%
+      filter(RACE =="White") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
-  
-  # 2015 race
-  output$y6_plot_1 <- renderPlotly({
+
+  output$b2014pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2014 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
+
+    # filter NIU for educ
+    data2014 <- d2014 %>% filter(EDUC != "1")
+
+    # 2014 filters
+
+    data2014$EDUC[data2014$EDUC == "10"]<-"Grades 1-4"
+    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
+    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
+    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
+    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
+    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Grades 5-6"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Grades 7-8"
+    data2014$EDUC[data2014$EDUC == "40"]<-"HS, Grade 9"
+    data2014$EDUC[data2014$EDUC == "50"]<-"HS, Grade 10"
+    data2014$EDUC[data2014$EDUC == "60"]<-"HS, Grade 11"
+    data2014$EDUC[data2014$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
+    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2014$RACE[data2014$RACE == "100"]<-"White"
+    data2014$RACE[data2014$RACE == "200"]<-"Black"
+    data2014$RACE[data2014$RACE == "300"]<-"American Indian"
+    data2014$RACE[data2014$RACE == "651"]<-"Asian"
+    data2014$RACE[data2014$RACE == "652"]<-"Pacific Islander"
+    data2014$RACE[data2014$RACE == "801"]<-"Other"
+    data2014$RACE[data2014$RACE == "802"]<-"Other"
+    data2014$RACE[data2014$RACE == "803"]<-"Other"
+    data2014$RACE[data2014$RACE == "804"]<-"Other"
+    data2014$RACE[data2014$RACE == "805"]<-"Other"
+    data2014$RACE[data2014$RACE == "806"]<-"Other"
+    data2014$RACE[data2014$RACE == "807"]<-"Other"
+    data2014$RACE[data2014$RACE == "808"]<-"Other"
+    data2014$RACE[data2014$RACE == "809"]<-"Other"
+    data2014$RACE[data2014$RACE == "810"]<-"Other"
+    data2014$RACE[data2014$RACE == "811"]<-"Other"
+    data2014$RACE[data2014$RACE == "812"]<-"Other"
+    data2014$RACE[data2014$RACE == "813"]<-"Other"
+    data2014$RACE[data2014$RACE == "814"]<-"Other"
+    data2014$RACE[data2014$RACE == "815"]<-"Other"
+    data2014$RACE[data2014$RACE == "816"]<-"Other"
+    data2014$RACE[data2014$RACE == "817"]<-"Other"
+    data2014$RACE[data2014$RACE == "818"]<-"Other"
+    data2014$RACE[data2014$RACE == "819"]<-"Other"
+    data2014$RACE[data2014$RACE == "820"]<-"Other"
+    data2014$RACE[data2014$RACE == "830"]<-"Other"
+
+    df <- data2014 %>%
+      filter(RACE =="Black") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$ai2014pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2014 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
+
+    # filter NIU for educ
+    data2014 <- d2014 %>% filter(EDUC != "1")
+
+    # 2014 filters
+
+    data2014$EDUC[data2014$EDUC == "10"]<-"Grades 1-4"
+    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
+    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
+    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
+    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
+    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Grades 5-6"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Grades 7-8"
+    data2014$EDUC[data2014$EDUC == "40"]<-"HS, Grade 9"
+    data2014$EDUC[data2014$EDUC == "50"]<-"HS, Grade 10"
+    data2014$EDUC[data2014$EDUC == "60"]<-"HS, Grade 11"
+    data2014$EDUC[data2014$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
+    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2014$RACE[data2014$RACE == "100"]<-"White"
+    data2014$RACE[data2014$RACE == "200"]<-"Black"
+    data2014$RACE[data2014$RACE == "300"]<-"American Indian"
+    data2014$RACE[data2014$RACE == "651"]<-"Asian"
+    data2014$RACE[data2014$RACE == "652"]<-"Pacific Islander"
+    data2014$RACE[data2014$RACE == "801"]<-"Other"
+    data2014$RACE[data2014$RACE == "802"]<-"Other"
+    data2014$RACE[data2014$RACE == "803"]<-"Other"
+    data2014$RACE[data2014$RACE == "804"]<-"Other"
+    data2014$RACE[data2014$RACE == "805"]<-"Other"
+    data2014$RACE[data2014$RACE == "806"]<-"Other"
+    data2014$RACE[data2014$RACE == "807"]<-"Other"
+    data2014$RACE[data2014$RACE == "808"]<-"Other"
+    data2014$RACE[data2014$RACE == "809"]<-"Other"
+    data2014$RACE[data2014$RACE == "810"]<-"Other"
+    data2014$RACE[data2014$RACE == "811"]<-"Other"
+    data2014$RACE[data2014$RACE == "812"]<-"Other"
+    data2014$RACE[data2014$RACE == "813"]<-"Other"
+    data2014$RACE[data2014$RACE == "814"]<-"Other"
+    data2014$RACE[data2014$RACE == "815"]<-"Other"
+    data2014$RACE[data2014$RACE == "816"]<-"Other"
+    data2014$RACE[data2014$RACE == "817"]<-"Other"
+    data2014$RACE[data2014$RACE == "818"]<-"Other"
+    data2014$RACE[data2014$RACE == "819"]<-"Other"
+    data2014$RACE[data2014$RACE == "820"]<-"Other"
+    data2014$RACE[data2014$RACE == "830"]<-"Other"
+
+    df <- data2014 %>%
+      filter(RACE =="American Indian") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$a2014pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2014 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
+
+    # filter NIU for educ
+    data2014 <- d2014 %>% filter(EDUC != "1")
+
+    # 2014 filters
+
+    data2014$EDUC[data2014$EDUC == "10"]<-"Grades 1-4"
+    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
+    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
+    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
+    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
+    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Grades 5-6"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Grades 7-8"
+    data2014$EDUC[data2014$EDUC == "40"]<-"HS, Grade 9"
+    data2014$EDUC[data2014$EDUC == "50"]<-"HS, Grade 10"
+    data2014$EDUC[data2014$EDUC == "60"]<-"HS, Grade 11"
+    data2014$EDUC[data2014$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
+    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2014$RACE[data2014$RACE == "100"]<-"White"
+    data2014$RACE[data2014$RACE == "200"]<-"Black"
+    data2014$RACE[data2014$RACE == "300"]<-"American Indian"
+    data2014$RACE[data2014$RACE == "651"]<-"Asian"
+    data2014$RACE[data2014$RACE == "652"]<-"Pacific Islander"
+    data2014$RACE[data2014$RACE == "801"]<-"Other"
+    data2014$RACE[data2014$RACE == "802"]<-"Other"
+    data2014$RACE[data2014$RACE == "803"]<-"Other"
+    data2014$RACE[data2014$RACE == "804"]<-"Other"
+    data2014$RACE[data2014$RACE == "805"]<-"Other"
+    data2014$RACE[data2014$RACE == "806"]<-"Other"
+    data2014$RACE[data2014$RACE == "807"]<-"Other"
+    data2014$RACE[data2014$RACE == "808"]<-"Other"
+    data2014$RACE[data2014$RACE == "809"]<-"Other"
+    data2014$RACE[data2014$RACE == "810"]<-"Other"
+    data2014$RACE[data2014$RACE == "811"]<-"Other"
+    data2014$RACE[data2014$RACE == "812"]<-"Other"
+    data2014$RACE[data2014$RACE == "813"]<-"Other"
+    data2014$RACE[data2014$RACE == "814"]<-"Other"
+    data2014$RACE[data2014$RACE == "815"]<-"Other"
+    data2014$RACE[data2014$RACE == "816"]<-"Other"
+    data2014$RACE[data2014$RACE == "817"]<-"Other"
+    data2014$RACE[data2014$RACE == "818"]<-"Other"
+    data2014$RACE[data2014$RACE == "819"]<-"Other"
+    data2014$RACE[data2014$RACE == "820"]<-"Other"
+    data2014$RACE[data2014$RACE == "830"]<-"Other"
+
+    df <- data2014 %>%
+      filter(RACE =="Asian") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$pi2014pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2014 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
+
+    # filter NIU for educ
+    data2014 <- d2014 %>% filter(EDUC != "1")
+
+    # 2014 filters
+
+    data2014$EDUC[data2014$EDUC == "10"]<-"Grades 1-4"
+    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
+    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
+    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
+    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
+    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Grades 5-6"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Grades 7-8"
+    data2014$EDUC[data2014$EDUC == "40"]<-"HS, Grade 9"
+    data2014$EDUC[data2014$EDUC == "50"]<-"HS, Grade 10"
+    data2014$EDUC[data2014$EDUC == "60"]<-"HS, Grade 11"
+    data2014$EDUC[data2014$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
+    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2014$RACE[data2014$RACE == "100"]<-"White"
+    data2014$RACE[data2014$RACE == "200"]<-"Black"
+    data2014$RACE[data2014$RACE == "300"]<-"American Indian"
+    data2014$RACE[data2014$RACE == "651"]<-"Asian"
+    data2014$RACE[data2014$RACE == "652"]<-"Pacific Islander"
+    data2014$RACE[data2014$RACE == "801"]<-"Other"
+    data2014$RACE[data2014$RACE == "802"]<-"Other"
+    data2014$RACE[data2014$RACE == "803"]<-"Other"
+    data2014$RACE[data2014$RACE == "804"]<-"Other"
+    data2014$RACE[data2014$RACE == "805"]<-"Other"
+    data2014$RACE[data2014$RACE == "806"]<-"Other"
+    data2014$RACE[data2014$RACE == "807"]<-"Other"
+    data2014$RACE[data2014$RACE == "808"]<-"Other"
+    data2014$RACE[data2014$RACE == "809"]<-"Other"
+    data2014$RACE[data2014$RACE == "810"]<-"Other"
+    data2014$RACE[data2014$RACE == "811"]<-"Other"
+    data2014$RACE[data2014$RACE == "812"]<-"Other"
+    data2014$RACE[data2014$RACE == "813"]<-"Other"
+    data2014$RACE[data2014$RACE == "814"]<-"Other"
+    data2014$RACE[data2014$RACE == "815"]<-"Other"
+    data2014$RACE[data2014$RACE == "816"]<-"Other"
+    data2014$RACE[data2014$RACE == "817"]<-"Other"
+    data2014$RACE[data2014$RACE == "818"]<-"Other"
+    data2014$RACE[data2014$RACE == "819"]<-"Other"
+    data2014$RACE[data2014$RACE == "820"]<-"Other"
+    data2014$RACE[data2014$RACE == "830"]<-"Other"
+
+    df <- data2014 %>%
+      filter(RACE =="Pacific Islander") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$o2014pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2014 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2014 AND age >= 18')
+
+    # filter NIU for educ
+    data2014 <- d2014 %>% filter(EDUC != "1")
+
+    # 2014 filters
+
+    data2014$EDUC[data2014$EDUC == "10"]<-"Grades 1-4"
+    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
+    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
+    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
+    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
+    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Grades 5-6"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Grades 7-8"
+    data2014$EDUC[data2014$EDUC == "40"]<-"HS, Grade 9"
+    data2014$EDUC[data2014$EDUC == "50"]<-"HS, Grade 10"
+    data2014$EDUC[data2014$EDUC == "60"]<-"HS, Grade 11"
+    data2014$EDUC[data2014$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
+    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2014$RACE[data2014$RACE == "100"]<-"White"
+    data2014$RACE[data2014$RACE == "200"]<-"Black"
+    data2014$RACE[data2014$RACE == "300"]<-"American Indian"
+    data2014$RACE[data2014$RACE == "651"]<-"Asian"
+    data2014$RACE[data2014$RACE == "652"]<-"Pacific Islander"
+    data2014$RACE[data2014$RACE == "801"]<-"Other"
+    data2014$RACE[data2014$RACE == "802"]<-"Other"
+    data2014$RACE[data2014$RACE == "803"]<-"Other"
+    data2014$RACE[data2014$RACE == "804"]<-"Other"
+    data2014$RACE[data2014$RACE == "805"]<-"Other"
+    data2014$RACE[data2014$RACE == "806"]<-"Other"
+    data2014$RACE[data2014$RACE == "807"]<-"Other"
+    data2014$RACE[data2014$RACE == "808"]<-"Other"
+    data2014$RACE[data2014$RACE == "809"]<-"Other"
+    data2014$RACE[data2014$RACE == "810"]<-"Other"
+    data2014$RACE[data2014$RACE == "811"]<-"Other"
+    data2014$RACE[data2014$RACE == "812"]<-"Other"
+    data2014$RACE[data2014$RACE == "813"]<-"Other"
+    data2014$RACE[data2014$RACE == "814"]<-"Other"
+    data2014$RACE[data2014$RACE == "815"]<-"Other"
+    data2014$RACE[data2014$RACE == "816"]<-"Other"
+    data2014$RACE[data2014$RACE == "817"]<-"Other"
+    data2014$RACE[data2014$RACE == "818"]<-"Other"
+    data2014$RACE[data2014$RACE == "819"]<-"Other"
+    data2014$RACE[data2014$RACE == "820"]<-"Other"
+    data2014$RACE[data2014$RACE == "830"]<-"Other"
+
+    df <- data2014 %>%
+      filter(RACE =="Other") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  ## 2015 RACE
+
+  output$w2015pie <- renderPlotly({
     # query to get all data from 2011 for sex + educ attain
     d2015 <- dbGetQuery(conn,
                         statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
-    
+
     # filter NIU for educ
     data2015 <- d2015 %>% filter(EDUC != "1")
-    
+
     # 2015 filters
-    
+
     data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
     data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
     data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
@@ -1150,7 +3039,7 @@ server <- function(input, output) {
     data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
     data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
     data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
-    
+
     data2015$RACE[data2015$RACE == "100"]<-"White"
     data2015$RACE[data2015$RACE == "200"]<-"Black"
     data2015$RACE[data2015$RACE == "300"]<-"American Indian"
@@ -1177,14 +3066,381 @@ server <- function(input, output) {
     data2015$RACE[data2015$RACE == "819"]<-"Other"
     data2015$RACE[data2015$RACE == "820"]<-"Other"
     data2015$RACE[data2015$RACE == "830"]<-"Other"
-    
-    # plot
-    racexeduc2015 <- ggplot(data2015, aes(x=EDUC, fill=RACE)) + 
-      geom_bar(position = "dodge", stat = "count") + 
-      xlab("Level of Educational Attainment") + 
-      theme(axis.text.x = element_text(angle = 90))
-    
-    ggplotly(racexeduc2015)
+
+    df <- data2015 %>%
+      filter(RACE =="White") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$b2015pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2015 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
+
+    # filter NIU for educ
+    data2015 <- d2015 %>% filter(EDUC != "1")
+
+    # 2015 filters
+
+    data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
+    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
+    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
+    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
+    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
+    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Grades 5-6"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Grades 7-8"
+    data2015$EDUC[data2015$EDUC == "40"]<-"HS, Grade 9"
+    data2015$EDUC[data2015$EDUC == "50"]<-"HS, Grade 10"
+    data2015$EDUC[data2015$EDUC == "60"]<-"HS, Grade 11"
+    data2015$EDUC[data2015$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
+    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2015$RACE[data2015$RACE == "100"]<-"White"
+    data2015$RACE[data2015$RACE == "200"]<-"Black"
+    data2015$RACE[data2015$RACE == "300"]<-"American Indian"
+    data2015$RACE[data2015$RACE == "651"]<-"Asian"
+    data2015$RACE[data2015$RACE == "652"]<-"Pacific Islander"
+    data2015$RACE[data2015$RACE == "801"]<-"Other"
+    data2015$RACE[data2015$RACE == "802"]<-"Other"
+    data2015$RACE[data2015$RACE == "803"]<-"Other"
+    data2015$RACE[data2015$RACE == "804"]<-"Other"
+    data2015$RACE[data2015$RACE == "805"]<-"Other"
+    data2015$RACE[data2015$RACE == "806"]<-"Other"
+    data2015$RACE[data2015$RACE == "807"]<-"Other"
+    data2015$RACE[data2015$RACE == "808"]<-"Other"
+    data2015$RACE[data2015$RACE == "809"]<-"Other"
+    data2015$RACE[data2015$RACE == "810"]<-"Other"
+    data2015$RACE[data2015$RACE == "811"]<-"Other"
+    data2015$RACE[data2015$RACE == "812"]<-"Other"
+    data2015$RACE[data2015$RACE == "813"]<-"Other"
+    data2015$RACE[data2015$RACE == "814"]<-"Other"
+    data2015$RACE[data2015$RACE == "815"]<-"Other"
+    data2015$RACE[data2015$RACE == "816"]<-"Other"
+    data2015$RACE[data2015$RACE == "817"]<-"Other"
+    data2015$RACE[data2015$RACE == "818"]<-"Other"
+    data2015$RACE[data2015$RACE == "819"]<-"Other"
+    data2015$RACE[data2015$RACE == "820"]<-"Other"
+    data2015$RACE[data2015$RACE == "830"]<-"Other"
+
+    df <- data2015 %>%
+      filter(RACE =="Black") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$ai2015pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2015 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
+
+    # filter NIU for educ
+    data2015 <- d2015 %>% filter(EDUC != "1")
+
+    # 2015 filters
+
+    data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
+    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
+    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
+    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
+    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
+    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Grades 5-6"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Grades 7-8"
+    data2015$EDUC[data2015$EDUC == "40"]<-"HS, Grade 9"
+    data2015$EDUC[data2015$EDUC == "50"]<-"HS, Grade 10"
+    data2015$EDUC[data2015$EDUC == "60"]<-"HS, Grade 11"
+    data2015$EDUC[data2015$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
+    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2015$RACE[data2015$RACE == "100"]<-"White"
+    data2015$RACE[data2015$RACE == "200"]<-"Black"
+    data2015$RACE[data2015$RACE == "300"]<-"American Indian"
+    data2015$RACE[data2015$RACE == "651"]<-"Asian"
+    data2015$RACE[data2015$RACE == "652"]<-"Pacific Islander"
+    data2015$RACE[data2015$RACE == "801"]<-"Other"
+    data2015$RACE[data2015$RACE == "802"]<-"Other"
+    data2015$RACE[data2015$RACE == "803"]<-"Other"
+    data2015$RACE[data2015$RACE == "804"]<-"Other"
+    data2015$RACE[data2015$RACE == "805"]<-"Other"
+    data2015$RACE[data2015$RACE == "806"]<-"Other"
+    data2015$RACE[data2015$RACE == "807"]<-"Other"
+    data2015$RACE[data2015$RACE == "808"]<-"Other"
+    data2015$RACE[data2015$RACE == "809"]<-"Other"
+    data2015$RACE[data2015$RACE == "810"]<-"Other"
+    data2015$RACE[data2015$RACE == "811"]<-"Other"
+    data2015$RACE[data2015$RACE == "812"]<-"Other"
+    data2015$RACE[data2015$RACE == "813"]<-"Other"
+    data2015$RACE[data2015$RACE == "814"]<-"Other"
+    data2015$RACE[data2015$RACE == "815"]<-"Other"
+    data2015$RACE[data2015$RACE == "816"]<-"Other"
+    data2015$RACE[data2015$RACE == "817"]<-"Other"
+    data2015$RACE[data2015$RACE == "818"]<-"Other"
+    data2015$RACE[data2015$RACE == "819"]<-"Other"
+    data2015$RACE[data2015$RACE == "820"]<-"Other"
+    data2015$RACE[data2015$RACE == "830"]<-"Other"
+
+    df <- data2015 %>%
+      filter(RACE =="American Indian") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$a2015pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2015 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
+
+    # filter NIU for educ
+    data2015 <- d2015 %>% filter(EDUC != "1")
+
+    # 2015 filters
+
+    data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
+    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
+    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
+    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
+    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
+    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Grades 5-6"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Grades 7-8"
+    data2015$EDUC[data2015$EDUC == "40"]<-"HS, Grade 9"
+    data2015$EDUC[data2015$EDUC == "50"]<-"HS, Grade 10"
+    data2015$EDUC[data2015$EDUC == "60"]<-"HS, Grade 11"
+    data2015$EDUC[data2015$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
+    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2015$RACE[data2015$RACE == "100"]<-"White"
+    data2015$RACE[data2015$RACE == "200"]<-"Black"
+    data2015$RACE[data2015$RACE == "300"]<-"American Indian"
+    data2015$RACE[data2015$RACE == "651"]<-"Asian"
+    data2015$RACE[data2015$RACE == "652"]<-"Pacific Islander"
+    data2015$RACE[data2015$RACE == "801"]<-"Other"
+    data2015$RACE[data2015$RACE == "802"]<-"Other"
+    data2015$RACE[data2015$RACE == "803"]<-"Other"
+    data2015$RACE[data2015$RACE == "804"]<-"Other"
+    data2015$RACE[data2015$RACE == "805"]<-"Other"
+    data2015$RACE[data2015$RACE == "806"]<-"Other"
+    data2015$RACE[data2015$RACE == "807"]<-"Other"
+    data2015$RACE[data2015$RACE == "808"]<-"Other"
+    data2015$RACE[data2015$RACE == "809"]<-"Other"
+    data2015$RACE[data2015$RACE == "810"]<-"Other"
+    data2015$RACE[data2015$RACE == "811"]<-"Other"
+    data2015$RACE[data2015$RACE == "812"]<-"Other"
+    data2015$RACE[data2015$RACE == "813"]<-"Other"
+    data2015$RACE[data2015$RACE == "814"]<-"Other"
+    data2015$RACE[data2015$RACE == "815"]<-"Other"
+    data2015$RACE[data2015$RACE == "816"]<-"Other"
+    data2015$RACE[data2015$RACE == "817"]<-"Other"
+    data2015$RACE[data2015$RACE == "818"]<-"Other"
+    data2015$RACE[data2015$RACE == "819"]<-"Other"
+    data2015$RACE[data2015$RACE == "820"]<-"Other"
+    data2015$RACE[data2015$RACE == "830"]<-"Other"
+
+    df <- data2015 %>%
+      filter(RACE =="Asian") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$pi2015pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2015 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
+
+    # filter NIU for educ
+    data2015 <- d2015 %>% filter(EDUC != "1")
+
+    # 2015 filters
+
+    data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
+    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
+    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
+    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
+    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
+    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Grades 5-6"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Grades 7-8"
+    data2015$EDUC[data2015$EDUC == "40"]<-"HS, Grade 9"
+    data2015$EDUC[data2015$EDUC == "50"]<-"HS, Grade 10"
+    data2015$EDUC[data2015$EDUC == "60"]<-"HS, Grade 11"
+    data2015$EDUC[data2015$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
+    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2015$RACE[data2015$RACE == "100"]<-"White"
+    data2015$RACE[data2015$RACE == "200"]<-"Black"
+    data2015$RACE[data2015$RACE == "300"]<-"American Indian"
+    data2015$RACE[data2015$RACE == "651"]<-"Asian"
+    data2015$RACE[data2015$RACE == "652"]<-"Pacific Islander"
+    data2015$RACE[data2015$RACE == "801"]<-"Other"
+    data2015$RACE[data2015$RACE == "802"]<-"Other"
+    data2015$RACE[data2015$RACE == "803"]<-"Other"
+    data2015$RACE[data2015$RACE == "804"]<-"Other"
+    data2015$RACE[data2015$RACE == "805"]<-"Other"
+    data2015$RACE[data2015$RACE == "806"]<-"Other"
+    data2015$RACE[data2015$RACE == "807"]<-"Other"
+    data2015$RACE[data2015$RACE == "808"]<-"Other"
+    data2015$RACE[data2015$RACE == "809"]<-"Other"
+    data2015$RACE[data2015$RACE == "810"]<-"Other"
+    data2015$RACE[data2015$RACE == "811"]<-"Other"
+    data2015$RACE[data2015$RACE == "812"]<-"Other"
+    data2015$RACE[data2015$RACE == "813"]<-"Other"
+    data2015$RACE[data2015$RACE == "814"]<-"Other"
+    data2015$RACE[data2015$RACE == "815"]<-"Other"
+    data2015$RACE[data2015$RACE == "816"]<-"Other"
+    data2015$RACE[data2015$RACE == "817"]<-"Other"
+    data2015$RACE[data2015$RACE == "818"]<-"Other"
+    data2015$RACE[data2015$RACE == "819"]<-"Other"
+    data2015$RACE[data2015$RACE == "820"]<-"Other"
+    data2015$RACE[data2015$RACE == "830"]<-"Other"
+
+    df <- data2015 %>%
+      filter(RACE =="Pacific Islander") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+
+  output$o2015pie <- renderPlotly({
+    # query to get all data from 2011 for sex + educ attain
+    d2015 <- dbGetQuery(conn,
+                        statement= 'SELECT cpsidp, sex, educ, race, hispan, ftotval, inctot, month, age, statefip FROM CPS WHERE year = 2015 AND age >= 18')
+
+    # filter NIU for educ
+    data2015 <- d2015 %>% filter(EDUC != "1")
+
+    # 2015 filters
+
+    data2015$EDUC[data2015$EDUC == "10"]<-"Grades 1-4"
+    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
+    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
+    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
+    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
+    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Grades 5-6"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Grades 7-8"
+    data2015$EDUC[data2015$EDUC == "40"]<-"HS, Grade 9"
+    data2015$EDUC[data2015$EDUC == "50"]<-"HS, Grade 10"
+    data2015$EDUC[data2015$EDUC == "60"]<-"HS, Grade 11"
+    data2015$EDUC[data2015$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
+    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
+    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+
+    data2015$RACE[data2015$RACE == "100"]<-"White"
+    data2015$RACE[data2015$RACE == "200"]<-"Black"
+    data2015$RACE[data2015$RACE == "300"]<-"American Indian"
+    data2015$RACE[data2015$RACE == "651"]<-"Asian"
+    data2015$RACE[data2015$RACE == "652"]<-"Pacific Islander"
+    data2015$RACE[data2015$RACE == "801"]<-"Other"
+    data2015$RACE[data2015$RACE == "802"]<-"Other"
+    data2015$RACE[data2015$RACE == "803"]<-"Other"
+    data2015$RACE[data2015$RACE == "804"]<-"Other"
+    data2015$RACE[data2015$RACE == "805"]<-"Other"
+    data2015$RACE[data2015$RACE == "806"]<-"Other"
+    data2015$RACE[data2015$RACE == "807"]<-"Other"
+    data2015$RACE[data2015$RACE == "808"]<-"Other"
+    data2015$RACE[data2015$RACE == "809"]<-"Other"
+    data2015$RACE[data2015$RACE == "810"]<-"Other"
+    data2015$RACE[data2015$RACE == "811"]<-"Other"
+    data2015$RACE[data2015$RACE == "812"]<-"Other"
+    data2015$RACE[data2015$RACE == "813"]<-"Other"
+    data2015$RACE[data2015$RACE == "814"]<-"Other"
+    data2015$RACE[data2015$RACE == "815"]<-"Other"
+    data2015$RACE[data2015$RACE == "816"]<-"Other"
+    data2015$RACE[data2015$RACE == "817"]<-"Other"
+    data2015$RACE[data2015$RACE == "818"]<-"Other"
+    data2015$RACE[data2015$RACE == "819"]<-"Other"
+    data2015$RACE[data2015$RACE == "820"]<-"Other"
+    data2015$RACE[data2015$RACE == "830"]<-"Other"
+
+    df <- data2015 %>%
+      filter(RACE =="Other") %>%
+      group_by(EDUC) %>% # Variable to be transformed
+      count() %>%
+      ungroup() %>%
+      mutate(perc = `n` / sum(`n`)) %>%
+      arrange(perc) %>%
+      mutate(labels = scales::percent(perc))
+
+
+    plot_ly(data=df,values=~n,labels=~factor(EDUC),
+            textposition="outside",textinfo = 'label+percent',
+            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            marker=list(colors=c("grey", 'blue', 'yellow'),
+                        line=list(color="white",width=2)),type="pie") %>%
+      layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
   
   ###################### HISPANIC ######################
