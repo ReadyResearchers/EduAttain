@@ -161,7 +161,8 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2010pie")),
                        tabPanel("Asian", plotlyOutput("a2010pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2010pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2010pie"))
+                       tabPanel("Mixed Race", plotlyOutput("o2010pie")),
+                       tabPanel("Comparisons", htmlOutput("race_compare_10"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Race in 2011",
@@ -171,7 +172,9 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2011pie")),
                        tabPanel("Asian", plotlyOutput("a2011pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2011pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2011pie"))
+                       tabPanel("Mixed Race", plotlyOutput("o2011pie")),
+                       tabPanel("Interpretation", htmlOutput("race_interpret_11")),
+                       tabPanel("Comparisons", htmlOutput("race_compare_11"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Race in 2012",
@@ -181,7 +184,9 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2012pie")),
                        tabPanel("Asian", plotlyOutput("a2012pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2012pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2012pie"))
+                       tabPanel("Mixed Race", plotlyOutput("o2012pie")),
+                       tabPanel("Interpretation", htmlOutput("race_interpret_12")),
+                       tabPanel("Comparisons", htmlOutput("race_compare_12"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Race in 2013",
@@ -191,7 +196,9 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2013pie")),
                        tabPanel("Asian", plotlyOutput("a2013pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2013pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2013pie"))
+                       tabPanel("Mixed Race", plotlyOutput("o2013pie")),
+                       tabPanel("Interpretation", htmlOutput("race_interpret_13")),
+                       tabPanel("Comparisons", htmlOutput("race_compare_13"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Race in 2014",
@@ -201,7 +208,9 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2014pie")),
                        tabPanel("Asian", plotlyOutput("a2014pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2014pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2014pie"))
+                       tabPanel("Mixed Race", plotlyOutput("o2014pie")),
+                       tabPanel("Interpretation", htmlOutput("race_interpret_14")),
+                       tabPanel("Comparisons", htmlOutput("race_compare_14"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Race in 2015",
@@ -211,7 +220,9 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2015pie")),
                        tabPanel("Asian", plotlyOutput("a2015pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2015pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2015pie"))
+                       tabPanel("Mixed Race", plotlyOutput("o2015pie")),
+                       tabPanel("Interpretation", htmlOutput("race_interpret_15")),
+                       tabPanel("Comparisons", htmlOutput("race_compare_15"))
                      )
               )
             )
@@ -1465,6 +1476,19 @@ server <- function(input, output) {
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
+  
+  output$race_compare_10 <- renderUI({
+    HTML("<b>In 2010:</b><br><br>
+          <small>Conclusions</small><br>
+               <li>The <b>white</b> population in this sample accounted for a higher proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders than the 
+         <em>black, American Indian, Pacific Islander, and mixed race</em> populations. In comparing White and Asian rates of post-secondary education, the <b>Asian</b> population
+         accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the <em>White</em> population.</li>
+         <li>The <b>Black</b> population in this sample accounted for a higher proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders than the 
+         <em>American Indian</em> population. When compared to other racial group's rates of post-secondary education, the <b>Black</b> population
+         accounted for a smaller proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders. The only exception to this is the slight advantage in associate degree and master degree attainment,
+         compared to the <em>Pacific Islander and mixed race</em> populations.</li>
+         <li><li>")
+  })
 
   ## 2011 RACE
 
@@ -1899,6 +1923,28 @@ server <- function(input, output) {
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
 
+  output$race_compare_11 <- renderUI({
+    HTML("<b>In 2011:</b><br>
+               <li><b>1.54%</b> more <em>men</em> had <b>associates' degrees</b></li>
+               <li><b>0.7%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
+               <li><b>0.84%</b> more <em>men</em> had <b>masters' degrees</b></li>
+               <li><b>0.68%</b> more <em>women</em> had <b>doctorate degrees</b></li>")
+  })
+  
+  output$race_interpret_11 <- renderUI({
+    HTML("<b>From 2010 to 2011</b><br>
+               <small>Women experienced</small><br>
+               <li>a <b>0.28%</b> increase in the amount of <b>associates' degree</b> holders</li>
+               <li>a <b>0.20%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
+               <li>a <b>0.14%</b> increase in the amount of <b>doctorate degree</b> holders</li>
+               <li>a <b>0.31%</b> increase in the amount of <b>masters' degree</b> holders</li><br>
+               <small>Men experienced</small><br>
+               <li>a <b>0.31%</b> increase in the amount of <b>associates' degree</b> holders</li>
+               <li>a <b>0.30%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
+               <li>a <b>0.10%</b> increase in the amount of <b>doctorate degree</b> holders</li>
+               <li>a <b>0.34%</b> increase in the amount of <b>masters' degree</b> holders</li>")
+  })
+  
   ##2012 RACE
 
   output$w2012pie <- renderPlotly({
