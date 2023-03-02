@@ -103,38 +103,48 @@ body <- dashboardBody(
                        title = "US Educational Attainment by Gender in 2010",
                        height = "500px", width = NULL,
                        tabPanel("Male", plotlyOutput("m2010pie")),
-                       tabPanel("Female", plotlyOutput("f2010pie"))
+                       tabPanel("Female", plotlyOutput("f2010pie")),
+                       tabPanel("Comparisons", htmlOutput("gen_compare_10"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Gender in 2011",
                        height = "500px", width = NULL,
                        tabPanel("Male", plotlyOutput("m2011pie")),
                        tabPanel("Female", plotlyOutput("f2011pie")),
-                       tabPanel("Interpretation", htmlOutput("gen_interpret_10"))
+                       tabPanel("Interpretation", htmlOutput("gen_interpret_11")),
+                       tabPanel("Comparisons", htmlOutput("gen_compare_11"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Gender in 2012",
                        height = "500px", width = NULL,
                        tabPanel("Male", plotlyOutput("m2012pie")),
-                       tabPanel("Female", plotlyOutput("f2012pie"))
+                       tabPanel("Female", plotlyOutput("f2012pie")),
+                       tabPanel("Interpretation", htmlOutput("gen_interpret_12")),
+                       tabPanel("Comparisons", htmlOutput("gen_compare_12"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Gender in 2013",
                        height = "500px", width = NULL,
                        tabPanel("Male", plotlyOutput("m2013pie")),
-                       tabPanel("Female", plotlyOutput("f2013pie"))
+                       tabPanel("Female", plotlyOutput("f2013pie")),
+                       tabPanel("Interpretation", htmlOutput("gen_interpret_13")),
+                       tabPanel("Comparisons", htmlOutput("gen_compare_13"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Gender in 2014",
                        height = "500px", width = NULL,
                        tabPanel("Male", plotlyOutput("m2014pie")),
-                       tabPanel("Female", plotlyOutput("f2014pie"))
+                       tabPanel("Female", plotlyOutput("f2014pie")),
+                       tabPanel("Interpretation", htmlOutput("gen_interpret_14")),
+                       tabPanel("Comparisons", htmlOutput("gen_compare_14"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Gender in 2015",
                        height = "500px", width = NULL,
                        tabPanel("Male", plotlyOutput("m2015pie")),
-                       tabPanel("Female", plotlyOutput("f2015pie"))
+                       tabPanel("Female", plotlyOutput("f2015pie")),
+                       tabPanel("Interpretation", htmlOutput("gen_interpret_15")),
+                       tabPanel("Comparisons", htmlOutput("gen_compare_15"))
                      )
               )
             )
@@ -363,7 +373,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -410,15 +420,20 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
     
   })
   
-  output$gen_interpret_10 <- renderUI({
-    paste(HTML("test"))
+  output$gen_compare_10 <- renderUI({
+    HTML("<b>In 2010:</b><br>
+               <li><b>1.57%</b> more <em>men</em> had <b>associates' degrees</b></li>
+               <li><b>0.8%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
+               <li><b>0.87%</b> more <em>men</em> had <b>masters' degrees</b></li>
+               <li><b>0.72%</b> more <em>women</em> had <b>doctorate degrees</b></li>")
+    
   })
   
   output$m2011pie <- renderPlotly({
@@ -461,7 +476,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -507,10 +522,32 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$gen_compare_11 <- renderUI({
+    HTML("<b>In 2011:</b><br>
+               <li><b>1.54%</b> more <em>men</em> had <b>associates' degrees</b></li>
+               <li><b>0.7%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
+               <li><b>0.84%</b> more <em>men</em> had <b>masters' degrees</b></li>
+               <li><b>0.68%</b> more <em>women</em> had <b>doctorate degrees</b></li>")
+  })
+  
+  output$gen_interpret_11 <- renderUI({
+    HTML("<b>From 2010 to 2011</b><br>
+               <small>Women experienced</small><br>
+               <li>a <b>0.28%</b> increase in the amount of <b>associates' degree</b> holders</li>
+               <li>a <b>0.20%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
+               <li>a <b>0.14%</b> increase in the amount of <b>doctorate degree</b> holders</li>
+               <li>a <b>0.31%</b> increase in the amount of <b>masters' degree</b> holders</li><br>
+               <small>Men experienced</small><br>
+               <li>a <b>0.31%</b> increase in the amount of <b>associates' degree</b> holders</li>
+               <li>a <b>0.30%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
+               <li>a <b>0.10%</b> increase in the amount of <b>doctorate degree</b> holders</li>
+               <li>a <b>0.34%</b> increase in the amount of <b>masters' degree</b> holders</li>")
   })
   
   output$m2012pie <- renderPlotly({
@@ -553,7 +590,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -599,10 +636,38 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$gen_compare_12 <- renderUI({
+    HTML("<b>In 2012:</b><br>
+               <ul>
+               <li><b>1.48%</b> more <em>men</em> had <b>associates' degrees</b></li>
+               <li><b>0.9%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
+               <li><b>0.94%</b> more <em>men</em> had <b>masters' degrees</b></li>
+               <li><b>0.82%</b> more <em>women</em> had <b>doctorate degrees</b></li>
+               </ul>")
+  })
+  
+  output$gen_interpret_12 <- renderUI({
+    HTML("<b>From 2011 to 2012</b><br>
+               <small>Women experienced</small><br>
+               <ul>
+               <li>a <b>0.20%</b> increase in the amount of <b>associates' degree</b> holders</li>
+               <li>a <b>0.50%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
+               <li>a <b>0.04%</b> decrease in the amount of <b>doctorate degree</b> holders</li>
+               <li>a <b>0.23%</b> increase in the amount of <b>masters' degree</b> holders</li>
+               </ul>
+               <small>Men experienced</small><br>
+               <ul>
+               <li>a <b>0.26%</b> increase in the amount of <b>associates' degree</b> holders</li>
+               <li>a <b>0.30%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
+               <li>a <b>0.10%</b> increase in the amount of <b>doctorate degree</b> holders</li>
+               <li>a <b>0.13%</b> increase in the amount of <b>masters' degree</b> holders</li>
+               </ul>")
   })
 
   output$m2013pie <- renderPlotly({
@@ -645,7 +710,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -691,10 +756,38 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$gen_compare_13 <- renderUI({
+    HTML("<b>In 2013:</b><br>
+               <ul>
+               <li><b>1.59%</b> more <em>men</em> had <b>associates' degrees</b></li>
+               <li><b>0.80%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
+               <li><b>1.08%</b> more <em>men</em> had <b>masters' degrees</b></li>
+               <li><b>0.79%</b> more <em>women</em> had <b>doctorate degrees</b></li>
+               </ul>")
+  })
+  
+  output$gen_interpret_13 <- renderUI({
+    HTML("<b>From 2012 to 2013</b><br>
+               <small>Women experienced</small><br>
+               <ul>
+               <li>a <b>0.21%</b> increase in the amount of <b>associates' degree</b> holders</li>
+               <li>a <b>0.10%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
+               <li>a <b>0.08%</b> increase in the amount of <b>doctorate degree</b> holders</li>
+               <li>a <b>0.41%</b> increase in the amount of <b>masters' degree</b> holders</li>
+               </ul>
+               <small>Men experienced</small><br>
+               <ul>
+               <li>a <b>0.10%</b> increase in the amount of <b>associates' degree</b> holders</li>
+               <li>a <b>0.20%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
+               <li>a <b>0.05%</b> increase in the amount of <b>doctorate degree</b> holders</li>
+               <li>a <b>0.27%</b> increase in the amount of <b>masters' degree</b> holders</li>
+               </ul>")
   })
   
   output$m2014pie <- renderPlotly({
@@ -738,7 +831,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -785,10 +878,38 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$gen_compare_14 <- renderUI({
+    HTML("<b>In 2014:</b><br>
+               <ul>
+               <li><b>1.89%</b> more <em>men</em> had <b>associates' degrees</b></li>
+               <li><b>1.10%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
+               <li><b>1.26%</b> more <em>men</em> had <b>masters' degrees</b></li>
+               <li><b>0.81%</b> more <em>women</em> had <b>doctorate degrees</b></li>
+               </ul>")
+  })
+  
+  output$gen_interpret_14 <- renderUI({
+    HTML("<b>From 2013 to 2014</b><br>
+               <small>Women experienced</small><br>
+               <ul>
+               <li>a <b>0.12%</b> increase in the amount of <b>associates' degree</b> holders</li>
+               <li>a <b>0.30%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
+               <li>a <b>0.11%</b> increase in the amount of <b>doctorate degree</b> holders</li>
+               <li>a <b>0.22%</b> increase in the amount of <b>masters' degree</b> holders</li>
+               </ul>
+               <small>Men experienced</small><br>
+               <ul>
+               <li>a <b>0.18%</b> decrease in the amount of <b>associates' degree</b> holders</li>
+               <li>a <b>no change</b> in the amount of <b>bachelors' degree</b> holders</li>
+               <li>a <b>0.13%</b> increase in the amount of <b>doctorate degree</b> holders</li>
+               <li>a <b>0.04%</b> increase in the amount of <b>masters' degree</b> holders</li>
+               </ul>")
   })
   
   output$m2015pie <- renderPlotly({
@@ -832,7 +953,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -880,9 +1001,38 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$gen_compare_15 <- renderUI({
+    HTML("<b>In 2015:</b><br>
+               <ul>
+               <li><b>1.93%</b> more <em>men</em> had <b>associates' degrees</b></li>
+               <li><b>0.10%</b> more <em>women</em> had <b>bachelors' degrees</b></li>
+               <li><b>2.55%</b> more <em>men</em> had <b>masters' degrees</b></li>
+               <li><b>0.98%</b> more <em>women</em> had <b>doctorate degrees</b></li>
+               </ul>")
+  })
+  
+  output$gen_interpret_15 <- renderUI({
+    HTML("<b>From 2014 to 2015</b><br>
+               <small>Women experienced</small><br>
+               <ul>
+               <li>a <b>0.21%</b> increase in the amount of <b>associates' degree</b> holders</li>
+               <li>a <b>2.40%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
+               <li>a <b>0.22%</b> increase in the amount of <b>doctorate degree</b> holders</li>
+               <li>a <b>3.04%</b> increase in the amount of <b>masters' degree</b> holders</li>
+               </ul>
+               <small>Men experienced</small><br>
+               <ul>
+               <li>a <b>0.17%</b> increase in the amount of <b>associates' degree</b> holders</li>
+               <li>a <b>3.60%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
+               <li>a <b>0.39%</b> increase in the amount of <b>doctorate degree</b> holders</li>
+               <li>a <b>1.75%</b> increase in the amount of <b>masters' degree</b> holders</li>
+               </ul>")
   })
   
 #######################################################
@@ -957,7 +1107,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1027,7 +1177,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1097,7 +1247,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1168,7 +1318,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1239,7 +1389,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1310,7 +1460,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1384,7 +1534,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1456,7 +1606,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1527,7 +1677,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1599,7 +1749,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1671,7 +1821,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1743,7 +1893,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1816,7 +1966,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1887,7 +2037,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -1957,7 +2107,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2029,7 +2179,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2101,7 +2251,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2173,7 +2323,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2245,7 +2395,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2317,7 +2467,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2388,7 +2538,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2459,7 +2609,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2530,7 +2680,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2601,7 +2751,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2676,7 +2826,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2748,7 +2898,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2821,7 +2971,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2893,7 +3043,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -2966,7 +3116,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3039,7 +3189,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3113,7 +3263,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3184,7 +3334,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3255,7 +3405,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3327,7 +3477,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3399,7 +3549,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3471,7 +3621,7 @@ server <- function(input, output) {
 
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3530,7 +3680,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3586,7 +3736,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3642,7 +3792,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3698,7 +3848,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3754,7 +3904,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3812,7 +3962,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3868,7 +4018,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3924,7 +4074,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -3980,7 +4130,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4036,7 +4186,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4094,7 +4244,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4150,7 +4300,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4206,7 +4356,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4262,7 +4412,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4318,7 +4468,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4377,7 +4527,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4434,7 +4584,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4490,7 +4640,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4547,7 +4697,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4604,7 +4754,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4664,7 +4814,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4721,7 +4871,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4778,7 +4928,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4835,7 +4985,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4892,7 +5042,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -4949,7 +5099,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -5006,7 +5156,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -5065,7 +5215,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -5123,7 +5273,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -5180,7 +5330,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -5238,7 +5388,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -5295,7 +5445,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -5353,7 +5503,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
@@ -5410,7 +5560,7 @@ server <- function(input, output) {
     
     plot_ly(data=df,values=~n,labels=~factor(EDUC),
             textposition="outside",textinfo = 'label+percent',
-            hoverinfo='label+percent',outsidetextfont = list(color = 'red'),
+            outsidetextfont = list(color = 'red'),
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
