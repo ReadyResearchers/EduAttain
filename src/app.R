@@ -18,9 +18,6 @@
 
 # install libs
 
-require(foreign)
-require(MASS)
-
 library(shiny)
 library(shinydashboard)
 library(RSQLite)
@@ -29,6 +26,7 @@ library(tidyverse)
 library(ggplot2)
 library(plotly)
 library(rsconnect)
+library(VGAM)
 
 # setting database path
 #db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
@@ -111,7 +109,6 @@ body <- dashboardBody(
                        height = "500px", width = NULL,
                        tabPanel("Male", plotlyOutput("m2011pie")),
                        tabPanel("Female", plotlyOutput("f2011pie")),
-                       tabPanel("Interpretation", htmlOutput("gen_interpret_11")),
                        tabPanel("Comparisons", htmlOutput("gen_compare_11"))
                      ),
                      tabBox(
@@ -119,7 +116,6 @@ body <- dashboardBody(
                        height = "500px", width = NULL,
                        tabPanel("Male", plotlyOutput("m2012pie")),
                        tabPanel("Female", plotlyOutput("f2012pie")),
-                       tabPanel("Interpretation", htmlOutput("gen_interpret_12")),
                        tabPanel("Comparisons", htmlOutput("gen_compare_12"))
                      ),
                      tabBox(
@@ -127,7 +123,6 @@ body <- dashboardBody(
                        height = "500px", width = NULL,
                        tabPanel("Male", plotlyOutput("m2013pie")),
                        tabPanel("Female", plotlyOutput("f2013pie")),
-                       tabPanel("Interpretation", htmlOutput("gen_interpret_13")),
                        tabPanel("Comparisons", htmlOutput("gen_compare_13"))
                      ),
                      tabBox(
@@ -135,7 +130,6 @@ body <- dashboardBody(
                        height = "500px", width = NULL,
                        tabPanel("Male", plotlyOutput("m2014pie")),
                        tabPanel("Female", plotlyOutput("f2014pie")),
-                       tabPanel("Interpretation", htmlOutput("gen_interpret_14")),
                        tabPanel("Comparisons", htmlOutput("gen_compare_14"))
                      ),
                      tabBox(
@@ -143,7 +137,6 @@ body <- dashboardBody(
                        height = "500px", width = NULL,
                        tabPanel("Male", plotlyOutput("m2015pie")),
                        tabPanel("Female", plotlyOutput("f2015pie")),
-                       tabPanel("Interpretation", htmlOutput("gen_interpret_15")),
                        tabPanel("Comparisons", htmlOutput("gen_compare_15"))
                      )
               )
@@ -172,9 +165,8 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2011pie")),
                        tabPanel("Asian", plotlyOutput("a2011pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2011pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2011pie")),
-                       tabPanel("Interpretation", htmlOutput("race_interpret_11")),
-                       tabPanel("Comparisons", htmlOutput("race_compare_11"))
+                       tabPanel("Mixed Race", plotlyOutput("o2011pie"))
+                       # tabPanel("Comparisons", htmlOutput("race_compare_11"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Race in 2012",
@@ -185,8 +177,7 @@ body <- dashboardBody(
                        tabPanel("Asian", plotlyOutput("a2012pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2012pie")),
                        tabPanel("Mixed Race", plotlyOutput("o2012pie")),
-                       tabPanel("Interpretation", htmlOutput("race_interpret_12")),
-                       tabPanel("Comparisons", htmlOutput("race_compare_12"))
+                       # tabPanel("Comparisons", htmlOutput("race_compare_12"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Race in 2013",
@@ -196,9 +187,8 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2013pie")),
                        tabPanel("Asian", plotlyOutput("a2013pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2013pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2013pie")),
-                       tabPanel("Interpretation", htmlOutput("race_interpret_13")),
-                       tabPanel("Comparisons", htmlOutput("race_compare_13"))
+                       tabPanel("Mixed Race", plotlyOutput("o2013pie"))
+                       # tabPanel("Comparisons", htmlOutput("race_compare_13"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Race in 2014",
@@ -208,9 +198,8 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2014pie")),
                        tabPanel("Asian", plotlyOutput("a2014pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2014pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2014pie")),
-                       tabPanel("Interpretation", htmlOutput("race_interpret_14")),
-                       tabPanel("Comparisons", htmlOutput("race_compare_14"))
+                       tabPanel("Mixed Race", plotlyOutput("o2014pie"))
+                       # tabPanel("Comparisons", htmlOutput("race_compare_14"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Race in 2015",
@@ -220,9 +209,8 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2015pie")),
                        tabPanel("Asian", plotlyOutput("a2015pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2015pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2015pie")),
-                       tabPanel("Interpretation", htmlOutput("race_interpret_15")),
-                       tabPanel("Comparisons", htmlOutput("race_compare_15"))
+                       tabPanel("Mixed Race", plotlyOutput("o2015pie"))
+                       # tabPanel("Comparisons", htmlOutput("race_compare_15"))
                      )
               )
             )
@@ -293,7 +281,7 @@ body <- dashboardBody(
             )
     ),
     tabItem(tabName = "reg",
-            h2("Ordinal Logistic Regression Results"), 
+            h2("Generalized Ordinal Regression Results"), 
             box(
               title = "Model Summary", status = "primary", solidHeader = TRUE, collapsible = FALSE, verbatimTextOutput("summary"))
     )
@@ -332,8 +320,8 @@ server <- function(input, output) {
   
   output$description <- renderUI({
     HTML(paste("<b>EduAttain</b>, leverages data from <a href='https://cps.ipums.org/cps/index.shtml'>IPUMS</a>, to assess how an individual's <em>race, gender, or Hispanic ethnicity</em> influence the level of education attained. <br>
-               <br> This project is divided into two main sections: <em>Descriptive Statistics</em> and <em>Statistical Analysis</em>. <br> For the descriptive statistics, barplots based on counts will depict how
-               educational attainment varies by race, gender, and Hispanic ethnicity over each survey year. For the statistical analysis, the statistical relationship between educational attainment and each of the explanatory variables will be tested using an ordinal logistic regression 
+               <br> This project is divided into two main sections: <em>Descriptive Statistics</em> and <em>Statistical Analysis</em>. <br> For the descriptive statistics, pie charts based on population percentages will depict how
+               educational attainment varies by race, gender, and Hispanic ethnicity over each survey year. For the statistical analysis, the statistical relationship between educational attainment and each of the explanatory variables will be tested using an generalized ordinal regression 
                <br> <br>The source code for this project is stored in a <a href='https://github.com/ReadyResearchers/EduAttain'>GitHub Repository</a> that can be accessed for review of the code, adhering to fair use practices."))
   })
   
@@ -547,20 +535,6 @@ server <- function(input, output) {
                <li><b>0.68%</b> more <em>women</em> had <b>doctorate degrees</b></li>")
   })
   
-  output$gen_interpret_11 <- renderUI({
-    HTML("<b>From 2010 to 2011</b><br>
-               <small>Women experienced</small><br>
-               <li>a <b>0.28%</b> increase in the amount of <b>associates' degree</b> holders</li>
-               <li>a <b>0.20%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
-               <li>a <b>0.14%</b> increase in the amount of <b>doctorate degree</b> holders</li>
-               <li>a <b>0.31%</b> increase in the amount of <b>masters' degree</b> holders</li><br>
-               <small>Men experienced</small><br>
-               <li>a <b>0.31%</b> increase in the amount of <b>associates' degree</b> holders</li>
-               <li>a <b>0.30%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
-               <li>a <b>0.10%</b> increase in the amount of <b>doctorate degree</b> holders</li>
-               <li>a <b>0.34%</b> increase in the amount of <b>masters' degree</b> holders</li>")
-  })
-  
   output$m2012pie <- renderPlotly({
     # query to get all data from 2011 for sex + educ attain
     d2012 <- dbGetQuery(conn,
@@ -660,24 +634,6 @@ server <- function(input, output) {
                <li><b>0.9%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
                <li><b>0.94%</b> more <em>men</em> had <b>masters' degrees</b></li>
                <li><b>0.82%</b> more <em>women</em> had <b>doctorate degrees</b></li>
-               </ul>")
-  })
-  
-  output$gen_interpret_12 <- renderUI({
-    HTML("<b>From 2011 to 2012</b><br>
-               <small>Women experienced</small><br>
-               <ul>
-               <li>a <b>0.20%</b> increase in the amount of <b>associates' degree</b> holders</li>
-               <li>a <b>0.50%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
-               <li>a <b>0.04%</b> decrease in the amount of <b>doctorate degree</b> holders</li>
-               <li>a <b>0.23%</b> increase in the amount of <b>masters' degree</b> holders</li>
-               </ul>
-               <small>Men experienced</small><br>
-               <ul>
-               <li>a <b>0.26%</b> increase in the amount of <b>associates' degree</b> holders</li>
-               <li>a <b>0.30%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
-               <li>a <b>0.10%</b> increase in the amount of <b>doctorate degree</b> holders</li>
-               <li>a <b>0.13%</b> increase in the amount of <b>masters' degree</b> holders</li>
                </ul>")
   })
 
@@ -780,24 +736,6 @@ server <- function(input, output) {
                <li><b>0.80%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
                <li><b>1.08%</b> more <em>men</em> had <b>masters' degrees</b></li>
                <li><b>0.79%</b> more <em>women</em> had <b>doctorate degrees</b></li>
-               </ul>")
-  })
-  
-  output$gen_interpret_13 <- renderUI({
-    HTML("<b>From 2012 to 2013</b><br>
-               <small>Women experienced</small><br>
-               <ul>
-               <li>a <b>0.21%</b> increase in the amount of <b>associates' degree</b> holders</li>
-               <li>a <b>0.10%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
-               <li>a <b>0.08%</b> increase in the amount of <b>doctorate degree</b> holders</li>
-               <li>a <b>0.41%</b> increase in the amount of <b>masters' degree</b> holders</li>
-               </ul>
-               <small>Men experienced</small><br>
-               <ul>
-               <li>a <b>0.10%</b> increase in the amount of <b>associates' degree</b> holders</li>
-               <li>a <b>0.20%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
-               <li>a <b>0.05%</b> increase in the amount of <b>doctorate degree</b> holders</li>
-               <li>a <b>0.27%</b> increase in the amount of <b>masters' degree</b> holders</li>
                </ul>")
   })
   
@@ -905,24 +843,6 @@ server <- function(input, output) {
                </ul>")
   })
   
-  output$gen_interpret_14 <- renderUI({
-    HTML("<b>From 2013 to 2014</b><br>
-               <small>Women experienced</small><br>
-               <ul>
-               <li>a <b>0.12%</b> increase in the amount of <b>associates' degree</b> holders</li>
-               <li>a <b>0.30%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
-               <li>a <b>0.11%</b> increase in the amount of <b>doctorate degree</b> holders</li>
-               <li>a <b>0.22%</b> increase in the amount of <b>masters' degree</b> holders</li>
-               </ul>
-               <small>Men experienced</small><br>
-               <ul>
-               <li>a <b>0.18%</b> decrease in the amount of <b>associates' degree</b> holders</li>
-               <li>a <b>no change</b> in the amount of <b>bachelors' degree</b> holders</li>
-               <li>a <b>0.13%</b> increase in the amount of <b>doctorate degree</b> holders</li>
-               <li>a <b>0.04%</b> increase in the amount of <b>masters' degree</b> holders</li>
-               </ul>")
-  })
-  
   output$m2015pie <- renderPlotly({
     # query to get all data from 2011 for sex + educ attain
     d2015 <- dbGetQuery(conn,
@@ -1025,24 +945,6 @@ server <- function(input, output) {
                <li><b>0.10%</b> more <em>women</em> had <b>bachelors' degrees</b></li>
                <li><b>2.55%</b> more <em>men</em> had <b>masters' degrees</b></li>
                <li><b>0.98%</b> more <em>women</em> had <b>doctorate degrees</b></li>
-               </ul>")
-  })
-  
-  output$gen_interpret_15 <- renderUI({
-    HTML("<b>From 2014 to 2015</b><br>
-               <small>Women experienced</small><br>
-               <ul>
-               <li>a <b>0.21%</b> increase in the amount of <b>associates' degree</b> holders</li>
-               <li>a <b>2.40%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
-               <li>a <b>0.22%</b> increase in the amount of <b>doctorate degree</b> holders</li>
-               <li>a <b>3.04%</b> increase in the amount of <b>masters' degree</b> holders</li>
-               </ul>
-               <small>Men experienced</small><br>
-               <ul>
-               <li>a <b>0.17%</b> increase in the amount of <b>associates' degree</b> holders</li>
-               <li>a <b>3.60%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
-               <li>a <b>0.39%</b> increase in the amount of <b>doctorate degree</b> holders</li>
-               <li>a <b>1.75%</b> increase in the amount of <b>masters' degree</b> holders</li>
                </ul>")
   })
   
@@ -1479,7 +1381,8 @@ server <- function(input, output) {
   
   output$race_compare_10 <- renderUI({
     HTML("<b>In 2010:</b><br><br>
-          <small>Conclusions</small><br>
+          <strong>Conclusions</strong><br>
+          <ul>
                <li>The <b>white</b> population in this sample accounted for a higher proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders than the 
          <em>black, American Indian, Pacific Islander, and mixed race</em> populations. In comparing White and Asian rates of post-secondary education, the <b>Asian</b> population
          accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the <em>White</em> population.</li>
@@ -1487,7 +1390,13 @@ server <- function(input, output) {
          <em>American Indian</em> population. When compared to other racial group's rates of post-secondary education, the <b>Black</b> population
          accounted for a smaller proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders. The only exception to this is the slight advantage in associate degree and master degree attainment,
          compared to the <em>Pacific Islander and mixed race</em> populations.</li>
-         <li><li>")
+         <li>The <b>American Indian</b> population accounted for the <em>lowest rates of post-secondary education</em>, across all levels, 
+         when compared to all of the other racial groups in the sample.</li>
+         <li>The <b>Asian</b> population in this sample accounted for the <em>highest rates of post-secondary education</em> when compared to all other racial groups, with the exception of the <em>mixed race and White</em> populations' slight advantage in <b>associate degree </b>attainment.</li>
+         <li>The <b>Pacific Islander</b> population had a lower proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders when compared to the <em>White, Asian, and mixed race</em> populations, while maintaining an advantage in these levels of educational 
+         attainment when compared to the <em>Black and American Indian</em> populations.</li>
+         </ul>
+         <br><small>*The mixed race population in this sample accounts for every possible combination of these races, as well as, any unspecified mixed race values.</small>")
   })
 
   ## 2011 RACE
@@ -1923,27 +1832,14 @@ server <- function(input, output) {
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
 
-  output$race_compare_11 <- renderUI({
-    HTML("<b>In 2011:</b><br>
-               <li><b>1.54%</b> more <em>men</em> had <b>associates' degrees</b></li>
-               <li><b>0.7%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
-               <li><b>0.84%</b> more <em>men</em> had <b>masters' degrees</b></li>
-               <li><b>0.68%</b> more <em>women</em> had <b>doctorate degrees</b></li>")
-  })
-  
-  output$race_interpret_11 <- renderUI({
-    HTML("<b>From 2010 to 2011</b><br>
-               <small>Women experienced</small><br>
-               <li>a <b>0.28%</b> increase in the amount of <b>associates' degree</b> holders</li>
-               <li>a <b>0.20%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
-               <li>a <b>0.14%</b> increase in the amount of <b>doctorate degree</b> holders</li>
-               <li>a <b>0.31%</b> increase in the amount of <b>masters' degree</b> holders</li><br>
-               <small>Men experienced</small><br>
-               <li>a <b>0.31%</b> increase in the amount of <b>associates' degree</b> holders</li>
-               <li>a <b>0.30%</b> increase in the amount of <b>bachelors' degree</b> holders</li>
-               <li>a <b>0.10%</b> increase in the amount of <b>doctorate degree</b> holders</li>
-               <li>a <b>0.34%</b> increase in the amount of <b>masters' degree</b> holders</li>")
-  })
+  # output$race_compare_11 <- renderUI({
+  #   HTML("<b>In 2011:</b><br>
+  #              <li><b>1.54%</b> more <em>men</em> had <b>associates' degrees</b></li>
+  #              <li><b>0.7%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
+  #              <li><b>0.84%</b> more <em>men</em> had <b>masters' degrees</b></li>
+  #              <li><b>0.68%</b> more <em>women</em> had <b>doctorate degrees</b></li>")
+  # })
+  # 
   
   ##2012 RACE
 
@@ -5619,25 +5515,25 @@ server <- function(input, output) {
     
     
     # all yrs
-    result$EDUC[result$EDUC == "10"]<-"Grades 1-4"
+    result$EDUC[result$EDUC == "10"]<-"Elementary School"
     result$EDUC[result$EDUC == "111"]<-"Bachelor's Degree"
     result$EDUC[result$EDUC == "123"]<-"Master's Degree"
     result$EDUC[result$EDUC == "124"]<-"Professional School Degree"
     result$EDUC[result$EDUC == "125"]<-"Doctorate Degree"
     result$EDUC[result$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    result$EDUC[result$EDUC == "20"]<-"Grades 5-6"
-    result$EDUC[result$EDUC == "30"]<-"Grades 7-8"
-    result$EDUC[result$EDUC == "40"]<-"HS, Grade 9"
-    result$EDUC[result$EDUC == "50"]<-"HS, Grade 10"
-    result$EDUC[result$EDUC == "60"]<-"HS, Grade 11"
-    result$EDUC[result$EDUC == "71"]<-"HS, Grade 12, no diploma"
+    result$EDUC[result$EDUC == "20"]<-"Middle School"
+    result$EDUC[result$EDUC == "30"]<-"Middle School"
+    result$EDUC[result$EDUC == "40"]<-"High School, no diploma"
+    result$EDUC[result$EDUC == "50"]<-"High School, no diploma"
+    result$EDUC[result$EDUC == "60"]<-"High School, no diploma"
+    result$EDUC[result$EDUC == "71"]<-"High School, no diploma"
     result$EDUC[result$EDUC == "73"]<-"HS Diploma or Equiv."
     result$EDUC[result$EDUC == "81"]<-"Some college, no degree"
     result$EDUC[result$EDUC == "91"]<-"Occupational/Vocational Program Degree"
     result$EDUC[result$EDUC == "92"]<-"Associate's Degree, Academic"
     
     ##### converting educ levels to factor
-    result$EDUC <- factor(result$EDUC, levels=c("None/Preschool/Kindergarten","Grades 1-4","Grades 5-6","Grades 7-8","HS, Grade 9", "HS, Grade 10", "HS, Grade 11", "HS, Grade 12, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
+    result$EDUC <- factor(result$EDUC, levels=c("None/Preschool/Kindergarten","Elementary School","Middle School","High School, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
     
     
     # filtering
@@ -5667,31 +5563,15 @@ server <- function(input, output) {
     # hispanic filtering
     result$HISPAN[result$HISPAN == "0"]<-"000"
     
-    #dummy variable recoding
+    # to fix error: response should be ordinal -- see ordered() 
+    result$EDUC <- ordered(result$EDUC)
     
-    # sex
-    result$female <- ifelse(result$SEX == "2", 1, 0)
+    ## sample data
+    sample_result <- result[sample(nrow(result), 10000), ]
     
-    # race
-    result$black <- ifelse(result$RACE == "200", 1, 0)
-    result$amer_indian <- ifelse(result$RACE == "300", 1, 0)
-    result$asian <- ifelse(result$RACE == "651", 1, 0)
-    result$islander <- ifelse(result$RACE == "652", 1, 0)
-    result$mixed_race <- ifelse(result$RACE == "999", 1, 0)
+    model <- vglm(EDUC ~ RACE + SEX + HISPAN, family = cumulative(parallel = TRUE), data = sample_result)
     
-    # hispanic
-    result$mex <- ifelse(result$HISPAN == "100", 1, 0)
-    result$pr <- ifelse(result$HISPAN == "200", 1, 0)
-    result$cuban <- ifelse(result$HISPAN == "300", 1, 0)
-    result$dom <- ifelse(result$HISPAN == "400", 1, 0)
-    result$salv <- ifelse(result$HISPAN == "500", 1, 0)
-    result$otherhispan <- ifelse(result$HISPAN == "600", 1, 0)
-    result$centralamer <- ifelse(result$HISPAN == "611", 1, 0)
-    result$southamer <- ifelse(result$HISPAN == "612", 1, 0)
-    
-    
-    ## fit ordered logit model and store results 'm'
-    model <- polr(EDUC ~ female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan + centralamer + southamer, data = result, Hess=TRUE, method = c("logistic"))
+    # can also set the family as multinomial for multinomial log regression
     
     # summary
     summary(model)
