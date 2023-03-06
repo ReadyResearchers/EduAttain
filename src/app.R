@@ -95,6 +95,9 @@ body <- dashboardBody(
     ),
     tabItem(tabName = "genxedu",
             h2("Educational Attainment by Gender from 2010 to 2015"),
+            box(
+              title = NULL, status = "primary", solidHeader = FALSE, collapsible = FALSE,
+              htmlOutput("gen_intro"), width = 12),
             fluidRow(
               column(width = 12,
                      tabBox(
@@ -144,6 +147,9 @@ body <- dashboardBody(
     ),
     tabItem(tabName = "racxedu",
             h2("Educational Attainment by Race from 2010 to 2015"),
+            box(
+              title = NULL, status = "primary", solidHeader = FALSE, collapsible = FALSE,
+              htmlOutput("race_intro"), width = 12),
             fluidRow(
               column(width = 12,
                      tabBox(
@@ -165,8 +171,8 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2011pie")),
                        tabPanel("Asian", plotlyOutput("a2011pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2011pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2011pie"))
-                       # tabPanel("Comparisons", htmlOutput("race_compare_11"))
+                       tabPanel("Mixed Race", plotlyOutput("o2011pie")),
+                       tabPanel("Comparisons", htmlOutput("race_compare_11"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Race in 2012",
@@ -177,7 +183,7 @@ body <- dashboardBody(
                        tabPanel("Asian", plotlyOutput("a2012pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2012pie")),
                        tabPanel("Mixed Race", plotlyOutput("o2012pie")),
-                       # tabPanel("Comparisons", htmlOutput("race_compare_12"))
+                       tabPanel("Comparisons", htmlOutput("race_compare_12"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Race in 2013",
@@ -187,8 +193,8 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2013pie")),
                        tabPanel("Asian", plotlyOutput("a2013pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2013pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2013pie"))
-                       # tabPanel("Comparisons", htmlOutput("race_compare_13"))
+                       tabPanel("Mixed Race", plotlyOutput("o2013pie")),
+                       tabPanel("Comparisons", htmlOutput("race_compare_13"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Race in 2014",
@@ -198,8 +204,8 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2014pie")),
                        tabPanel("Asian", plotlyOutput("a2014pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2014pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2014pie"))
-                       # tabPanel("Comparisons", htmlOutput("race_compare_14"))
+                       tabPanel("Mixed Race", plotlyOutput("o2014pie")),
+                       tabPanel("Comparisons", htmlOutput("race_compare_14"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Race in 2015",
@@ -209,8 +215,8 @@ body <- dashboardBody(
                        tabPanel("American Indian", plotlyOutput("ai2015pie")),
                        tabPanel("Asian", plotlyOutput("a2015pie")),
                        tabPanel("Pacific Islander", plotlyOutput("pi2015pie")),
-                       tabPanel("Mixed Race", plotlyOutput("o2015pie"))
-                       # tabPanel("Comparisons", htmlOutput("race_compare_15"))
+                       tabPanel("Mixed Race", plotlyOutput("o2015pie")),
+                       tabPanel("Comparisons", htmlOutput("race_compare_15"))
                      )
               )
             )
@@ -281,9 +287,16 @@ body <- dashboardBody(
             )
     ),
     tabItem(tabName = "reg",
-            h2("Generalized Ordinal Regression Results"), 
-            box(
-              title = "Model Summary", status = "primary", solidHeader = TRUE, collapsible = FALSE, verbatimTextOutput("summary"))
+            h2("Statistical Analysis"), 
+            fluidRow(
+              column(width = 12,
+                     tabBox(
+                         title = "Summary", width = NULL,
+                         tabPanel("Generalized Ordinal Regression", verbatimTextOutput("summary")),
+                         tabPanel("Odds Ratio", verbatimTextOutput("odds"))
+                     )
+                  )
+            )
     )
   )
 )
@@ -331,6 +344,11 @@ server <- function(input, output) {
 #########################################################
   
 ###################### GENDER ###########################
+  
+  output$gen_intro <- renderUI({
+    HTML("The comparisons in this section were computed by observing plots and recording their values on a spreadsheet. These were used to compare population percentages to see differences between identity groups at every level of post-secondary education. <br><br>
+         <small>*Any miscalculations may be a result of manual entry</small><br><br> These computations can be observed <a href='https://docs.google.com/spreadsheets/d/1OP41Q0Z2Lx1bguxgef4uCV0v7Qi5m5RwRZEX-9lbsIk/edit?usp=sharing'>here</a>.")
+  })
   
   output$m2010pie <- renderPlotly({
     # query to get all data from 2010 for sex + educ attain
@@ -954,6 +972,12 @@ server <- function(input, output) {
   
 ###################### RACE ###########################
   
+  output$race_intro <- renderUI({
+    HTML("The comparisons in this section were computed by observing plots and recording their values on a spreadsheet. These were used to compare population percentages to see differences between identity groups at every level of post-secondary education. <br><br>
+         <small>*Any miscalculations may be a result of manual entry, The mixed race population in this sample accounts for every possible combination of these races, as well as, any unspecified mixed race values</small><br><br> These computations can be observed 
+         <a href='https://docs.google.com/spreadsheets/d/1fl_vnczZZVo979qkT76KnCYwJwA4vlvJS4w6O9scZBA/edit?usp=sharing'>here</a>.")
+  })
+  
   ##2010 RACE
 
   output$w2010pie <- renderPlotly({
@@ -1395,8 +1419,7 @@ server <- function(input, output) {
          <li>The <b>Asian</b> population in this sample accounted for the <em>highest rates of post-secondary education</em> when compared to all other racial groups, with the exception of the <em>mixed race and White</em> populations' slight advantage in <b>associate degree </b>attainment.</li>
          <li>The <b>Pacific Islander</b> population had a lower proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders when compared to the <em>White, Asian, and mixed race</em> populations, while maintaining an advantage in these levels of educational 
          attainment when compared to the <em>Black and American Indian</em> populations.</li>
-         </ul>
-         <br><small>*The mixed race population in this sample accounts for every possible combination of these races, as well as, any unspecified mixed race values.</small>")
+         </ul>")
   })
 
   ## 2011 RACE
@@ -1832,14 +1855,40 @@ server <- function(input, output) {
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
 
-  # output$race_compare_11 <- renderUI({
-  #   HTML("<b>In 2011:</b><br>
-  #              <li><b>1.54%</b> more <em>men</em> had <b>associates' degrees</b></li>
-  #              <li><b>0.7%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
-  #              <li><b>0.84%</b> more <em>men</em> had <b>masters' degrees</b></li>
-  #              <li><b>0.68%</b> more <em>women</em> had <b>doctorate degrees</b></li>")
-  # })
-  # 
+  output$race_compare_11 <- renderUI({
+    HTML("<b>In 2011:</b><br><br>
+               <strong>Conclusions</strong><br>
+               <ul>
+               
+               <li>The <b>White</b> population in this sample accounted for a higher proportion of <b>associates', 
+               bachelors', masters', and doctorate degree</b> holders than the <em>Black, American Indian, Pacific Islander,
+               and mixed race</em> populations, with the exception of <em>Black and Native American</em> populations' slight advantage 
+               in <b>associate degree</b> attainment. In comparing <em>White and Asian</em> rates of post-secondary education, the Asian 
+               population accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the White population.</li>
+               
+               <li>The <b>Black</b> population in this sample accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders 
+               than the <em>American Indian</em> population and had a slight disadvantage in the proportion of <b>associates' degree</b> holders. 
+               When compared to the <em>Asian</em> population, the Black population had a slightly higher proportion of <b>associates' degree</b> holders and
+               otherwise comparatively had a lower proportion of bachelors', masters' and doctoral degree holders. Compared to the <em>Pacific Islander</em> population,
+               the Black population had a higher proportion of <b>associates', masters', and doctoral degree</b> holders, while having a lower proportion of bachelors' degree holders.
+               When compared to the <em>mixed race population</em>, the Black population only maintained an advantage in the attainment of masters' degrees. 
+               The Black population in this sample accounted for a lower proportion of degree attainment across <b>all levels of post-secondary education</b> than the <em>White</em> population.</li>
+               
+               <li>The <b>American Indian</b> population had a slight advantage in the percentage of <b>associate degree</b> holders when compared to the <em>White, Black, Asian, and Pacific Islander</em> populations,
+                though were disadvantaged in the attainment of bachelors', masters', and doctoral degrees compared to these same populations. When compared to the <em>mixed race</em> population, the American
+                Indian population accounted for a lower proportion of post-secondary degree attainment, across all levels of postsecondary education.</li>
+               
+               <li>The <b>Asian</b> population in this sample accounted for the highest proportion of <b>bachelors', masters', and doctoral degree</b> holders when compared to all other racial groups, but accounted for a lower 
+               proportion of associates' degree holders when compared to these same populations.</li>
+               
+               <li>The <b>Pacific Islander</b> population had a lower proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders when compared to the <em>mixed race and White</em> populations. 
+               Compared to the <em>Asian</em> population, the Pacific Islander population had a higher proportion of only <b>associates' degree</b> holders. The Pacific Islander population had a higher proportion of <b>associates',
+               masters', and doctoral degree</b> holders than the <em>American Indian</em> population, though the American Indian population had a higher proportion of bachelors' degree holders. Compared to the <em>Black</em> population,
+               the Pacific Islander population only maintained an advantage in the proportion of <b>bachelors' degree</b> holders.</li>
+               
+               </ul>")
+  })
+
   
   ##2012 RACE
 
@@ -2270,6 +2319,34 @@ server <- function(input, output) {
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
+  
+  output$race_compare_12 <- renderUI({
+    HTML("<b>In 2012:</b><br><br>
+               <strong>Conclusions</strong><br>
+               <ul>
+               
+               <li>The <b>White</b> population in this sample accounted for a higher proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders 
+               than the <em>American Indian, Pacific Islander, mixed race, and Black</em> populations, with the exception of <em>mixed race</em> population's slight advantage
+               in <b>associate degree</b> attainment. In comparing <em>White and Asian</em> rates of post-secondary education, the Asian population accounted for a higher proportion
+               of <b>bachelors', masters', and doctorate degree</b> holders than the White population.</li>
+               
+               <li>The <b>Black</b> population in this sample accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the <em>American Indian</em> population and had a slight disadvantage in the proportion of <em>associates'
+               degree</em> holders. When compared to the <em>Asian</em> population, the Black population had a slightly higher proportion of <b>associates' degree</b> holders and otherwise comparatively had a lower proportion of <b>bachelors', masters' and doctoral
+               degree</b> holders. Compared to the <em>Pacific Islander</em> population, the Black population had a higher proportion of <b>associates', masters', and doctoral degree</b> holders, while having a lower proportion of <b>bachelors' degree</b> holders. 
+               When compared to the <em>mixed race</em> population, the Black population only maintained an advantage in the attainment of <b>doctoral degrees</b>. The Black population in this sample accounted for a <b>lower proportion of degree attainment 
+               across all levels of post-secondary education</b> compared to the <em>White</em> population.</li>
+               
+               <li>The <b>American Indian</b> population in this sample accounted for a higher proportion of <b>associates', doctorate, and masters' degree</b> holders than the <em>Pacific Islander</em> population. In comparison, the American Indian population in this sample also accounted 
+               for a lower proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders than the <em>Black, White, mixed race, and Asian</em> populations, with the exception of their slight advantage in <b>associate degree</b> attainment when compared to the <em>Asian and Black</em> populations.</li>
+               
+               <li>The <b>Asian</b> population in this sample accounted for the highest proportion of <b>bachelors', masters', and doctoral degree</b> holders when compared to all other racial groups, but accounted for a lower 
+               proportion of associates' degree holders when compared to these same populations.</li>
+               
+               <li>The <b>Pacific Islander</b> population had a lower proportion of <b>associates', masters', and doctorate degree</b> holders when compared to the <em>mixed race, American Indian, and Black</em> populations. Compared to the <em>Asian</em> populations, the Pacific Islander population had a higher proportion of only <b>associates' degree</b> holders.
+               The <em>White</em> population had a higher proportion of degree holders, across all levels of postsecondary education, compared to the Pacific Islander population.</li>
+               
+               </ul>")
+  })
 
   ##2013 RACE
 
@@ -2699,6 +2776,33 @@ server <- function(input, output) {
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
 
+  
+  output$race_compare_13 <- renderUI({
+    HTML("<b>In 2013:</b><br><br>
+               <strong>Conclusions</strong><br>
+               <ul>
+               
+               <li>The <b>White</b> population in this sample accounted for a higher proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders than the <em>American Indian, Pacific Islander, mixed race, and Black</em> populations, with the exception of <em>Pacific Islander</em> 
+               population's slight advantage in <b>associate degree</b> attainment. In comparing <em>White and Asian</em> rates of post-secondary education, the Asian population accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the White population.</li>
+               
+               <li>The <b>Black</b> population in this sample accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the <em>American Indian</em> population and had a slight disadvantage in the proportion of <b>associates' degree</b> holders. When compared to the <em>Asian</em>
+               population, the Black population had a slightly higher proportion of <b>associates' degree</b> holders and otherwise comparatively had a lower proportion of bachelors', masters' and doctoral degree holders. Compared to the <em>Pacific Islander</em> population, the Black population had
+               a higher proportion of <b>masters' and doctoral degree</b> holders, while having a lower proportion of associates' and bachelors' degree holders. The Black population in this sample accounted for a lower proportion of degree attainment across all levels of post-secondary education
+               compared to the <em>White and mixed race</em> populations.</li>
+               
+               <li>The <b>American Indian</b> population in this sample accounted for a lower proportion of <b>associates', bachelors', masters', and doctoral degree</b> holders compared to the <em>White, mixed race, Asian, and Black</em> populations, with the exception of a slight advantage in the proportion of
+               <b>associates' degree</b> holders compared to the <em>Asian and Black</em> populations. The American Indian population had a higher proportion of <b>doctorate and masters' degree</b> holders than the <em>Pacific Islander</em> population.</li>
+               
+               <li>The <b>Asian</b> population in this sample accounted for the highest proportion of <b>bachelors', masters', and doctoral degree</b> holders when compared to all other racial groups, but accounted for a lower 
+               proportion of associates' degree holders when compared to these same populations.</li>
+               
+               <li>The <b>Pacific Islander</b> population had a lower proportion of <b>masters' and doctorate degree</b> holders when compared to the <em>American Indian and Black </em>populations. Compared to the <em>White, Asian, and mixed race</em> populations, the Pacific Islander population had a higher proportion of 
+               only <b>associates' degree</b> holders.</li>
+               
+               </ul>")
+  })
+  
+  
   ##2014 RACE
 
   output$w2014pie <- renderPlotly({
@@ -3137,6 +3241,30 @@ server <- function(input, output) {
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
 
+  output$race_compare_14 <- renderUI({
+    HTML("<b>In 2014:</b><br><br>
+               <strong>Conclusions</strong><br>
+               <ul>
+               
+               <li>The <b>White</b> population in this sample accounted for a higher proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders than the <em>American Indian, Pacific Islander, mixed race, and Black</em> populations, with the exception of <em>American Indian and mixed race</em> populations' slight advantage in <b>associate
+               degree</b> attainment. In comparing <em>White and Asian</em> rates of post-secondary education, the Asian population accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the White population.</li>
+               
+               <li>The <b>Black</b> population in this sample accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the <em>American Indian</em> population and had a slight disadvantage in the proportion of <b>associates' degree</b> holders. When compared to the <em>Asian</em> population, the Black population had a slightly
+               higher proportion of <b>associates' degree</b> holders and otherwise comparatively had a lower proportion of <b>bachelors', masters' and doctoral degree</b> holders. Compared to the <em>Pacific Islander</em> population, the Black population had a higher proportion of <b>associates', masters', and doctoral degree</b> holders, while having a lower
+               proportion of bachelors' degree holders. The Black population in this sample accounted for a higher proportion of <b>masters' degree</b> holders compared to the <em>mixed race</em> population and a <b>lower proportion of degree attainment across all levels of post-secondary education</b> when compared to the <em>White</em> population.</li>
+               
+               <li>The <b>American Indian</b> population had a lower proportion of <b>bachelors', masters', and doctoral degree</b> holders compared to the <em>White, Black, Asian, and mixed race</em> populations. Compared to the <em>Pacific Islander</em> population, the American Indian population had a higher proportion of <b>associates' and doctorate degree</b> holders.</li>
+               
+               <li>The <b>Asian</b> population in this sample accounted for the highest proportion of <b>bachelors', masters', and doctoral degree</b> holders when compared to all other racial groups, but accounted for a lower 
+               proportion of associates' degree holders when compared to these same populations.</li>
+               
+               <li>The <b>Pacific Islander</b> population in this sample accounted for a <b>lower proportion of degree holders across all levels of postsecondary education</b> compared to the <em>mixed race, White, and Asian</em> populations, with the exception of a slight advantage in the amount of <b>associates' degree</b> holders compared to the <em>Asian</em> population. 
+               Compared to the <em>Black</em> population, the Pacific Islander population had a higher proportion of <b>bachelors' degree</b> holders. When compared to the <em>American Indian</em> population, the Pacific Islander population had a higher proportion of <b>bachelors' and masters' degree</b> holders.</li>
+               
+               </ul>")
+  })
+  
+  
   ## 2015 RACE
 
   output$w2015pie <- renderPlotly({
@@ -3568,6 +3696,31 @@ server <- function(input, output) {
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
+  
+  
+  output$race_compare_15 <- renderUI({
+    HTML("<b>In 2015:</b><br><br>
+               <strong>Conclusions</strong><br>
+               <ul>
+               
+               <li>The <b>White</b> population in this sample accounted for a <b>higher proportion of degree holders across all levels of post secondary education</b> when compared to the <em>Black, American Indian, Pacific Islander, and mixed race</em> populations, with the exception of <em>American Indian, Pacific Islander, and Black</em> populations' slight advantage in <b>associate degree attainment</b> and 
+               the <em>Pacific Islander</em> population's advantage in <b>masters' degree</b> holders. In comparing <em>White and Asian</em> rates of post-secondary education, the Asian population accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the White population.</li>
+               
+               <li>The <b>Black</b> population in this sample accounted for a higher proportion of <b>associates', bachelors', and masters' degree</b> holders than the <em>American Indian</em> population. When compared to the <em>White and Asian</em> populations, the Black population had a slightly higher proportion of <b>associates' degree holders</b> and otherwise comparatively had a lower proportion of bachelors',
+               masters' and doctoral degree holders. The Black population in this sample accounted for a higher proportion of <b>masters' degree holders</b> compared to the <em>mixed race</em> population and a <b>lower proportion of degree attainment across all levels of post-secondary education</b> when compared to the <em>Pacific Islander</em> population.</li>
+               
+               <li>The <b>American Indian</b> population had a lower proportion of <b>bachelors', masters', and doctoral degree</b> holders compared to the <em>White, Black, Asian, Pacific Islander, and mixed race</em> populations, with the exception of a slight advantage in the proportion of <b>associates' degree</b> holders compared to the <em>White and Asian</em> populations and in the proportion of <b>doctoral 
+               degree</b> holders compared to the <em>Black</em> population.</li>
+               
+               <li>The <b>Asian</b> population in this sample accounted for the highest proportion of <b>bachelors', masters', and doctoral degree</b> holders when compared to all other racial groups, but accounted for a lower 
+               proportion of associates' degree holders when compared to these same populations.</li>
+               
+               <li>The <b>Pacific Islander</b> population made up a higher proportion of <b>associates' and doctoral degree</b> holders compared to the <em>White</em> population. Compared to the <em>Black, American Indian, and mixed race</em> populations, the Pacific Islander population made up a <b>higher proportion of degree holders at every level of postsecondary education</b>. When compared to the <em>Asian</em> population,
+               the Pacific Islander population only had an advantage in the proportion of <b>associates' degree</b> holders.</li>
+               
+               </ul>")
+  })
+  
   
   ###################### HISPANIC ######################
   
@@ -5562,19 +5715,144 @@ server <- function(input, output) {
     
     # hispanic filtering
     result$HISPAN[result$HISPAN == "0"]<-"000"
+    #other hispan filtering
+    result$HISPAN[result$HISPAN == "600"]<-"650"
+    result$HISPAN[result$HISPAN == "610"]<-"650"
+    result$HISPAN[result$HISPAN == "611"]<-"650"
+    result$HISPAN[result$HISPAN == "612"]<-"650"
+    
+    # sex
+    result$female <- ifelse(result$SEX == "2", 1, 0)
+    #result$SEX <- replace(result$SEX == "1", 0) #male base case is == 1
+    
+    # race
+    #result$RACE <- replace(result$RACE == "100", 0) # white base case is == 100
+    result$black <- ifelse(result$RACE == "200", 1, 0)
+    result$amer_indian <- ifelse(result$RACE == "300", 1, 0)
+    result$asian <- ifelse(result$RACE == "651", 1, 0)
+    result$islander <- ifelse(result$RACE == "652", 1, 0)
+    result$mixed_race <- ifelse(result$RACE == "999", 1, 0)
+    
+    # hispanic
+    #result$HISPAN <-- replace(result$HISPAN == "000", 0) # non hispanic base case == 000
+    result$mex <- ifelse(result$HISPAN == "100", 1, 0)
+    result$pr <- ifelse(result$HISPAN == "200", 1, 0)
+    result$cuban <- ifelse(result$HISPAN == "300", 1, 0)
+    result$dom <- ifelse(result$HISPAN == "400", 1, 0)
+    result$salv <- ifelse(result$HISPAN == "500", 1, 0)
+    result$otherhispan <- ifelse(result$HISPAN == "650", 1, 0)
     
     # to fix error: response should be ordinal -- see ordered() 
     result$EDUC <- ordered(result$EDUC)
     
     ## sample data
-    sample_result <- result[sample(nrow(result), 10000), ]
+    sample_result <- result[sample(nrow(result), 20000), ]
     
-    model <- vglm(EDUC ~ RACE + SEX + HISPAN, family = cumulative(parallel = TRUE), data = sample_result)
+    # model <- vglm(EDUC ~ RACE + SEX + HISPAN, family = cumulative(parallel = TRUE), data = sample_result)
+    
+    model <- vglm(EDUC ~ female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan, family = cumulative(parallel = TRUE), data = sample_result)
     
     # can also set the family as multinomial for multinomial log regression
     
     # summary
     summary(model)
+  })
+  
+  output$odds <- renderPrint({
+    # query to display the first 5 rows
+    result <- dbGetQuery(conn,
+                         statement= "SELECT cpsidp, sex, educ, race, hispan, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
+    
+    
+    # all yrs
+    result$EDUC[result$EDUC == "10"]<-"Elementary School"
+    result$EDUC[result$EDUC == "111"]<-"Bachelor's Degree"
+    result$EDUC[result$EDUC == "123"]<-"Master's Degree"
+    result$EDUC[result$EDUC == "124"]<-"Professional School Degree"
+    result$EDUC[result$EDUC == "125"]<-"Doctorate Degree"
+    result$EDUC[result$EDUC == "2"]<-"None/Preschool/Kindergarten"
+    result$EDUC[result$EDUC == "20"]<-"Middle School"
+    result$EDUC[result$EDUC == "30"]<-"Middle School"
+    result$EDUC[result$EDUC == "40"]<-"High School, no diploma"
+    result$EDUC[result$EDUC == "50"]<-"High School, no diploma"
+    result$EDUC[result$EDUC == "60"]<-"High School, no diploma"
+    result$EDUC[result$EDUC == "71"]<-"High School, no diploma"
+    result$EDUC[result$EDUC == "73"]<-"HS Diploma or Equiv."
+    result$EDUC[result$EDUC == "81"]<-"Some college, no degree"
+    result$EDUC[result$EDUC == "91"]<-"Occupational/Vocational Program Degree"
+    result$EDUC[result$EDUC == "92"]<-"Associate's Degree, Academic"
+    
+    ##### converting educ levels to factor
+    result$EDUC <- factor(result$EDUC, levels=c("None/Preschool/Kindergarten","Elementary School","Middle School","High School, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
+    
+    
+    # filtering
+    result$RACE[result$RACE == "801"]<-"999" #white black
+    result$RACE[result$RACE == "802"]<-"999" #white american indian
+    result$RACE[result$RACE == "803"]<-"999" #white asian
+    result$RACE[result$RACE == "804"]<-"999" #white pacific islander
+    result$RACE[result$RACE == "805"]<-"999" #black american indian
+    result$RACE[result$RACE == "806"]<-"999" #black asian
+    result$RACE[result$RACE == "807"]<-"999" #black pacific islander
+    result$RACE[result$RACE == "808"]<-"999" #american indian asian
+    result$RACE[result$RACE == "809"]<-"999" #asian pacific islander
+    result$RACE[result$RACE == "810"]<-"999" #white black american indian
+    result$RACE[result$RACE == "811"]<-"999" #white black asian
+    result$RACE[result$RACE == "812"]<-"999" #white american indian asian
+    result$RACE[result$RACE == "813"]<-"999" #white asian pacific islander
+    result$RACE[result$RACE == "814"]<-"999" #white black american indian asian
+    result$RACE[result$RACE == "815"]<-"999" #american indian
+    result$RACE[result$RACE == "816"]<-"999" #white black pacific islander
+    result$RACE[result$RACE == "817"]<-"999" #white american indian pacific islander
+    result$RACE[result$RACE == "818"]<-"999" #black american indian asian
+    result$RACE[result$RACE == "819"]<-"999" #white american indian asian pacific islander
+    result$RACE[result$RACE == "820"]<-"999" #mixed race, 2-3, unspecified
+    result$RACE[result$RACE == "830"]<-"999" #mixed race, 4-5, unspecified
+    
+    
+    # hispanic filtering
+    result$HISPAN[result$HISPAN == "0"]<-"000"
+    #other hispan filtering
+    result$HISPAN[result$HISPAN == "600"]<-"650"
+    result$HISPAN[result$HISPAN == "610"]<-"650"
+    result$HISPAN[result$HISPAN == "611"]<-"650"
+    result$HISPAN[result$HISPAN == "612"]<-"650"
+    
+    # sex
+    result$female <- ifelse(result$SEX == "2", 1, 0)
+    #result$SEX <- replace(result$SEX == "1", 0) #male base case is == 1
+    
+    # race
+    #result$RACE <- replace(result$RACE == "100", 0) # white base case is == 100
+    result$black <- ifelse(result$RACE == "200", 1, 0)
+    result$amer_indian <- ifelse(result$RACE == "300", 1, 0)
+    result$asian <- ifelse(result$RACE == "651", 1, 0)
+    result$islander <- ifelse(result$RACE == "652", 1, 0)
+    result$mixed_race <- ifelse(result$RACE == "999", 1, 0)
+    
+    # hispanic
+    #result$HISPAN <-- replace(result$HISPAN == "000", 0) # non hispanic base case == 000
+    result$mex <- ifelse(result$HISPAN == "100", 1, 0)
+    result$pr <- ifelse(result$HISPAN == "200", 1, 0)
+    result$cuban <- ifelse(result$HISPAN == "300", 1, 0)
+    result$dom <- ifelse(result$HISPAN == "400", 1, 0)
+    result$salv <- ifelse(result$HISPAN == "500", 1, 0)
+    result$otherhispan <- ifelse(result$HISPAN == "650", 1, 0)
+    
+    # to fix error: response should be ordinal -- see ordered() 
+    result$EDUC <- ordered(result$EDUC)
+    
+    ## sample data
+    sample_result <- result[sample(nrow(result), 20000), ]
+    
+    # model <- vglm(EDUC ~ RACE + SEX + HISPAN, family = cumulative(parallel = TRUE), data = sample_result)
+    
+    model <- vglm(EDUC ~ female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan, family = cumulative(parallel = TRUE), data = sample_result)
+    
+    # can also set the family as multinomial for multinomial log regression
+    
+    # summary
+    exp(coef(model, matrix = TRUE))
   })
 }
 
