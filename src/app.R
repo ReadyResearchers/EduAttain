@@ -223,6 +223,9 @@ body <- dashboardBody(
     ),
     tabItem(tabName = "hisxedu",
             h2("US Hispanic/Latino Educational Attainment from 2010 to 2015"),
+            box(
+              title = NULL, status = "primary", solidHeader = FALSE, collapsible = FALSE,
+              htmlOutput("hispan_intro"), width = 12),
             fluidRow(
               column(width = 12,
                      tabBox(
@@ -232,7 +235,8 @@ body <- dashboardBody(
                        tabPanel("Mexican", plotlyOutput("mx2010pie")),
                        tabPanel("Puerto Rican", plotlyOutput("pr2010pie")),
                        tabPanel("Cuban", plotlyOutput("c2010pie")),
-                       tabPanel("Other Hispanic", plotlyOutput("oh2010pie"))
+                       tabPanel("Other Hispanic", plotlyOutput("oh2010pie")),
+                       tabPanel("Comparisons", htmlOutput("hispan_compare_10"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Hispanic Origin in 2011",
@@ -241,7 +245,8 @@ body <- dashboardBody(
                        tabPanel("Mexican", plotlyOutput("mx2011pie")),
                        tabPanel("Puerto Rican", plotlyOutput("pr2011pie")),
                        tabPanel("Cuban", plotlyOutput("c2011pie")),
-                       tabPanel("Other Hispanic", plotlyOutput("oh2011pie"))
+                       tabPanel("Other Hispanic", plotlyOutput("oh2011pie")),
+                       tabPanel("Comparisons", htmlOutput("hispan_compare_11"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Hispanic Origin in 2012",
@@ -250,7 +255,8 @@ body <- dashboardBody(
                        tabPanel("Mexican", plotlyOutput("mx2012pie")),
                        tabPanel("Puerto Rican", plotlyOutput("pr2012pie")),
                        tabPanel("Cuban", plotlyOutput("c2012pie")),
-                       tabPanel("Other Hispanic", plotlyOutput("oh2012pie"))
+                       tabPanel("Other Hispanic", plotlyOutput("oh2012pie")),
+                       tabPanel("Comparisons", htmlOutput("hispan_compare_12"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Hispanic Origin in 2013",
@@ -259,7 +265,8 @@ body <- dashboardBody(
                        tabPanel("Mexican", plotlyOutput("mx2013pie")),
                        tabPanel("Puerto Rican", plotlyOutput("pr2013pie")),
                        tabPanel("Cuban", plotlyOutput("c2013pie")),
-                       tabPanel("Other Hispanic", plotlyOutput("oh2013pie"))
+                       tabPanel("Other Hispanic", plotlyOutput("oh2013pie")),
+                       tabPanel("Comparisons", htmlOutput("hispan_compare_13"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Hispanic Origin in 2014",
@@ -270,7 +277,8 @@ body <- dashboardBody(
                        tabPanel("Cuban", plotlyOutput("c2014pie")),
                        tabPanel("Dominican", plotlyOutput("d2014pie")),
                        tabPanel("Salvadorian", plotlyOutput("s2014pie")),
-                       tabPanel("Other Hispanic", plotlyOutput("oh2014pie"))
+                       tabPanel("Other Hispanic", plotlyOutput("oh2014pie")),
+                       tabPanel("Comparisons", htmlOutput("hispan_compare_14"))
                      ),
                      tabBox(
                        title = "US Educational Attainment by Hispanic Origin in 2015",
@@ -281,7 +289,8 @@ body <- dashboardBody(
                        tabPanel("Cuban", plotlyOutput("c2015pie")),
                        tabPanel("Dominican", plotlyOutput("d2015pie")),
                        tabPanel("Salvadorian", plotlyOutput("s2015pie")),
-                       tabPanel("Other Hispanic", plotlyOutput("oh2015pie"))
+                       tabPanel("Other Hispanic", plotlyOutput("oh2015pie")),
+                       tabPanel("Comparisons", htmlOutput("hispan_compare_15"))
                      )
               )
             )
@@ -974,7 +983,7 @@ server <- function(input, output) {
   
   output$race_intro <- renderUI({
     HTML("The comparisons in this section were computed by observing plots and recording their values on a spreadsheet. These were used to compare population percentages to see differences between identity groups at every level of post-secondary education. <br><br>
-         <small>*Any miscalculations may be a result of manual entry, The mixed race population in this sample accounts for every possible combination of these races, as well as, any unspecified mixed race values</small><br><br> These computations can be observed 
+         <small>*Any miscalculations may be a result of manual entry, The mixed race population in this sample accounts for every possible combination of these races, as well as, any unspecified mixed race entries</small><br><br> These computations can be observed 
          <a href='https://docs.google.com/spreadsheets/d/1fl_vnczZZVo979qkT76KnCYwJwA4vlvJS4w6O9scZBA/edit?usp=sharing'>here</a>.")
   })
   
@@ -3724,6 +3733,12 @@ server <- function(input, output) {
   
   ###################### HISPANIC ######################
   
+  output$hispan_intro <- renderUI({
+    HTML("The comparisons in this section were computed by observing plots and recording their values on a spreadsheet. These were used to compare population percentages to see differences between identity groups at every level of post-secondary education. <br><br>
+         <small>*Any miscalculations may be a result of manual entry, The <em>Other Hispanic</em> population in this sample accounts for entries left unspecified or marked as Central or South American. Data for Salvadorian and Dominican Hispanic origin only available in survey years 2014 and 2015.</small><br><br> These computations can be observed 
+         <a href='https://docs.google.com/spreadsheets/d/1yo7w3FYOYPKFA_UBW6T1-d2AcJBCc-olJuapiMwqDOw/edit?usp=sharing'>here</a>.")
+  })
+  
   # 2010 HISPAN
   output$nh2010pie <- renderPlotly({
     # query to get all data from 2010 for sex + educ attain
@@ -4003,6 +4018,24 @@ server <- function(input, output) {
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  
+  output$hispan_compare_10 <- renderUI({
+    HTML("<b>In 2010:</b><br><br>
+               <strong>Conclusions</strong><br>
+               <ul>
+               
+               <li>The <b>non-Hispanic</b> population in this sample had a higher proportion of <b>associates', bachelors', masters' and doctoral degree</b> holders than the <em>Mexican, Puerto Rican, and other Hispanic</em> populations, with the exception of the <em>Puerto Rican</em> population's slight advantage in the proportion of <b>associate degree</b> holders. Compared to the <em>Cuban</em> population, the non-Hispanic population only had a higher percentage 
+               of <b>bachelors' and masters' degree</b> holders.</li>
+               
+               <li>The <b>Mexican</b> population had a <b>lowest proportion of degree holders, across all levels of post-secondary education</b>, compared to all other populations in this sample.</li>
+               
+               <li>The <b>Puerto Rican</b> population in this sample had a <b>higher proportion of post-secondary degree holders</b> than the <em>Mexican</em> population, but a <b>lower proportion</b> than the <em>Cuban</em> population. Compared to the <em>non-Hispanic and Other Hispanic</em> populations, the Puerto Rican population had a higher percentage of only <b>associate degree</b> holders.</li>
+               
+               <li>The <b>Cuban</b> population in this sample had a higher proportion of <b>associates', bachelors', masters', and doctoral degree</b> holders than the <em>Mexican, Puerto Rican and Other Hispanic</em> populations. Compared to the <em>non-Hispanic</em> population, the Cuban population only had a higher proportion of <b>associates' and doctoral degree</b> holders.</li>
+
+               </ul>")
   })
   
   ##2011 HISPAN
@@ -4287,6 +4320,22 @@ server <- function(input, output) {
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
   
+  output$hispan_compare_11 <- renderUI({
+    HTML("<b>In 2011:</b><br><br>
+               <strong>Conclusions</strong><br>
+               <ul>
+               
+               <li>The <b>non-Hispanic</b> population in this sample had a higher proportion of <b>associates', bachelors', masters', and doctoral degree</b> holders than the <em>Mexican, Puerto Rican, and other Hispanic</em> populations. Compared to the <em>Cuban</em> population, the non-Hispanic population only had a higher percentage of <b>bachelors' and masters' degree</b> holders.</li>
+               
+               <li>The <b>Mexican</b> population had the <b>lowest proportion of degree holders, across all levels of post-secondary education</b>, compared to all other populations in this sample.</li>
+               
+               <li>The <b>Puerto Rican</b> population in this sample had a <b>higher proportion of post-secondary degree holders</b> than the <em>Mexican</em> population, but a <b>lower proportion</b> than the <em>Cuban and non-Hispanic</em> populations. Compared to the <em>other Hispanic</em> population, the Puerto Rican population had a higher percentage of only <b>associate degree</b> holders.</li>
+               
+               <li>The <b>Cuban</b> population in this sample had a higher proportion of <b>associates', bachelors', masters', and doctoral degree</b> holders than the <em>Mexican, Puerto Rican and Other Hispanic</em> populations. Compared to the <em>non-Hispanic</em> population, the Cuban population only had a higher proportion of <b>associates' and doctoral degree</b> holders.</li>
+
+               </ul>")
+  })
+  
   ##2012 HISPAN
   
   output$nh2012pie <- renderPlotly({
@@ -4567,6 +4616,24 @@ server <- function(input, output) {
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$hispan_compare_12 <- renderUI({
+    HTML("<b>In 2012:</b><br><br>
+               <strong>Conclusions</strong><br>
+               <ul>
+               
+               <li>The <b>non-Hispanic</b> population had the <b>highest proportion of degree holders, across all levels of postsecondary education</b>, compared to all other populations in this sample.</li>
+               
+               <li>The <b>Mexican</b> population had the <b>lowest proportion of degree holders, across all levels of post-secondary education</b>, compared to all other populations in this sample.</li>
+               
+               <li>The <b>Puerto Rican</b> population in this sample had a <b>higher proportion of post-secondary degree holders</b> than the <em>Mexican</em> population, but a <b>lower proportion</b> than the <em>Cuban and non-Hispanic</em> 
+               populations. Compared to the <em>other Hispanic</em> population, the Puerto Rican population had a higher percentage of only <b>associate degree</b> holders.</li>
+               
+               <li>The <b>Cuban</b> population in this sample had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>, compared to the <em>Mexican, Puerto Rican, and Other Hispanic</em> populations. Compared to the <em>non-Hispanic</em>
+               population, the Cuban population had a <b>lower proportion of degree holders, across all levels of postsecondary education</b>.</li>
+
+               </ul>")
   })
   
   ## 2013 HISPAN
@@ -4853,6 +4920,25 @@ server <- function(input, output) {
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$hispan_compare_13 <- renderUI({
+    HTML("<b>In 2013:</b><br><br>
+               <strong>Conclusions</strong><br>
+               <ul>
+               
+               <li>The <b>non-Hispanic</b> population in this sample had a higher proportion of <b>associates', bachelors', masters' and doctoral degree</b> holders than the <em>Mexican, Puerto Rican, and other Hispanic</em> populations. 
+               Compared to the <em>Cuban</em> population, the non-Hispanic population had a lower proportion of <b>associates' degree</b> holders.</li>
+               
+               <li>The <b>Mexican</b> population had the <b>lowest proportion of degree holders, across all levels of post-secondary education</b>, compared to all other populations in this sample.</li>
+               
+               <li>The <b>Puerto Rican</b> population in this sample had a <b>higher proportion of post-secondary degree holders</b> than the <em>Mexican</em> population, but a <b>lower proportion</b> than the <em>Cuban and non-Hispanic</em> populations. 
+               Compared to the <em>other Hispanic</em> population, the Puerto Rican population had a higher percentage of only <b>associate</b> degree holders.</li>
+               
+               <li>The <b>Cuban</b> population in this sample had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>, compared to the <em>Mexican and Puerto Rican</em> populations. Compared to the <em>other Hispanic</em> population, the Cuban 
+               population had a slightly lower proportion of <b>doctorate degree</b> holders. Compared to the <em>non-Hispanic</em> population, the Cuban population only had a higher proportion of <b>associates' degree</b> holders.</li>
+
+               </ul>")
   })
   
   ## 2014 HISPAN
@@ -5255,6 +5341,32 @@ server <- function(input, output) {
             marker=list(colors=c("grey", 'blue', 'yellow'),
                         line=list(color="white",width=2)),type="pie") %>%
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
+  })
+  
+  output$hispan_compare_14 <- renderUI({
+    HTML("<b>In 2014:</b><br><br>
+               <strong>Conclusions</strong><br>
+               <ul>
+               
+               <li>The <b>Non-Hispanic</b> population in this sample had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>, compared to the <em>Mexican, Puerto Rican, other Hispanic, and Salvadorian</em> populations. Compared to the <em>Dominican</em> population,
+               the non-Hispanic population had a lower proportion of <b>associates' degree</b> holders. Compared to the <em>Cuban</em> population, the non-Hispanic population only had a higher proportion of <b>masters' degree</b> holders.</li>
+               
+               <li>The <b>Mexican</b> population had a <b>lower proportion of degree holders across all levels of postsecondary education</b> compared to the <em>non-Hispanic, Puerto Rican, Cuban, other Hispanic, and Dominican</em> populations. Compared to the <em>Salvadorian</em> population, the Mexican
+               population had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>.</li>
+               
+               <li>The <b>Puerto Rican</b> population in this sample had a <b>higher proportion of post-secondary degree holders</b> than the <em>Mexican and Salvadorian</em> populations, but a <b>lower proportion</b> than the <em>Cuban, Dominican, and non-Hispanic</em> populations. Compared to the <em>other Hispanic</em>
+               population, the Puerto Rican population had a higher percentage of only <b>associate degree</b> holders.</li>
+               
+               <li>The <b>Cuban</b> population in this sample had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>, compared to the <em>Mexican, Dominican, Salvadorian, other Hispanic, and Puerto Rican</em> populations. Compared to the <em>non-Hispanic</em> population,
+               the Cuban population only had a lower proportion of <b>masters' degree</b> holders.</li>
+               
+               <li>The <b>other Hispanic</b> population had a <b>lower proportion of degree holders across all levels of postsecondary education</b> compared to the <em>non-Hispanic and Cuban</em> populations. Compared to the <em>Mexican and Salvadorian</em> populations, the other Hispanic population had a <b>higher 
+               proportion of postsecondary degree holders</b>. Compared to the <em>Puerto Rican and Dominican</em> populations, the other Hispanic population had a lower proportion of <b>associates' degree</b> holders.</li>
+               
+               <li>The <b>Dominican</b> population in this sample accounted for a higher proportion of only <b>associates' degree</b> holders compared to the <em>non-Hispanic and other Hispanic</em> populations. Compared to the <em>Mexican, Puerto Rican, and Salvadorian</em> populations, the Dominican population
+               had <b>a higher proportion of degree holders across all levels of postsecondary education</b>. Compared to the <em>Cuban</em> population, the Dominican population had a <b>lower proportion of degree holders across all levels of postsecondary education</b>.</li>
+
+               </ul>")
   })
   
   ## 2015 HISPAN
@@ -5661,6 +5773,39 @@ server <- function(input, output) {
       layout(legend=list(title=list(text='<b> Level of Educational Attainment </b>')))
   })
   
+  output$hispan_compare_15 <- renderUI({
+    HTML("<b>In 2015:</b><br><br>
+               <strong>Conclusions</strong><br>
+               <ul>
+               
+               <li>The <b>Non-Hispanic</b> population in this sample had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>, compared to the <em>Mexican, Puerto Rican, other Hispanic, Dominican, and Salvadorian</em> populations.
+               Compared to the <em>Cuban</em> population, the non-Hispanic population only had a higher proportion of <b>associates' and doctoral degree</b> holders.</li>
+               
+               <li>The <b>Mexican</b> population in this sample had a <b>lower proportion of degree holders across all levels of post-secondary education</b> compared to the <em>non-Hispanic and Cuban</em> populations. Compared to the <em>other Hispanic and Puerto Rican</em> populations, the Mexican 
+               population had a higher proportion of only <b>masters' degree</b> holders. Compared to the <em>Dominican</em> population, the Mexican population had a higher proportion of <b>masters' and doctoral degree</b> holders. Compared to the <em>Salvadorian</em> population, the Mexican population 
+               had a higher proportion of <b>doctoral degree</b> holders.</li>
+               
+               <li>The <b>Puerto Rican</b> population in this sample had a <b>lower proportion of postsecondary degree holders</b> than the <em>non-Hispanic</em> population. Compared to the <em>other Hispanic and Cuban</em> populations, the Puerto Rican population had a higher percentage of only <b>associate</b> degree holders. 
+               Compared to the <em>Mexican</em> population, the Puerto Rican population had a higher percentage of <b>masters' degree</b> holders. The Puerto Rican population had a lower percentage of <b>bachelors' degree</b> holders compared to the <em>Dominican</em> population and a lower percentage of <b>doctoral degree</b> holders 
+               compared to the <em>Salvadorian</em> population.</li>
+               
+               <li>The <b>Cuban</b> population in this sample had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>, compared to the <em>Mexican and Salvadorian</em> populations. Compared to the <em>non-Hispanic</em> population, the Cuban population only had a lower proportion of <b>associates' and 
+               doctoral degree</b> holders. The Cuban population had a lower proportion of <b>associate degree</b> holders compared to the <em>Puerto Rican and Dominican</em> populations. Compared to the <em>other Hispanic</em> population, the Cuban population only had a higher proportion of <b>bachelors' and masters' degree</b> holders.</li>
+               
+               <li>The <b>other Hispanic</b> population had a <b>lower proportion of degree holders across all levels of postsecondary education</b> compared to the <em>non-Hispanic</em> population. Compared to the <em>Cuban</em> population, the other Hispanic population had a slightly higher proportion of <b>associates' and doctoral degree</b> holders. 
+               Compared to the <em>Dominican and Salvadorian</em> populations, the other Hispanic population had a <b>higher proportion of postsecondary degree holders</b>. The other Hispanic population had a lower proportion of <b>masters' degree</b> holders compared to the <em>Mexican</em> population and a lower proportion of <b>associate degree</b> holders 
+               compared to the <em>Puerto Rican</em> population.</li>
+               
+               <li>The <b>Dominican</b> population in this sample accounted for a <b>lower proportion of degree holders across all levels of postsecondary education</b> compared to the <em>non-Hispanic and other Hispanic</em> populations. Compared to the <em>Mexican</em> population, the Dominican population had a higher proportion of <b>associates' and bachelors' 
+               degree</b> holders. Compared to the <em>Puerto Rican</em> population, the Dominican population had a higher percentage of <b>bachelors' degree</b> holders. Compared to the <em>Cuban</em> population, the Dominican population had a higher proportion of <b>associate degree</b> holders. Compared to the <em>Salvadorian</em> population, the Dominican population 
+               had a lower proportion of <b>doctorate degree</b> holders.</li>
+
+               </ul>")
+  })
+  
+  ##################################################
+  
+  # regression model output
   output$summary <- renderPrint({
     # query to display the first 5 rows
     result <- dbGetQuery(conn,
