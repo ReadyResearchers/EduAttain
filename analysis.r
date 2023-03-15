@@ -30,11 +30,11 @@ library(plotly)
 library(brant)
 library(VGAM)
 
-# setting database path
-db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
-
 # setting database path -- via USB
 db <- "D:/eduattain/CPS.db"
+
+# setting database path
+db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
 
 # connect to database
 conn <- dbConnect(drv = SQLite(), dbname = db)
@@ -282,6 +282,25 @@ result$EDUC[result$EDUC == "73"]<-"HS Diploma or Equiv."
 result$EDUC[result$EDUC == "81"]<-"Some college, no degree"
 result$EDUC[result$EDUC == "91"]<-"Occupational/Vocational Program Degree"
 result$EDUC[result$EDUC == "92"]<-"Associate's Degree, Academic"
+
+
+##coding for all yrs - binary reg
+result$EDUC[result$EDUC == "10"]<-"Some High School or Less" # Some High School or Less = 0
+result$EDUC[result$EDUC == "111"]<-"High School Diploma or Greater" # High School Diploma or Greater = 1
+result$EDUC[result$EDUC == "123"]<-"High School Diploma or Greater"
+result$EDUC[result$EDUC == "124"]<-"High School Diploma or Greater"
+result$EDUC[result$EDUC == "125"]<-"High School Diploma or Greater"
+result$EDUC[result$EDUC == "2"]<-"Some High School or Less"
+result$EDUC[result$EDUC == "20"]<-"Some High School or Less"
+result$EDUC[result$EDUC == "30"]<-"Some High School or Less"
+result$EDUC[result$EDUC == "40"]<-"Some High School or Less"
+result$EDUC[result$EDUC == "50"]<-"Some High School or Less"
+result$EDUC[result$EDUC == "60"]<-"Some High School or Less"
+result$EDUC[result$EDUC == "71"]<-"Some High School or Less"
+result$EDUC[result$EDUC == "73"]<-"High School Diploma or Greater"
+result$EDUC[result$EDUC == "81"]<-"High School Diploma or Greater"
+result$EDUC[result$EDUC == "91"]<-"High School Diploma or Greater"
+result$EDUC[result$EDUC == "92"]<-"High School Diploma or Greater"
 
 ##### converting educ levels to factor
 result$EDUC <- factor(result$EDUC, levels=c("None/Preschool/Kindergarten","Grades 1-4","Grades 5-6","Grades 7-8","HS, Grade 9", "HS, Grade 10", "HS, Grade 11", "HS, Grade 12, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
@@ -1477,6 +1496,7 @@ result$salv <- ifelse(result$HISPAN == "500", 1, 0)
 result$otherhispan <- ifelse(result$HISPAN == "600", 1, 0)
 result$centralamer <- ifelse(result$HISPAN == "611", 1, 0)
 result$southamer <- ifelse(result$HISPAN == "612", 1, 0)
+result$EDUC <- ifelse(result$EDUC == "High School Diploma or Greater", 1, 0)
 
 ## random data points for reg
 inc_sample <- sample(result$FTOTVAL, 1000)
@@ -1518,7 +1538,36 @@ sample_result <- result[sample(nrow(result), 10000), ]
 # to fix error: response should be ordinal -- see ordered()
 result$EDUC <- ordered(result$EDUC)
 
+# generalized ordered probit
 m <- vglm(EDUC ~ RACE + SEX + HISPAN, family = cumulative(parallel = TRUE), data = sample_result)
+
+
+
+## remove na values
+result <- na.omit(result)
+
+## sample data
+sample_result <- result[sample(nrow(result), 100000), ]
+
+View(sample_result)
+
+# binary reg
+summary(sample_result)
+
+# % of each category in the reg both dependent and independent
+prop.table(table(sample_result$EDUC))
+prop.table(table(sample_result$female))
+prop.table(table(sample_result$black))
+prop.table(table(sample_result$amer_indian))
+prop.table(table(sample_result$asian))
+prop.table(table(sample_result$islander))
+prop.table(table(sample_result$mixed_race))
+prop.table(table(sample_result$mex))
+prop.table(table(sample_result$pr))
+prop.table(table(sample_result$salv))
+prop.table(table(sample_result$otherhispan))
+
+m <- glm(EDUC~female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan, family = binomial, data = sample_result)
 
 
 ## view a summary of the model
