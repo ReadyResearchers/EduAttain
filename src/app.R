@@ -73,7 +73,7 @@ body <- dashboardBody(
             fluidRow(
               column(width = 6,
                      box(title = NULL, status = "primary", solidHeader = FALSE,
-                         imageOutput("logo"), width = NULL, height = 350),
+                         imageOutput("logo"), width = NULL, height = 450),
                      box(title = "Project Description", status = "primary", solidHeader = TRUE, collapsible = FALSE,
                          htmlOutput("description"), width = NULL),
                      box(
@@ -296,13 +296,15 @@ body <- dashboardBody(
             )
     ),
     tabItem(tabName = "reg",
-            h2("Statistical Analysis"), 
+            h2("Statistical Analysis"),
+            box(
+              title = NULL, status = "primary", solidHeader = FALSE, collapsible = FALSE,
+              htmlOutput("stat_intro"), width = 12),
             fluidRow(
               column(width = 12,
                      tabBox(
                          title = "Summary", width = NULL,
-                         tabPanel("Binary Logistic Regression", verbatimTextOutput("binary")), tabPanel("Binary Odds Ratio", verbatimTextOutput("binary_odds")), tabPanel("Generalized Ordinal Regression", verbatimTextOutput("summary")),
-                         tabPanel("Odds Ratio", verbatimTextOutput("odds"))
+                         tabPanel("Binary Logistic Regression", verbatimTextOutput("binary"), htmlOutput("reg_interpret")), tabPanel("Odds Ratio", verbatimTextOutput("binary_odds"), htmlOutput("odds_interpret"))
                      )
                   )
             )
@@ -343,7 +345,7 @@ server <- function(input, output) {
   output$description <- renderUI({
     HTML(paste("<b>EduAttain</b>, leverages data from <a href='https://cps.ipums.org/cps/index.shtml'>IPUMS</a>, to assess how an individual's <em>race, gender, or Hispanic ethnicity</em> influence the level of education attained. <br>
                <br> This project is divided into two main sections: <em>Descriptive Statistics</em> and <em>Statistical Analysis</em>. <br> For the descriptive statistics, pie charts based on population percentages will depict how
-               educational attainment varies by race, gender, and Hispanic ethnicity over each survey year. For the statistical analysis, the statistical relationship between educational attainment and each of the explanatory variables will be tested using an generalized ordinal regression 
+               educational attainment varies by race, gender, and Hispanic ethnicity over each survey year. For the statistical analysis, the statistical relationship between educational attainment and each of the explanatory variables will be tested using a binary logistic regression. 
                <br> <br>The source code for this project is stored in a <a href='https://github.com/ReadyResearchers/EduAttain'>GitHub Repository</a> that can be accessed for review of the code, adhering to fair use practices."))
   })
   
@@ -355,8 +357,8 @@ server <- function(input, output) {
 ###################### GENDER ###########################
   
   output$gen_intro <- renderUI({
-    HTML("The comparisons in this section were computed by observing plots and recording their values on a spreadsheet. These were used to compare population percentages to see differences between identity groups at every level of post-secondary education. <br><br>
-         <small>*Any miscalculations may be a result of manual entry</small><br><br> These computations can be observed <a href='https://docs.google.com/spreadsheets/d/1OP41Q0Z2Lx1bguxgef4uCV0v7Qi5m5RwRZEX-9lbsIk/edit?usp=sharing'>here</a>.")
+    HTML("The comparisons in this section were computed by observing plots and recording their values on a spreadsheet. These were used to compare population percentages to see differences in educational attainment between identity groups. The levels of education were combined to create two distinct categories: <b>High School Diploma or Greater</b> and <b>High School or Less</b> <br><br>
+         <small>*Any miscalculations may be a result of manual entry</small><br><br> These computations can be observed <a href='https://docs.google.com/spreadsheets/d/1KuRkeLsDDIG6rsqbB9p_4u6002yk-FJL7efE9rQhBdQ/edit?usp=sharing'>here</a>.")
   })
   
   output$m2010pie <- renderPlotly({
@@ -368,22 +370,22 @@ server <- function(input, output) {
     data2010 <- d2010 %>% filter(EDUC != "1")
     
     # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Elementary School"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "40"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "50"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "60"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "71"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "111"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "123"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "124"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "125"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "2"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "40"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "50"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "60"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "71"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "73"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "81"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "91"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2010$SEX[data2010$SEX == "1"]<-"Male"
     data2010$SEX[data2010$SEX == "2"]<-"Female"
@@ -415,22 +417,22 @@ server <- function(input, output) {
     data2010 <- d2010 %>% filter(EDUC != "1")
     
     # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Elementary School"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "40"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "50"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "60"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "71"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "111"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "123"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "124"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "125"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "2"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "40"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "50"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "60"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "71"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "73"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "81"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "91"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2010$SEX[data2010$SEX == "1"]<-"Male"
     data2010$SEX[data2010$SEX == "2"]<-"Female"
@@ -455,10 +457,7 @@ server <- function(input, output) {
   
   output$gen_compare_10 <- renderUI({
     HTML("<b>In 2010:</b><br>
-               <li><b>1.57%</b> more <em>men</em> had <b>associates' degrees</b></li>
-               <li><b>0.8%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
-               <li><b>0.87%</b> more <em>men</em> had <b>masters' degrees</b></li>
-               <li><b>0.72%</b> more <em>women</em> had <b>doctorate degrees</b></li>")
+               <ul><li>The <b>Female</b> population had a slightly higher proportion of individuals who had an educational attainment of a high school diploma or higher.</li></ul>")
     
   })
   
@@ -471,22 +470,22 @@ server <- function(input, output) {
     data2011 <- d2011 %>% filter(EDUC != "1")
     
     # 2011 filters
-    data2011$EDUC[data2011$EDUC == "10"]<-"Elementary School"
-    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
-    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
-    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
-    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
-    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2011$EDUC[data2011$EDUC == "20"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "30"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "40"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "50"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "60"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "71"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
-    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2011$EDUC[data2011$EDUC == "10"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "111"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "123"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "124"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "125"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "2"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "40"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "50"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "60"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "71"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "73"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "81"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "91"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2011$SEX[data2011$SEX == "1"]<-"Male"
     data2011$SEX[data2011$SEX == "2"]<-"Female"
@@ -517,22 +516,22 @@ server <- function(input, output) {
     data2011 <- d2011 %>% filter(EDUC != "1")
     
     # 2011 filters
-    data2011$EDUC[data2011$EDUC == "10"]<-"Elementary School"
-    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
-    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
-    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
-    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
-    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2011$EDUC[data2011$EDUC == "20"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "30"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "40"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "50"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "60"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "71"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
-    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2011$EDUC[data2011$EDUC == "10"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "111"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "123"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "124"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "125"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "2"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "40"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "50"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "60"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "71"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "73"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "81"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "91"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2011$SEX[data2011$SEX == "1"]<-"Male"
     data2011$SEX[data2011$SEX == "2"]<-"Female"
@@ -555,11 +554,8 @@ server <- function(input, output) {
   })
   
   output$gen_compare_11 <- renderUI({
-    HTML("<b>In 2011:</b><br>
-               <li><b>1.54%</b> more <em>men</em> had <b>associates' degrees</b></li>
-               <li><b>0.7%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
-               <li><b>0.84%</b> more <em>men</em> had <b>masters' degrees</b></li>
-               <li><b>0.68%</b> more <em>women</em> had <b>doctorate degrees</b></li>")
+    HTML("<b>In 2011:</b><br><ul>
+               <li>The <b>Female</b> population had a slightly higher proportion of individuals who had an educational attainment of a high school diploma or higher.</li></ul>")
   })
   
   output$m2012pie <- renderPlotly({
@@ -571,22 +567,22 @@ server <- function(input, output) {
     data2012 <- d2012 %>% filter(EDUC != "1")
     
     # 2012 filters
-    data2012$EDUC[data2012$EDUC == "10"]<-"Elementary School"
-    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
-    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
-    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
-    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
-    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2012$EDUC[data2012$EDUC == "20"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "30"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "40"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "50"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "60"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "71"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
-    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "111"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "123"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "124"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "125"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "2"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "40"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "50"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "60"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "71"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "73"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "81"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "91"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2012$SEX[data2012$SEX == "1"]<-"Male"
     data2012$SEX[data2012$SEX == "2"]<-"Female"
@@ -617,22 +613,22 @@ server <- function(input, output) {
     data2012 <- d2012 %>% filter(EDUC != "1")
     
     # 2012 filters
-    data2012$EDUC[data2012$EDUC == "10"]<-"Elementary School"
-    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
-    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
-    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
-    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
-    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2012$EDUC[data2012$EDUC == "20"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "30"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "40"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "50"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "60"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "71"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
-    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "111"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "123"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "124"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "125"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "2"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "40"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "50"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "60"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "71"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "73"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "81"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "91"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2012$SEX[data2012$SEX == "1"]<-"Male"
     data2012$SEX[data2012$SEX == "2"]<-"Female"
@@ -657,10 +653,7 @@ server <- function(input, output) {
   output$gen_compare_12 <- renderUI({
     HTML("<b>In 2012:</b><br>
                <ul>
-               <li><b>1.48%</b> more <em>men</em> had <b>associates' degrees</b></li>
-               <li><b>0.9%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
-               <li><b>0.94%</b> more <em>men</em> had <b>masters' degrees</b></li>
-               <li><b>0.82%</b> more <em>women</em> had <b>doctorate degrees</b></li>
+               <li>The <b>Female</b> population had a slightly higher proportion of individuals who had an educational attainment of a high school diploma or higher.</li>
                </ul>")
   })
 
@@ -673,22 +666,22 @@ server <- function(input, output) {
     data2013 <- d2013 %>% filter(EDUC != "1")
     
     # 2013 filters
-    data2013$EDUC[data2013$EDUC == "10"]<-"Elementary School"
-    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
-    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
-    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
-    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
-    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2013$EDUC[data2013$EDUC == "20"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "30"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "40"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "50"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "60"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "71"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
-    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "111"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "123"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "124"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "125"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "2"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "40"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "50"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "60"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "71"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "73"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "81"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "91"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2013$SEX[data2013$SEX == "1"]<-"Male"
     data2013$SEX[data2013$SEX == "2"]<-"Female"
@@ -719,22 +712,22 @@ server <- function(input, output) {
     data2013 <- d2013 %>% filter(EDUC != "1")
     
     # 2013 filters
-    data2013$EDUC[data2013$EDUC == "10"]<-"Elementary School"
-    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
-    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
-    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
-    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
-    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2013$EDUC[data2013$EDUC == "20"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "30"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "40"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "50"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "60"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "71"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
-    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "111"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "123"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "124"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "125"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "2"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "40"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "50"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "60"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "71"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "73"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "81"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "91"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2013$SEX[data2013$SEX == "1"]<-"Male"
     data2013$SEX[data2013$SEX == "2"]<-"Female"
@@ -759,10 +752,7 @@ server <- function(input, output) {
   output$gen_compare_13 <- renderUI({
     HTML("<b>In 2013:</b><br>
                <ul>
-               <li><b>1.59%</b> more <em>men</em> had <b>associates' degrees</b></li>
-               <li><b>0.80%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
-               <li><b>1.08%</b> more <em>men</em> had <b>masters' degrees</b></li>
-               <li><b>0.79%</b> more <em>women</em> had <b>doctorate degrees</b></li>
+               <li>The <b>Female</b> population had a slightly higher proportion of individuals who had an educational attainment of a high school diploma or higher.</li>
                </ul>")
   })
   
@@ -776,22 +766,22 @@ server <- function(input, output) {
     
     # 2014 filters
     
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2014$SEX[data2014$SEX == "1"]<-"Male"
     data2014$SEX[data2014$SEX == "2"]<-"Female"
@@ -823,22 +813,22 @@ server <- function(input, output) {
     
     # 2014 filters
     
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2014$SEX[data2014$SEX == "1"]<-"Male"
     data2014$SEX[data2014$SEX == "2"]<-"Female"
@@ -863,10 +853,7 @@ server <- function(input, output) {
   output$gen_compare_14 <- renderUI({
     HTML("<b>In 2014:</b><br>
                <ul>
-               <li><b>1.89%</b> more <em>men</em> had <b>associates' degrees</b></li>
-               <li><b>1.10%</b> more <em>men</em> had <b>bachelors' degrees</b></li>
-               <li><b>1.26%</b> more <em>men</em> had <b>masters' degrees</b></li>
-               <li><b>0.81%</b> more <em>women</em> had <b>doctorate degrees</b></li>
+               <li>The <b>Female</b> population had a slightly higher proportion of individuals who had an educational attainment of a high school diploma or higher.</li>
                </ul>")
   })
   
@@ -880,22 +867,22 @@ server <- function(input, output) {
     
     # 2015 filters
     
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2015$SEX[data2015$SEX == "1"]<-"Male"
     data2015$SEX[data2015$SEX == "2"]<-"Female"
@@ -927,22 +914,22 @@ server <- function(input, output) {
     
     # 2015 filters
     
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
     
     
     data2015$SEX[data2015$SEX == "1"]<-"Male"
@@ -968,10 +955,7 @@ server <- function(input, output) {
   output$gen_compare_15 <- renderUI({
     HTML("<b>In 2015:</b><br>
                <ul>
-               <li><b>1.93%</b> more <em>men</em> had <b>associates' degrees</b></li>
-               <li><b>0.10%</b> more <em>women</em> had <b>bachelors' degrees</b></li>
-               <li><b>2.55%</b> more <em>men</em> had <b>masters' degrees</b></li>
-               <li><b>0.98%</b> more <em>women</em> had <b>doctorate degrees</b></li>
+               <li>The <b>Female</b> population had a slightly higher proportion of individuals who had an educational attainment of a high school diploma or higher.</li>
                </ul>")
   })
   
@@ -982,9 +966,9 @@ server <- function(input, output) {
 ###################### RACE ###########################
   
   output$race_intro <- renderUI({
-    HTML("The comparisons in this section were computed by observing plots and recording their values on a spreadsheet. These were used to compare population percentages to see differences between identity groups at every level of post-secondary education. <br><br>
+    HTML("The comparisons in this section were computed by observing plots and recording their values on a spreadsheet. These were used to compare population percentages to see differences  in educational attainment between identity groups. The levels of education were combined to create two distinct categories: <b>High School Diploma or Greater</b> and <b>High School or Less</b> <br><br>
          <small>*Any miscalculations may be a result of manual entry, The mixed race population in this sample accounts for every possible combination of these races, as well as, any unspecified mixed race entries</small><br><br> These computations can be observed 
-         <a href='https://docs.google.com/spreadsheets/d/1fl_vnczZZVo979qkT76KnCYwJwA4vlvJS4w6O9scZBA/edit?usp=sharing'>here</a>.")
+         <a href='https://docs.google.com/spreadsheets/d/1e4gtS3aIDYTBXB1uGxbzMUKj9pPhlBCmbXSftVrWlxI/edit?usp=sharing'>here</a>.")
   })
   
   ##2010 RACE
@@ -998,22 +982,22 @@ server <- function(input, output) {
     data2010 <- d2010 %>% filter(EDUC != "1")
 
     # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Elementary School"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "40"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "50"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "60"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "71"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "111"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "123"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "124"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "125"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "2"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "40"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "50"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "60"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "71"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "73"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "81"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "91"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2010$RACE[data2010$RACE == "100"]<-"White"
     data2010$RACE[data2010$RACE == "200"]<-"Black"
@@ -1068,22 +1052,22 @@ server <- function(input, output) {
     data2010 <- d2010 %>% filter(EDUC != "1")
 
     # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Elementary School"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "40"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "50"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "60"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "71"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "111"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "123"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "124"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "125"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "2"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "40"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "50"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "60"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "71"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "73"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "81"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "91"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2010$RACE[data2010$RACE == "100"]<-"White"
     data2010$RACE[data2010$RACE == "200"]<-"Black"
@@ -1138,22 +1122,22 @@ server <- function(input, output) {
     data2010 <- d2010 %>% filter(EDUC != "1")
 
     # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Elementary School"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "40"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "50"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "60"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "71"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "111"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "123"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "124"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "125"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "2"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "40"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "50"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "60"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "71"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "73"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "81"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "91"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2010$RACE[data2010$RACE == "100"]<-"White"
     data2010$RACE[data2010$RACE == "200"]<-"Black"
@@ -1208,22 +1192,22 @@ server <- function(input, output) {
     data2010 <- d2010 %>% filter(EDUC != "1")
 
     # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Elementary School"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "40"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "50"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "60"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "71"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "111"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "123"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "124"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "125"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "2"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "40"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "50"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "60"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "71"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "73"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "81"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "91"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2010$RACE[data2010$RACE == "100"]<-"White"
     data2010$RACE[data2010$RACE == "200"]<-"Black"
@@ -1279,22 +1263,22 @@ server <- function(input, output) {
     data2010 <- d2010 %>% filter(EDUC != "1")
 
     # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Elementary School"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "40"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "50"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "60"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "71"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "111"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "123"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "124"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "125"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "2"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "40"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "50"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "60"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "71"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "73"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "81"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "91"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2010$RACE[data2010$RACE == "100"]<-"White"
     data2010$RACE[data2010$RACE == "200"]<-"Black"
@@ -1350,22 +1334,22 @@ server <- function(input, output) {
     data2010 <- d2010 %>% filter(EDUC != "1")
 
     # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Elementary School"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "40"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "50"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "60"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "71"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "111"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "123"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "124"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "125"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "2"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "40"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "50"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "60"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "71"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "73"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "81"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "91"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2010$RACE[data2010$RACE == "100"]<-"White"
     data2010$RACE[data2010$RACE == "200"]<-"Black"
@@ -1416,18 +1400,20 @@ server <- function(input, output) {
     HTML("<b>In 2010:</b><br><br>
           <strong>Conclusions</strong><br>
           <ul>
-               <li>The <b>white</b> population in this sample accounted for a higher proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders than the 
-         <em>black, American Indian, Pacific Islander, and mixed race</em> populations. In comparing White and Asian rates of post-secondary education, the <b>Asian</b> population
-         accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the <em>White</em> population.</li>
-         <li>The <b>Black</b> population in this sample accounted for a higher proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders than the 
-         <em>American Indian</em> population. When compared to other racial group's rates of post-secondary education, the <b>Black</b> population
-         accounted for a smaller proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders. The only exception to this is the slight advantage in associate degree and master degree attainment,
-         compared to the <em>Pacific Islander and mixed race</em> populations.</li>
-         <li>The <b>American Indian</b> population accounted for the <em>lowest rates of post-secondary education</em>, across all levels, 
-         when compared to all of the other racial groups in the sample.</li>
-         <li>The <b>Asian</b> population in this sample accounted for the <em>highest rates of post-secondary education</em> when compared to all other racial groups, with the exception of the <em>mixed race and White</em> populations' slight advantage in <b>associate degree </b>attainment.</li>
-         <li>The <b>Pacific Islander</b> population had a lower proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders when compared to the <em>White, Asian, and mixed race</em> populations, while maintaining an advantage in these levels of educational 
-         attainment when compared to the <em>Black and American Indian</em> populations.</li>
+          <li>The <b>White</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>Black, American Indian, Pacific Islander, and Mixed Race</b> populations, while having a lower proportion compared to the <b>Asian</b> population.</li>
+          
+          <li>The <b>Black</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>American Indian</b> population, while having a lower proportion compared to the <b>White, Asian, Pacific Islander, and Mixed Race</b> population.</li>
+          
+          <li>The <b>American Indian</b> population had the lowest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
+          <b>all other racial groups/b>.</li>
+          
+          <li>The <b>Pacific Islander</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>American Indian and Black</b> populations, while having a lower proportion compared to the <b>White, Asian, and Mixed Race</b> population.</li>
+          
+          <li>The <b>Asian</b> population had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
+          <b>all other racial groups</b>.</li>
          </ul>")
   })
 
@@ -1442,22 +1428,22 @@ server <- function(input, output) {
     data2011 <- d2011 %>% filter(EDUC != "1")
 
     # 2011 filters
-    data2011$EDUC[data2011$EDUC == "10"]<-"Elementary School"
-    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
-    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
-    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
-    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
-    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2011$EDUC[data2011$EDUC == "20"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "30"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "40"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "50"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "60"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "71"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
-    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2011$EDUC[data2011$EDUC == "10"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "111"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "123"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "124"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "125"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "2"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "40"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "50"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "60"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "71"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "73"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "81"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "91"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2011$RACE[data2011$RACE == "100"]<-"White"
     data2011$RACE[data2011$RACE == "200"]<-"Black"
@@ -1514,22 +1500,22 @@ server <- function(input, output) {
     data2011 <- d2011 %>% filter(EDUC != "1")
 
     # 2011 filters
-    data2011$EDUC[data2011$EDUC == "10"]<-"Elementary School"
-    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
-    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
-    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
-    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
-    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2011$EDUC[data2011$EDUC == "20"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "30"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "40"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "50"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "60"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "71"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
-    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2011$EDUC[data2011$EDUC == "10"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "111"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "123"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "124"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "125"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "2"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "40"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "50"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "60"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "71"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "73"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "81"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "91"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2011$RACE[data2011$RACE == "100"]<-"White"
     data2011$RACE[data2011$RACE == "200"]<-"Black"
@@ -1586,22 +1572,22 @@ server <- function(input, output) {
     data2011 <- d2011 %>% filter(EDUC != "1")
 
     # 2011 filters
-    data2011$EDUC[data2011$EDUC == "10"]<-"Elementary School"
-    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
-    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
-    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
-    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
-    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2011$EDUC[data2011$EDUC == "20"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "30"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "40"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "50"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "60"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "71"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
-    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2011$EDUC[data2011$EDUC == "10"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "111"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "123"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "124"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "125"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "2"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "40"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "50"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "60"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "71"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "73"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "81"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "91"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2011$RACE[data2011$RACE == "100"]<-"White"
     data2011$RACE[data2011$RACE == "200"]<-"Black"
@@ -1657,22 +1643,22 @@ server <- function(input, output) {
     data2011 <- d2011 %>% filter(EDUC != "1")
 
     # 2011 filters
-    data2011$EDUC[data2011$EDUC == "10"]<-"Elementary School"
-    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
-    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
-    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
-    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
-    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2011$EDUC[data2011$EDUC == "20"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "30"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "40"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "50"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "60"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "71"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
-    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2011$EDUC[data2011$EDUC == "10"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "111"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "123"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "124"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "125"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "2"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "40"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "50"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "60"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "71"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "73"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "81"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "91"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2011$RACE[data2011$RACE == "100"]<-"White"
     data2011$RACE[data2011$RACE == "200"]<-"Black"
@@ -1729,22 +1715,22 @@ server <- function(input, output) {
     data2011 <- d2011 %>% filter(EDUC != "1")
 
     # 2011 filters
-    data2011$EDUC[data2011$EDUC == "10"]<-"Elementary School"
-    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
-    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
-    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
-    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
-    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2011$EDUC[data2011$EDUC == "20"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "30"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "40"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "50"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "60"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "71"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
-    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2011$EDUC[data2011$EDUC == "10"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "111"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "123"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "124"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "125"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "2"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "40"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "50"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "60"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "71"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "73"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "81"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "91"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2011$RACE[data2011$RACE == "100"]<-"White"
     data2011$RACE[data2011$RACE == "200"]<-"Black"
@@ -1801,22 +1787,22 @@ server <- function(input, output) {
     data2011 <- d2011 %>% filter(EDUC != "1")
 
     # 2011 filters
-    data2011$EDUC[data2011$EDUC == "10"]<-"Elementary School"
-    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
-    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
-    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
-    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
-    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2011$EDUC[data2011$EDUC == "20"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "30"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "40"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "50"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "60"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "71"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
-    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2011$EDUC[data2011$EDUC == "10"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "111"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "123"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "124"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "125"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "2"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "40"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "50"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "60"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "71"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "73"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "81"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "91"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2011$RACE[data2011$RACE == "100"]<-"White"
     data2011$RACE[data2011$RACE == "200"]<-"Black"
@@ -1869,32 +1855,21 @@ server <- function(input, output) {
                <strong>Conclusions</strong><br>
                <ul>
                
-               <li>The <b>White</b> population in this sample accounted for a higher proportion of <b>associates', 
-               bachelors', masters', and doctorate degree</b> holders than the <em>Black, American Indian, Pacific Islander,
-               and mixed race</em> populations, with the exception of <em>Black and Native American</em> populations' slight advantage 
-               in <b>associate degree</b> attainment. In comparing <em>White and Asian</em> rates of post-secondary education, the Asian 
-               population accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the White population.</li>
-               
-               <li>The <b>Black</b> population in this sample accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders 
-               than the <em>American Indian</em> population and had a slight disadvantage in the proportion of <b>associates' degree</b> holders. 
-               When compared to the <em>Asian</em> population, the Black population had a slightly higher proportion of <b>associates' degree</b> holders and
-               otherwise comparatively had a lower proportion of bachelors', masters' and doctoral degree holders. Compared to the <em>Pacific Islander</em> population,
-               the Black population had a higher proportion of <b>associates', masters', and doctoral degree</b> holders, while having a lower proportion of bachelors' degree holders.
-               When compared to the <em>mixed race population</em>, the Black population only maintained an advantage in the attainment of masters' degrees. 
-               The Black population in this sample accounted for a lower proportion of degree attainment across <b>all levels of post-secondary education</b> than the <em>White</em> population.</li>
-               
-               <li>The <b>American Indian</b> population had a slight advantage in the percentage of <b>associate degree</b> holders when compared to the <em>White, Black, Asian, and Pacific Islander</em> populations,
-                though were disadvantaged in the attainment of bachelors', masters', and doctoral degrees compared to these same populations. When compared to the <em>mixed race</em> population, the American
-                Indian population accounted for a lower proportion of post-secondary degree attainment, across all levels of postsecondary education.</li>
-               
-               <li>The <b>Asian</b> population in this sample accounted for the highest proportion of <b>bachelors', masters', and doctoral degree</b> holders when compared to all other racial groups, but accounted for a lower 
-               proportion of associates' degree holders when compared to these same populations.</li>
-               
-               <li>The <b>Pacific Islander</b> population had a lower proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders when compared to the <em>mixed race and White</em> populations. 
-               Compared to the <em>Asian</em> population, the Pacific Islander population had a higher proportion of only <b>associates' degree</b> holders. The Pacific Islander population had a higher proportion of <b>associates',
-               masters', and doctoral degree</b> holders than the <em>American Indian</em> population, though the American Indian population had a higher proportion of bachelors' degree holders. Compared to the <em>Black</em> population,
-               the Pacific Islander population only maintained an advantage in the proportion of <b>bachelors' degree</b> holders.</li>
-               
+               <li>The <b>White</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>Black and American Indian</b> populations, while having a lower proportion compared to the <b>Asian, Pacific Islander, and Mixed Race</b> population.</li>
+          
+          <li>The <b>Black</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>American Indian</b> population, while having a lower proportion compared to the <b>White, Asian, Pacific Islander, and Mixed Race</b> population.</li>
+          
+          <li>The <b>American Indian</b> population had the lowest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
+          <b>all other racial groups/b>.</li>
+          
+          <li>The <b>Pacific Islander</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>White, American Indian, Mixed Race, and Black</b> populations, while having a lower proportion compared to the <b>Asian</b> population.</li>
+          
+          <li>The <b>Asian</b> population had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
+          <b>all other racial groups</b>.</li>
+          
                </ul>")
   })
 
@@ -1910,22 +1885,22 @@ server <- function(input, output) {
     data2012 <- d2012 %>% filter(EDUC != "1")
 
     # 2012 filters
-    data2012$EDUC[data2012$EDUC == "10"]<-"Elementary School"
-    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
-    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
-    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
-    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
-    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2012$EDUC[data2012$EDUC == "20"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "30"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "40"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "50"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "60"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "71"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
-    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "111"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "123"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "124"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "125"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "2"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "40"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "50"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "60"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "71"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "73"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "81"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "91"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2012$RACE[data2012$RACE == "100"]<-"White"
     data2012$RACE[data2012$RACE == "200"]<-"Black"
@@ -1981,22 +1956,22 @@ server <- function(input, output) {
     data2012 <- d2012 %>% filter(EDUC != "1")
 
     # 2012 filters
-    data2012$EDUC[data2012$EDUC == "10"]<-"Elementary School"
-    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
-    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
-    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
-    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
-    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2012$EDUC[data2012$EDUC == "20"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "30"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "40"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "50"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "60"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "71"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
-    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "111"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "123"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "124"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "125"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "2"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "40"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "50"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "60"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "71"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "73"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "81"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "91"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2012$RACE[data2012$RACE == "100"]<-"White"
     data2012$RACE[data2012$RACE == "200"]<-"Black"
@@ -2052,22 +2027,22 @@ server <- function(input, output) {
     data2012 <- d2012 %>% filter(EDUC != "1")
 
     # 2012 filters
-    data2012$EDUC[data2012$EDUC == "10"]<-"Elementary School"
-    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
-    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
-    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
-    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
-    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2012$EDUC[data2012$EDUC == "20"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "30"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "40"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "50"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "60"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "71"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
-    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "111"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "123"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "124"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "125"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "2"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "40"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "50"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "60"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "71"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "73"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "81"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "91"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2012$RACE[data2012$RACE == "100"]<-"White"
     data2012$RACE[data2012$RACE == "200"]<-"Black"
@@ -2122,22 +2097,22 @@ server <- function(input, output) {
     data2012 <- d2012 %>% filter(EDUC != "1")
 
     # 2012 filters
-    data2012$EDUC[data2012$EDUC == "10"]<-"Elementary School"
-    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
-    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
-    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
-    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
-    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2012$EDUC[data2012$EDUC == "20"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "30"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "40"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "50"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "60"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "71"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
-    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "111"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "123"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "124"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "125"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "2"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "40"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "50"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "60"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "71"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "73"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "81"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "91"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2012$RACE[data2012$RACE == "100"]<-"White"
     data2012$RACE[data2012$RACE == "200"]<-"Black"
@@ -2194,22 +2169,22 @@ server <- function(input, output) {
     data2012 <- d2012 %>% filter(EDUC != "1")
 
     # 2012 filters
-    data2012$EDUC[data2012$EDUC == "10"]<-"Elementary School"
-    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
-    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
-    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
-    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
-    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2012$EDUC[data2012$EDUC == "20"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "30"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "40"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "50"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "60"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "71"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
-    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "111"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "123"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "124"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "125"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "2"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "40"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "50"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "60"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "71"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "73"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "81"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "91"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2012$RACE[data2012$RACE == "100"]<-"White"
     data2012$RACE[data2012$RACE == "200"]<-"Black"
@@ -2266,22 +2241,22 @@ server <- function(input, output) {
     data2012 <- d2012 %>% filter(EDUC != "1")
 
     # 2012 filters
-    data2012$EDUC[data2012$EDUC == "10"]<-"Elementary School"
-    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
-    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
-    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
-    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
-    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2012$EDUC[data2012$EDUC == "20"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "30"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "40"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "50"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "60"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "71"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
-    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "111"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "123"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "124"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "125"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "2"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "40"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "50"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "60"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "71"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "73"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "81"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "91"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2012$RACE[data2012$RACE == "100"]<-"White"
     data2012$RACE[data2012$RACE == "200"]<-"Black"
@@ -2334,26 +2309,21 @@ server <- function(input, output) {
                <strong>Conclusions</strong><br>
                <ul>
                
-               <li>The <b>White</b> population in this sample accounted for a higher proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders 
-               than the <em>American Indian, Pacific Islander, mixed race, and Black</em> populations, with the exception of <em>mixed race</em> population's slight advantage
-               in <b>associate degree</b> attainment. In comparing <em>White and Asian</em> rates of post-secondary education, the Asian population accounted for a higher proportion
-               of <b>bachelors', masters', and doctorate degree</b> holders than the White population.</li>
-               
-               <li>The <b>Black</b> population in this sample accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the <em>American Indian</em> population and had a slight disadvantage in the proportion of <em>associates'
-               degree</em> holders. When compared to the <em>Asian</em> population, the Black population had a slightly higher proportion of <b>associates' degree</b> holders and otherwise comparatively had a lower proportion of <b>bachelors', masters' and doctoral
-               degree</b> holders. Compared to the <em>Pacific Islander</em> population, the Black population had a higher proportion of <b>associates', masters', and doctoral degree</b> holders, while having a lower proportion of <b>bachelors' degree</b> holders. 
-               When compared to the <em>mixed race</em> population, the Black population only maintained an advantage in the attainment of <b>doctoral degrees</b>. The Black population in this sample accounted for a <b>lower proportion of degree attainment 
-               across all levels of post-secondary education</b> compared to the <em>White</em> population.</li>
-               
-               <li>The <b>American Indian</b> population in this sample accounted for a higher proportion of <b>associates', doctorate, and masters' degree</b> holders than the <em>Pacific Islander</em> population. In comparison, the American Indian population in this sample also accounted 
-               for a lower proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders than the <em>Black, White, mixed race, and Asian</em> populations, with the exception of their slight advantage in <b>associate degree</b> attainment when compared to the <em>Asian and Black</em> populations.</li>
-               
-               <li>The <b>Asian</b> population in this sample accounted for the highest proportion of <b>bachelors', masters', and doctoral degree</b> holders when compared to all other racial groups, but accounted for a lower 
-               proportion of associates' degree holders when compared to these same populations.</li>
-               
-               <li>The <b>Pacific Islander</b> population had a lower proportion of <b>associates', masters', and doctorate degree</b> holders when compared to the <em>mixed race, American Indian, and Black</em> populations. Compared to the <em>Asian</em> populations, the Pacific Islander population had a higher proportion of only <b>associates' degree</b> holders.
-               The <em>White</em> population had a higher proportion of degree holders, across all levels of postsecondary education, compared to the Pacific Islander population.</li>
-               
+               <li>The <b>White</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>Black, Pacific Islander, and American Indian</b> populations, while having a lower proportion compared to the <b>Asian and Mixed Race</b> population.</li>
+          
+          <li>The <b>Black</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>American Indian</b> population, while having a lower proportion compared to the <b>White, Asian, Pacific Islander, and Mixed Race</b> population.</li>
+          
+          <li>The <b>American Indian</b> population had the lowest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
+          <b>all other racial groups</b>.</li>
+          
+          <li>The <b>Pacific Islander</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>American Indian and Black</b> populations, while having a lower proportion compared to the <b>White, Mixed Race, and Asian</b> population.</li>
+          
+          <li>The <b>Asian</b> population had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
+          <b>all other racial groups/b>.</li>
+          
                </ul>")
   })
 
@@ -2368,22 +2338,22 @@ server <- function(input, output) {
     data2013 <- d2013 %>% filter(EDUC != "1")
 
     # 2013 filters
-    data2013$EDUC[data2013$EDUC == "10"]<-"Elementary School"
-    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
-    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
-    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
-    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
-    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2013$EDUC[data2013$EDUC == "20"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "30"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "40"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "50"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "60"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "71"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
-    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "111"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "123"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "124"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "125"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "2"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "40"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "50"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "60"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "71"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "73"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "81"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "91"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2013$RACE[data2013$RACE == "100"]<-"White"
     data2013$RACE[data2013$RACE == "200"]<-"Black"
@@ -2438,22 +2408,22 @@ server <- function(input, output) {
     data2013 <- d2013 %>% filter(EDUC != "1")
 
     # 2013 filters
-    data2013$EDUC[data2013$EDUC == "10"]<-"Elementary School"
-    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
-    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
-    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
-    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
-    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2013$EDUC[data2013$EDUC == "20"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "30"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "40"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "50"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "60"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "71"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
-    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "111"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "123"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "124"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "125"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "2"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "40"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "50"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "60"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "71"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "73"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "81"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "91"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2013$RACE[data2013$RACE == "100"]<-"White"
     data2013$RACE[data2013$RACE == "200"]<-"Black"
@@ -2510,22 +2480,22 @@ server <- function(input, output) {
     data2013 <- d2013 %>% filter(EDUC != "1")
 
     # 2013 filters
-    data2013$EDUC[data2013$EDUC == "10"]<-"Elementary School"
-    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
-    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
-    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
-    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
-    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2013$EDUC[data2013$EDUC == "20"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "30"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "40"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "50"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "60"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "71"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
-    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "111"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "123"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "124"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "125"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "2"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "40"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "50"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "60"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "71"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "73"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "81"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "91"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2013$RACE[data2013$RACE == "100"]<-"White"
     data2013$RACE[data2013$RACE == "200"]<-"Black"
@@ -2581,22 +2551,22 @@ server <- function(input, output) {
     data2013 <- d2013 %>% filter(EDUC != "1")
 
     # 2013 filters
-    data2013$EDUC[data2013$EDUC == "10"]<-"Elementary School"
-    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
-    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
-    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
-    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
-    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2013$EDUC[data2013$EDUC == "20"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "30"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "40"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "50"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "60"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "71"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
-    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "111"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "123"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "124"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "125"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "2"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "40"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "50"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "60"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "71"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "73"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "81"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "91"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2013$RACE[data2013$RACE == "100"]<-"White"
     data2013$RACE[data2013$RACE == "200"]<-"Black"
@@ -2652,22 +2622,22 @@ server <- function(input, output) {
     data2013 <- d2013 %>% filter(EDUC != "1")
 
     # 2013 filters
-    data2013$EDUC[data2013$EDUC == "10"]<-"Elementary School"
-    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
-    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
-    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
-    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
-    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2013$EDUC[data2013$EDUC == "20"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "30"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "40"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "50"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "60"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "71"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
-    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "111"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "123"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "124"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "125"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "2"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "40"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "50"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "60"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "71"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "73"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "81"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "91"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2013$RACE[data2013$RACE == "100"]<-"White"
     data2013$RACE[data2013$RACE == "200"]<-"Black"
@@ -2723,22 +2693,22 @@ server <- function(input, output) {
     data2013 <- d2013 %>% filter(EDUC != "1")
 
     # 2013 filters
-    data2013$EDUC[data2013$EDUC == "10"]<-"Elementary School"
-    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
-    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
-    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
-    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
-    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2013$EDUC[data2013$EDUC == "20"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "30"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "40"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "50"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "60"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "71"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
-    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "111"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "123"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "124"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "125"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "2"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "40"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "50"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "60"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "71"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "73"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "81"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "91"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2013$RACE[data2013$RACE == "100"]<-"White"
     data2013$RACE[data2013$RACE == "200"]<-"Black"
@@ -2791,22 +2761,20 @@ server <- function(input, output) {
                <strong>Conclusions</strong><br>
                <ul>
                
-               <li>The <b>White</b> population in this sample accounted for a higher proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders than the <em>American Indian, Pacific Islander, mixed race, and Black</em> populations, with the exception of <em>Pacific Islander</em> 
-               population's slight advantage in <b>associate degree</b> attainment. In comparing <em>White and Asian</em> rates of post-secondary education, the Asian population accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the White population.</li>
-               
-               <li>The <b>Black</b> population in this sample accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the <em>American Indian</em> population and had a slight disadvantage in the proportion of <b>associates' degree</b> holders. When compared to the <em>Asian</em>
-               population, the Black population had a slightly higher proportion of <b>associates' degree</b> holders and otherwise comparatively had a lower proportion of bachelors', masters' and doctoral degree holders. Compared to the <em>Pacific Islander</em> population, the Black population had
-               a higher proportion of <b>masters' and doctoral degree</b> holders, while having a lower proportion of associates' and bachelors' degree holders. The Black population in this sample accounted for a lower proportion of degree attainment across all levels of post-secondary education
-               compared to the <em>White and mixed race</em> populations.</li>
-               
-               <li>The <b>American Indian</b> population in this sample accounted for a lower proportion of <b>associates', bachelors', masters', and doctoral degree</b> holders compared to the <em>White, mixed race, Asian, and Black</em> populations, with the exception of a slight advantage in the proportion of
-               <b>associates' degree</b> holders compared to the <em>Asian and Black</em> populations. The American Indian population had a higher proportion of <b>doctorate and masters' degree</b> holders than the <em>Pacific Islander</em> population.</li>
-               
-               <li>The <b>Asian</b> population in this sample accounted for the highest proportion of <b>bachelors', masters', and doctoral degree</b> holders when compared to all other racial groups, but accounted for a lower 
-               proportion of associates' degree holders when compared to these same populations.</li>
-               
-               <li>The <b>Pacific Islander</b> population had a lower proportion of <b>masters' and doctorate degree</b> holders when compared to the <em>American Indian and Black </em>populations. Compared to the <em>White, Asian, and mixed race</em> populations, the Pacific Islander population had a higher proportion of 
-               only <b>associates' degree</b> holders.</li>
+               <li>The <b>White</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>Black and American Indian</b> populations, while having a lower proportion compared to the <b>Asian, Pacific Islander, and Mixed Race</b> population.</li>
+          
+          <li>The <b>Black</b> population had an equivalent proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>American Indian</b> population, while having a lower proportion compared to the <b>White, Asian, Pacific Islander, and Mixed Race</b> population.</li>
+          
+          <li>The <b>American Indian</b> population had the lowest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
+          <b>all other racial groups</b>, excluding the <b>Black</b> population.</li>
+          
+          <li>The <b>Pacific Islander</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>American Indian and Black</b> populations, while having a lower proportion compared to the <b>White, Mixed Race, and Asian</b> population.</li>
+          
+          <li>The <b>Asian</b> population had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
+          <b>all other racial groups/b>.</li>
                
                </ul>")
   })
@@ -2824,22 +2792,22 @@ server <- function(input, output) {
 
     # 2014 filters
 
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
 
     data2014$RACE[data2014$RACE == "100"]<-"White"
@@ -2897,22 +2865,22 @@ server <- function(input, output) {
 
     # 2014 filters
 
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
 
     data2014$RACE[data2014$RACE == "100"]<-"White"
@@ -2969,22 +2937,22 @@ server <- function(input, output) {
 
     # 2014 filters
 
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
 
     data2014$RACE[data2014$RACE == "100"]<-"White"
@@ -3042,22 +3010,22 @@ server <- function(input, output) {
 
     # 2014 filters
 
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2014$RACE[data2014$RACE == "100"]<-"White"
     data2014$RACE[data2014$RACE == "200"]<-"Black"
@@ -3114,22 +3082,22 @@ server <- function(input, output) {
 
     # 2014 filters
 
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
 
     data2014$RACE[data2014$RACE == "100"]<-"White"
@@ -3187,22 +3155,22 @@ server <- function(input, output) {
 
     # 2014 filters
 
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
 
     data2014$RACE[data2014$RACE == "100"]<-"White"
@@ -3255,20 +3223,20 @@ server <- function(input, output) {
                <strong>Conclusions</strong><br>
                <ul>
                
-               <li>The <b>White</b> population in this sample accounted for a higher proportion of <b>associates', bachelors', masters', and doctorate degree</b> holders than the <em>American Indian, Pacific Islander, mixed race, and Black</em> populations, with the exception of <em>American Indian and mixed race</em> populations' slight advantage in <b>associate
-               degree</b> attainment. In comparing <em>White and Asian</em> rates of post-secondary education, the Asian population accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the White population.</li>
-               
-               <li>The <b>Black</b> population in this sample accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the <em>American Indian</em> population and had a slight disadvantage in the proportion of <b>associates' degree</b> holders. When compared to the <em>Asian</em> population, the Black population had a slightly
-               higher proportion of <b>associates' degree</b> holders and otherwise comparatively had a lower proportion of <b>bachelors', masters' and doctoral degree</b> holders. Compared to the <em>Pacific Islander</em> population, the Black population had a higher proportion of <b>associates', masters', and doctoral degree</b> holders, while having a lower
-               proportion of bachelors' degree holders. The Black population in this sample accounted for a higher proportion of <b>masters' degree</b> holders compared to the <em>mixed race</em> population and a <b>lower proportion of degree attainment across all levels of post-secondary education</b> when compared to the <em>White</em> population.</li>
-               
-               <li>The <b>American Indian</b> population had a lower proportion of <b>bachelors', masters', and doctoral degree</b> holders compared to the <em>White, Black, Asian, and mixed race</em> populations. Compared to the <em>Pacific Islander</em> population, the American Indian population had a higher proportion of <b>associates' and doctorate degree</b> holders.</li>
-               
-               <li>The <b>Asian</b> population in this sample accounted for the highest proportion of <b>bachelors', masters', and doctoral degree</b> holders when compared to all other racial groups, but accounted for a lower 
-               proportion of associates' degree holders when compared to these same populations.</li>
-               
-               <li>The <b>Pacific Islander</b> population in this sample accounted for a <b>lower proportion of degree holders across all levels of postsecondary education</b> compared to the <em>mixed race, White, and Asian</em> populations, with the exception of a slight advantage in the amount of <b>associates' degree</b> holders compared to the <em>Asian</em> population. 
-               Compared to the <em>Black</em> population, the Pacific Islander population had a higher proportion of <b>bachelors' degree</b> holders. When compared to the <em>American Indian</em> population, the Pacific Islander population had a higher proportion of <b>bachelors' and masters' degree</b> holders.</li>
+               <li>The <b>White</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>Black, Pacific Islander, and American Indian</b> populations, while having a lower proportion compared to the <b>Asian and Mixed Race</b> population.</li>
+          
+          <li>The <b>Black</b> population had an higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>American Indian</b> population, while having a lower proportion compared to the <b>White, Asian, Pacific Islander, and Mixed Race</b> population.</li>
+          
+          <li>The <b>American Indian</b> population had the lowest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
+          <b>all other racial groups</b></li>
+          
+          <li>The <b>Pacific Islander</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>American Indian and Black</b> populations, while having a lower proportion compared to the <b>White, Mixed Race, and Asian</b> population.</li>
+          
+          <li>The <b>Asian</b> population had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
+          <b>all other racial groups/b>.</li>
                
                </ul>")
   })
@@ -3286,22 +3254,22 @@ server <- function(input, output) {
 
     # 2015 filters
 
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2015$RACE[data2015$RACE == "100"]<-"White"
     data2015$RACE[data2015$RACE == "200"]<-"Black"
@@ -3358,22 +3326,22 @@ server <- function(input, output) {
 
     # 2015 filters
 
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2015$RACE[data2015$RACE == "100"]<-"White"
     data2015$RACE[data2015$RACE == "200"]<-"Black"
@@ -3429,22 +3397,22 @@ server <- function(input, output) {
 
     # 2015 filters
 
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2015$RACE[data2015$RACE == "100"]<-"White"
     data2015$RACE[data2015$RACE == "200"]<-"Black"
@@ -3500,22 +3468,22 @@ server <- function(input, output) {
 
     # 2015 filters
 
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2015$RACE[data2015$RACE == "100"]<-"White"
     data2015$RACE[data2015$RACE == "200"]<-"Black"
@@ -3572,22 +3540,22 @@ server <- function(input, output) {
 
     # 2015 filters
 
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2015$RACE[data2015$RACE == "100"]<-"White"
     data2015$RACE[data2015$RACE == "200"]<-"Black"
@@ -3644,22 +3612,22 @@ server <- function(input, output) {
 
     # 2015 filters
 
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
 
     data2015$RACE[data2015$RACE == "100"]<-"White"
     data2015$RACE[data2015$RACE == "200"]<-"Black"
@@ -3712,20 +3680,20 @@ server <- function(input, output) {
                <strong>Conclusions</strong><br>
                <ul>
                
-               <li>The <b>White</b> population in this sample accounted for a <b>higher proportion of degree holders across all levels of post secondary education</b> when compared to the <em>Black, American Indian, Pacific Islander, and mixed race</em> populations, with the exception of <em>American Indian, Pacific Islander, and Black</em> populations' slight advantage in <b>associate degree attainment</b> and 
-               the <em>Pacific Islander</em> population's advantage in <b>masters' degree</b> holders. In comparing <em>White and Asian</em> rates of post-secondary education, the Asian population accounted for a higher proportion of <b>bachelors', masters', and doctorate degree</b> holders than the White population.</li>
-               
-               <li>The <b>Black</b> population in this sample accounted for a higher proportion of <b>associates', bachelors', and masters' degree</b> holders than the <em>American Indian</em> population. When compared to the <em>White and Asian</em> populations, the Black population had a slightly higher proportion of <b>associates' degree holders</b> and otherwise comparatively had a lower proportion of bachelors',
-               masters' and doctoral degree holders. The Black population in this sample accounted for a higher proportion of <b>masters' degree holders</b> compared to the <em>mixed race</em> population and a <b>lower proportion of degree attainment across all levels of post-secondary education</b> when compared to the <em>Pacific Islander</em> population.</li>
-               
-               <li>The <b>American Indian</b> population had a lower proportion of <b>bachelors', masters', and doctoral degree</b> holders compared to the <em>White, Black, Asian, Pacific Islander, and mixed race</em> populations, with the exception of a slight advantage in the proportion of <b>associates' degree</b> holders compared to the <em>White and Asian</em> populations and in the proportion of <b>doctoral 
-               degree</b> holders compared to the <em>Black</em> population.</li>
-               
-               <li>The <b>Asian</b> population in this sample accounted for the highest proportion of <b>bachelors', masters', and doctoral degree</b> holders when compared to all other racial groups, but accounted for a lower 
-               proportion of associates' degree holders when compared to these same populations.</li>
-               
-               <li>The <b>Pacific Islander</b> population made up a higher proportion of <b>associates' and doctoral degree</b> holders compared to the <em>White</em> population. Compared to the <em>Black, American Indian, and mixed race</em> populations, the Pacific Islander population made up a <b>higher proportion of degree holders at every level of postsecondary education</b>. When compared to the <em>Asian</em> population,
-               the Pacific Islander population only had an advantage in the proportion of <b>associates' degree</b> holders.</li>
+               <li>The <b>White</b> population had a highest proportion of individuals who had an educational attainment of high school diploma or greater compared to  
+          <b>all other racial groups</b>.</li>
+          
+          <li>The <b>Black</b> population had an higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>American Indian and Pacific Islander</b> population, while having a lower proportion compared to the <b>White, Asian, and Mixed Race</b> population.</li>
+          
+          <li>The <b>American Indian</b> population had the lowest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
+          <b>all other racial groups</b></li>
+          
+          <li>The <b>Pacific Islander</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
+          <b>American Indian and Black</b> populations, while having a lower proportion compared to the <b>White, Mixed Race, and Asian</b> population.</li>
+          
+          <li>The <b>Asian</b> population had the second highest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
+          <b>all other racial groups</b>, with the exception of when compared to the <b>White</b> population.</li>
                
                </ul>")
   })
@@ -3734,7 +3702,7 @@ server <- function(input, output) {
   ###################### HISPANIC ######################
   
   output$hispan_intro <- renderUI({
-    HTML("The comparisons in this section were computed by observing plots and recording their values on a spreadsheet. These were used to compare population percentages to see differences between identity groups at every level of post-secondary education. <br><br>
+    HTML("The comparisons in this section were computed by observing plots and recording their values on a spreadsheet. These were used to compare population percentages to see differences  in educational attainment between identity groups. The levels of education were combined to create two distinct categories: <b>High School Diploma or Greater</b> and <b>High School or Less</b><br><br>
          <small>*Any miscalculations may be a result of manual entry, The <em>Other Hispanic</em> population in this sample accounts for entries left unspecified or marked as Central or South American. Data for Salvadorian and Dominican Hispanic origin only available in survey years 2014 and 2015.</small><br><br> These computations can be observed 
          <a href='https://docs.google.com/spreadsheets/d/1yo7w3FYOYPKFA_UBW6T1-d2AcJBCc-olJuapiMwqDOw/edit?usp=sharing'>here</a>.")
   })
@@ -3749,22 +3717,22 @@ server <- function(input, output) {
     data2010 <- d2010 %>% filter(EDUC != "1")
     
     # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Elementary School"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "40"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "50"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "60"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "71"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "111"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "123"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "124"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "125"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "2"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "40"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "50"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "60"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "71"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "73"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "81"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "91"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2010$HISPAN[data2010$HISPAN == "0"]<-"Not Hispanic"
     data2010$HISPAN[data2010$HISPAN == "000"]<-"Not Hispanic"
@@ -3805,22 +3773,22 @@ server <- function(input, output) {
     data2010 <- d2010 %>% filter(EDUC != "1")
     
     # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Elementary School"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "40"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "50"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "60"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "71"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "111"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "123"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "124"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "125"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "2"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "40"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "50"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "60"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "71"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "73"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "81"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "91"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2010$HISPAN[data2010$HISPAN == "0"]<-"Not Hispanic"
     data2010$HISPAN[data2010$HISPAN == "000"]<-"Not Hispanic"
@@ -3861,22 +3829,22 @@ server <- function(input, output) {
     data2010 <- d2010 %>% filter(EDUC != "1")
     
     # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Elementary School"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "40"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "50"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "60"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "71"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "111"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "123"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "124"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "125"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "2"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "40"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "50"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "60"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "71"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "73"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "81"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "91"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2010$HISPAN[data2010$HISPAN == "0"]<-"Not Hispanic"
     data2010$HISPAN[data2010$HISPAN == "000"]<-"Not Hispanic"
@@ -3917,22 +3885,22 @@ server <- function(input, output) {
     data2010 <- d2010 %>% filter(EDUC != "1")
     
     # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Elementary School"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "40"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "50"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "60"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "71"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "111"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "123"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "124"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "125"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "2"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "40"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "50"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "60"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "71"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "73"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "81"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "91"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2010$HISPAN[data2010$HISPAN == "0"]<-"Not Hispanic"
     data2010$HISPAN[data2010$HISPAN == "000"]<-"Not Hispanic"
@@ -3973,22 +3941,22 @@ server <- function(input, output) {
     data2010 <- d2010 %>% filter(EDUC != "1")
     
     # 2010 filters
-    data2010$EDUC[data2010$EDUC == "10"]<-"Elementary School"
-    data2010$EDUC[data2010$EDUC == "111"]<-"Bachelor's Degree"
-    data2010$EDUC[data2010$EDUC == "123"]<-"Master's Degree"
-    data2010$EDUC[data2010$EDUC == "124"]<-"Professional School Degree"
-    data2010$EDUC[data2010$EDUC == "125"]<-"Doctorate Degree"
-    data2010$EDUC[data2010$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2010$EDUC[data2010$EDUC == "20"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "30"]<-"Middle School"
-    data2010$EDUC[data2010$EDUC == "40"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "50"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "60"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "71"]<-"High School, no diploma"
-    data2010$EDUC[data2010$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2010$EDUC[data2010$EDUC == "81"]<-"Some college, no degree"
-    data2010$EDUC[data2010$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2010$EDUC[data2010$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2010$EDUC[data2010$EDUC == "10"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "111"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "123"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "124"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "125"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "2"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "20"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "30"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "40"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "50"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "60"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "71"]<-"Some High School or Less"
+    data2010$EDUC[data2010$EDUC == "73"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "81"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "91"]<-"High School Diploma or Greater"
+    data2010$EDUC[data2010$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2010$HISPAN[data2010$HISPAN == "0"]<-"Not Hispanic"
     data2010$HISPAN[data2010$HISPAN == "000"]<-"Not Hispanic"
@@ -4049,22 +4017,22 @@ server <- function(input, output) {
     data2011 <- d2011 %>% filter(EDUC != "1")
     
     # 2011 filters
-    data2011$EDUC[data2011$EDUC == "10"]<-"Elementary School"
-    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
-    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
-    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
-    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
-    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2011$EDUC[data2011$EDUC == "20"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "30"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "40"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "50"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "60"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "71"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
-    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2011$EDUC[data2011$EDUC == "10"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "111"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "123"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "124"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "125"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "2"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "40"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "50"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "60"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "71"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "73"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "81"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "91"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2011$HISPAN[data2011$HISPAN == "0"]<-"Not Hispanic"
     data2011$HISPAN[data2011$HISPAN == "000"]<-"Not Hispanic"
@@ -4105,22 +4073,22 @@ server <- function(input, output) {
     data2011 <- d2011 %>% filter(EDUC != "1")
     
     # 2011 filters
-    data2011$EDUC[data2011$EDUC == "10"]<-"Elementary School"
-    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
-    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
-    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
-    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
-    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2011$EDUC[data2011$EDUC == "20"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "30"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "40"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "50"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "60"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "71"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
-    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2011$EDUC[data2011$EDUC == "10"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "111"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "123"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "124"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "125"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "2"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "40"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "50"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "60"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "71"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "73"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "81"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "91"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2011$HISPAN[data2011$HISPAN == "0"]<-"Not Hispanic"
     data2011$HISPAN[data2011$HISPAN == "000"]<-"Not Hispanic"
@@ -4161,22 +4129,22 @@ server <- function(input, output) {
     data2011 <- d2011 %>% filter(EDUC != "1")
     
     # 2011 filters
-    data2011$EDUC[data2011$EDUC == "10"]<-"Elementary School"
-    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
-    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
-    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
-    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
-    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2011$EDUC[data2011$EDUC == "20"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "30"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "40"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "50"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "60"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "71"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
-    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2011$EDUC[data2011$EDUC == "10"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "111"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "123"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "124"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "125"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "2"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "40"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "50"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "60"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "71"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "73"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "81"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "91"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2011$HISPAN[data2011$HISPAN == "0"]<-"Not Hispanic"
     data2011$HISPAN[data2011$HISPAN == "000"]<-"Not Hispanic"
@@ -4217,22 +4185,22 @@ server <- function(input, output) {
     data2011 <- d2011 %>% filter(EDUC != "1")
     
     # 2011 filters
-    data2011$EDUC[data2011$EDUC == "10"]<-"Elementary School"
-    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
-    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
-    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
-    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
-    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2011$EDUC[data2011$EDUC == "20"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "30"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "40"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "50"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "60"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "71"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
-    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2011$EDUC[data2011$EDUC == "10"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "111"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "123"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "124"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "125"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "2"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "40"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "50"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "60"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "71"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "73"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "81"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "91"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2011$HISPAN[data2011$HISPAN == "0"]<-"Not Hispanic"
     data2011$HISPAN[data2011$HISPAN == "000"]<-"Not Hispanic"
@@ -4273,22 +4241,22 @@ server <- function(input, output) {
     data2011 <- d2011 %>% filter(EDUC != "1")
     
     # 2011 filters
-    data2011$EDUC[data2011$EDUC == "10"]<-"Elementary School"
-    data2011$EDUC[data2011$EDUC == "111"]<-"Bachelor's Degree"
-    data2011$EDUC[data2011$EDUC == "123"]<-"Master's Degree"
-    data2011$EDUC[data2011$EDUC == "124"]<-"Professional School Degree"
-    data2011$EDUC[data2011$EDUC == "125"]<-"Doctorate Degree"
-    data2011$EDUC[data2011$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2011$EDUC[data2011$EDUC == "20"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "30"]<-"Middle School"
-    data2011$EDUC[data2011$EDUC == "40"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "50"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "60"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "71"]<-"High School, no diploma"
-    data2011$EDUC[data2011$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2011$EDUC[data2011$EDUC == "81"]<-"Some college, no degree"
-    data2011$EDUC[data2011$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2011$EDUC[data2011$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2011$EDUC[data2011$EDUC == "10"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "111"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "123"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "124"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "125"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "2"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "20"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "30"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "40"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "50"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "60"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "71"]<-"Some High School or Less"
+    data2011$EDUC[data2011$EDUC == "73"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "81"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "91"]<-"High School Diploma or Greater"
+    data2011$EDUC[data2011$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2011$HISPAN[data2011$HISPAN == "0"]<-"Not Hispanic"
     data2011$HISPAN[data2011$HISPAN == "000"]<-"Not Hispanic"
@@ -4347,22 +4315,22 @@ server <- function(input, output) {
     data2012 <- d2012 %>% filter(EDUC != "1")
     
     # 2012 filters
-    data2012$EDUC[data2012$EDUC == "10"]<-"Elementary School"
-    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
-    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
-    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
-    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
-    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2012$EDUC[data2012$EDUC == "20"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "30"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "40"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "50"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "60"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "71"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
-    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "111"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "123"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "124"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "125"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "2"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "40"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "50"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "60"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "71"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "73"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "81"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "91"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2012$HISPAN[data2012$HISPAN == "0"]<-"Not Hispanic"
     data2012$HISPAN[data2012$HISPAN == "000"]<-"Not Hispanic"
@@ -4403,22 +4371,22 @@ server <- function(input, output) {
     data2012 <- d2012 %>% filter(EDUC != "1")
     
     # 2012 filters
-    data2012$EDUC[data2012$EDUC == "10"]<-"Elementary School"
-    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
-    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
-    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
-    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
-    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2012$EDUC[data2012$EDUC == "20"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "30"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "40"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "50"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "60"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "71"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
-    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "111"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "123"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "124"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "125"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "2"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "40"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "50"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "60"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "71"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "73"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "81"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "91"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2012$HISPAN[data2012$HISPAN == "0"]<-"Not Hispanic"
     data2012$HISPAN[data2012$HISPAN == "000"]<-"Not Hispanic"
@@ -4459,22 +4427,22 @@ server <- function(input, output) {
     data2012 <- d2012 %>% filter(EDUC != "1")
     
     # 2012 filters
-    data2012$EDUC[data2012$EDUC == "10"]<-"Elementary School"
-    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
-    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
-    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
-    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
-    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2012$EDUC[data2012$EDUC == "20"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "30"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "40"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "50"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "60"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "71"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
-    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "111"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "123"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "124"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "125"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "2"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "40"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "50"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "60"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "71"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "73"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "81"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "91"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2012$HISPAN[data2012$HISPAN == "0"]<-"Not Hispanic"
     data2012$HISPAN[data2012$HISPAN == "000"]<-"Not Hispanic"
@@ -4515,22 +4483,22 @@ server <- function(input, output) {
     data2012 <- d2012 %>% filter(EDUC != "1")
     
     # 2012 filters
-    data2012$EDUC[data2012$EDUC == "10"]<-"Elementary School"
-    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
-    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
-    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
-    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
-    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2012$EDUC[data2012$EDUC == "20"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "30"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "40"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "50"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "60"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "71"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
-    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "111"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "123"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "124"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "125"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "2"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "40"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "50"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "60"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "71"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "73"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "81"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "91"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2012$HISPAN[data2012$HISPAN == "0"]<-"Not Hispanic"
     data2012$HISPAN[data2012$HISPAN == "000"]<-"Not Hispanic"
@@ -4571,22 +4539,22 @@ server <- function(input, output) {
     data2012 <- d2012 %>% filter(EDUC != "1")
     
     # 2012 filters
-    data2012$EDUC[data2012$EDUC == "10"]<-"Elementary School"
-    data2012$EDUC[data2012$EDUC == "111"]<-"Bachelor's Degree"
-    data2012$EDUC[data2012$EDUC == "123"]<-"Master's Degree"
-    data2012$EDUC[data2012$EDUC == "124"]<-"Professional School Degree"
-    data2012$EDUC[data2012$EDUC == "125"]<-"Doctorate Degree"
-    data2012$EDUC[data2012$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2012$EDUC[data2012$EDUC == "20"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "30"]<-"Middle School"
-    data2012$EDUC[data2012$EDUC == "40"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "50"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "60"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "71"]<-"High School, no diploma"
-    data2012$EDUC[data2012$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2012$EDUC[data2012$EDUC == "81"]<-"Some college, no degree"
-    data2012$EDUC[data2012$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2012$EDUC[data2012$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2012$EDUC[data2012$EDUC == "10"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "111"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "123"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "124"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "125"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "2"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "20"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "30"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "40"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "50"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "60"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "71"]<-"Some High School or Less"
+    data2012$EDUC[data2012$EDUC == "73"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "81"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "91"]<-"High School Diploma or Greater"
+    data2012$EDUC[data2012$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2012$HISPAN[data2012$HISPAN == "0"]<-"Not Hispanic"
     data2012$HISPAN[data2012$HISPAN == "000"]<-"Not Hispanic"
@@ -4647,22 +4615,22 @@ server <- function(input, output) {
     data2013 <- d2013 %>% filter(EDUC != "1")
     
     # 2013 filters
-    data2013$EDUC[data2013$EDUC == "10"]<-"Elementary School"
-    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
-    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
-    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
-    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
-    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2013$EDUC[data2013$EDUC == "20"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "30"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "40"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "50"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "60"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "71"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
-    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "111"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "123"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "124"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "125"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "2"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "40"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "50"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "60"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "71"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "73"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "81"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "91"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "92"]<-"High School Diploma or Greater"
     
     
     data2013$HISPAN[data2013$HISPAN == "0"]<-"Not Hispanic"
@@ -4704,22 +4672,22 @@ server <- function(input, output) {
     data2013 <- d2013 %>% filter(EDUC != "1")
     
     # 2013 filters
-    data2013$EDUC[data2013$EDUC == "10"]<-"Elementary School"
-    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
-    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
-    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
-    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
-    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2013$EDUC[data2013$EDUC == "20"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "30"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "40"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "50"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "60"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "71"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
-    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "111"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "123"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "124"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "125"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "2"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "40"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "50"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "60"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "71"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "73"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "81"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "91"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "92"]<-"High School Diploma or Greater"
     
     
     data2013$HISPAN[data2013$HISPAN == "0"]<-"Not Hispanic"
@@ -4761,22 +4729,22 @@ server <- function(input, output) {
     data2013 <- d2013 %>% filter(EDUC != "1")
     
     # 2013 filters
-    data2013$EDUC[data2013$EDUC == "10"]<-"Elementary School"
-    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
-    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
-    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
-    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
-    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2013$EDUC[data2013$EDUC == "20"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "30"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "40"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "50"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "60"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "71"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
-    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "111"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "123"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "124"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "125"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "2"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "40"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "50"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "60"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "71"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "73"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "81"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "91"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2013$HISPAN[data2013$HISPAN == "0"]<-"Not Hispanic"
     data2013$HISPAN[data2013$HISPAN == "000"]<-"Not Hispanic"
@@ -4817,22 +4785,22 @@ server <- function(input, output) {
     data2013 <- d2013 %>% filter(EDUC != "1")
     
     # 2013 filters
-    data2013$EDUC[data2013$EDUC == "10"]<-"Elementary School"
-    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
-    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
-    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
-    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
-    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2013$EDUC[data2013$EDUC == "20"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "30"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "40"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "50"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "60"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "71"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
-    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "111"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "123"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "124"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "125"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "2"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "40"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "50"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "60"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "71"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "73"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "81"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "91"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "92"]<-"High School Diploma or Greater"
     
     
     data2013$HISPAN[data2013$HISPAN == "0"]<-"Not Hispanic"
@@ -4874,22 +4842,22 @@ server <- function(input, output) {
     data2013 <- d2013 %>% filter(EDUC != "1")
     
     # 2013 filters
-    data2013$EDUC[data2013$EDUC == "10"]<-"Elementary School"
-    data2013$EDUC[data2013$EDUC == "111"]<-"Bachelor's Degree"
-    data2013$EDUC[data2013$EDUC == "123"]<-"Master's Degree"
-    data2013$EDUC[data2013$EDUC == "124"]<-"Professional School Degree"
-    data2013$EDUC[data2013$EDUC == "125"]<-"Doctorate Degree"
-    data2013$EDUC[data2013$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2013$EDUC[data2013$EDUC == "20"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "30"]<-"Middle School"
-    data2013$EDUC[data2013$EDUC == "40"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "50"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "60"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "71"]<-"High School, no diploma"
-    data2013$EDUC[data2013$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2013$EDUC[data2013$EDUC == "81"]<-"Some college, no degree"
-    data2013$EDUC[data2013$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2013$EDUC[data2013$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2013$EDUC[data2013$EDUC == "10"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "111"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "123"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "124"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "125"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "2"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "20"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "30"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "40"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "50"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "60"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "71"]<-"Some High School or Less"
+    data2013$EDUC[data2013$EDUC == "73"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "81"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "91"]<-"High School Diploma or Greater"
+    data2013$EDUC[data2013$EDUC == "92"]<-"High School Diploma or Greater"
     
     
     data2013$HISPAN[data2013$HISPAN == "0"]<-"Not Hispanic"
@@ -4953,22 +4921,22 @@ server <- function(input, output) {
     
     # 2014 filters
     
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
     
     data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
@@ -5011,22 +4979,22 @@ server <- function(input, output) {
     
     # 2014 filters
     
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
     data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
@@ -5068,22 +5036,22 @@ server <- function(input, output) {
     
     # 2014 filters
     
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
     data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
@@ -5125,22 +5093,22 @@ server <- function(input, output) {
     
     # 2014 filters
     
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
     data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
@@ -5182,22 +5150,22 @@ server <- function(input, output) {
     
     # 2014 filters
     
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
     data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
@@ -5239,22 +5207,22 @@ server <- function(input, output) {
     
     # 2014 filters
     
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
     data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
@@ -5296,22 +5264,22 @@ server <- function(input, output) {
     
     # 2014 filters
     
-    data2014$EDUC[data2014$EDUC == "10"]<-"Elementary School"
-    data2014$EDUC[data2014$EDUC == "111"]<-"Bachelor's Degree"
-    data2014$EDUC[data2014$EDUC == "123"]<-"Master's Degree"
-    data2014$EDUC[data2014$EDUC == "124"]<-"Professional School Degree"
-    data2014$EDUC[data2014$EDUC == "125"]<-"Doctorate Degree"
-    data2014$EDUC[data2014$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2014$EDUC[data2014$EDUC == "20"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "30"]<-"Middle School"
-    data2014$EDUC[data2014$EDUC == "40"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "50"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "60"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "71"]<-"High School, no diploma"
-    data2014$EDUC[data2014$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2014$EDUC[data2014$EDUC == "81"]<-"Some college, no degree"
-    data2014$EDUC[data2014$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2014$EDUC[data2014$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2014$EDUC[data2014$EDUC == "10"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "111"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "123"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "124"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "125"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "2"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "20"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "30"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "40"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "50"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "60"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "71"]<-"Some High School or Less"
+    data2014$EDUC[data2014$EDUC == "73"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "81"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "91"]<-"High School Diploma or Greater"
+    data2014$EDUC[data2014$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2014$HISPAN[data2014$HISPAN == "0"]<-"Not Hispanic"
     data2014$HISPAN[data2014$HISPAN == "000"]<-"Not Hispanic"
@@ -5381,22 +5349,22 @@ server <- function(input, output) {
     
     # 2015 filters
     
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
     data2015$HISPAN[data2015$HISPAN == "000"]<-"Not Hispanic"
@@ -5438,22 +5406,22 @@ server <- function(input, output) {
     
     # 2015 filters
     
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
     
     
     data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
@@ -5496,22 +5464,22 @@ server <- function(input, output) {
     
     # 2015 filters
     
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
     data2015$HISPAN[data2015$HISPAN == "000"]<-"Not Hispanic"
@@ -5553,22 +5521,22 @@ server <- function(input, output) {
     
     # 2015 filters
     
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
     
     
     data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
@@ -5610,22 +5578,22 @@ server <- function(input, output) {
     data2015 <- d2015 %>% filter(EDUC != "1")
     
     # 2015 filters
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
     
     
     data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
@@ -5668,23 +5636,22 @@ server <- function(input, output) {
     
     # 2015 filters
     
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
-    
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
     data2015$HISPAN[data2015$HISPAN == "000"]<-"Not Hispanic"
@@ -5726,22 +5693,22 @@ server <- function(input, output) {
     
     # 2015 filters
     
-    data2015$EDUC[data2015$EDUC == "10"]<-"Elementary School"
-    data2015$EDUC[data2015$EDUC == "111"]<-"Bachelor's Degree"
-    data2015$EDUC[data2015$EDUC == "123"]<-"Master's Degree"
-    data2015$EDUC[data2015$EDUC == "124"]<-"Professional School Degree"
-    data2015$EDUC[data2015$EDUC == "125"]<-"Doctorate Degree"
-    data2015$EDUC[data2015$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    data2015$EDUC[data2015$EDUC == "20"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "30"]<-"Middle School"
-    data2015$EDUC[data2015$EDUC == "40"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "50"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "60"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "71"]<-"High School, no diploma"
-    data2015$EDUC[data2015$EDUC == "73"]<-"HS Diploma or Equiv."
-    data2015$EDUC[data2015$EDUC == "81"]<-"Some college, no degree"
-    data2015$EDUC[data2015$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    data2015$EDUC[data2015$EDUC == "92"]<-"Associate's Degree, Academic"
+    data2015$EDUC[data2015$EDUC == "10"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "111"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "123"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "124"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "125"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "2"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "20"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "30"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "40"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "50"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "60"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "71"]<-"Some High School or Less"
+    data2015$EDUC[data2015$EDUC == "73"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "81"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "91"]<-"High School Diploma or Greater"
+    data2015$EDUC[data2015$EDUC == "92"]<-"High School Diploma or Greater"
     
     data2015$HISPAN[data2015$HISPAN == "0"]<-"Not Hispanic"
     data2015$HISPAN[data2015$HISPAN == "000"]<-"Not Hispanic"
@@ -5804,6 +5771,12 @@ server <- function(input, output) {
   })
   
   ##################################################
+  
+  output$stat_intro <- renderUI({
+    HTML("For this project, a binary logistic regression model was employed to study the relationship between race, gender, and Hispanic ethnicity as they relate to educational attainment. To achieve these results, the educational attainment variable was recoded from its original <em>ordinal</em> form into a <em>binary</em> variable, separating the levels of educational
+         attainment into two categories, High School Diploma or Greater and Some High School or Lesser. This should be kept in mind in the interpretation of the generated regression and subsequent odds ratio. Most of the interpretation from this model will come from the results of the odds ratio, which provide insight into the likelihood of a given identity group to attain an
+         education equivalent to or greater than a high school diploma.<br><br><small>This regression was constructed using a randomly selected sample of 100,000 observations from the source data, as to improve processing time.</small>")
+  })
   
   # regression model output
   output$binary <- renderPrint({
@@ -5897,6 +5870,10 @@ server <- function(input, output) {
     
   })
   
+  output$reg_interpret <- renderUI({
+    HTML("In this regression, all the predictor variables (<em>those included within the regression equation</em>) that are accompanied by a * or . are statistically significant. In this model, all of the explanatory variables are statistically significant, meaning they have an impact on the educational attainment variable.")
+  })
+  
   output$binary_odds <- renderPrint({
     # query to display the first 5 rows
     result <- dbGetQuery(conn,
@@ -5987,199 +5964,18 @@ server <- function(input, output) {
     exp(coef(m))
     
   })
-  
-  output$summary <- renderPrint({
-    # query to display the first 5 rows
-    result <- dbGetQuery(conn,
-                         statement= "SELECT cpsidp, sex, educ, race, hispan, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
-    
-    
-    # all yrs
-    result$EDUC[result$EDUC == "10"]<-"Elementary School"
-    result$EDUC[result$EDUC == "111"]<-"Bachelor's Degree"
-    result$EDUC[result$EDUC == "123"]<-"Master's Degree"
-    result$EDUC[result$EDUC == "124"]<-"Professional School Degree"
-    result$EDUC[result$EDUC == "125"]<-"Doctorate Degree"
-    result$EDUC[result$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    result$EDUC[result$EDUC == "20"]<-"Middle School"
-    result$EDUC[result$EDUC == "30"]<-"Middle School"
-    result$EDUC[result$EDUC == "40"]<-"High School, no diploma"
-    result$EDUC[result$EDUC == "50"]<-"High School, no diploma"
-    result$EDUC[result$EDUC == "60"]<-"High School, no diploma"
-    result$EDUC[result$EDUC == "71"]<-"High School, no diploma"
-    result$EDUC[result$EDUC == "73"]<-"HS Diploma or Equiv."
-    result$EDUC[result$EDUC == "81"]<-"Some college, no degree"
-    result$EDUC[result$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    result$EDUC[result$EDUC == "92"]<-"Associate's Degree, Academic"
-    
-    ##### converting educ levels to factor
-    result$EDUC <- factor(result$EDUC, levels=c("None/Preschool/Kindergarten","Elementary School","Middle School","High School, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
-    
-    
-    # filtering
-    result$RACE[result$RACE == "801"]<-"999" #white black
-    result$RACE[result$RACE == "802"]<-"999" #white american indian
-    result$RACE[result$RACE == "803"]<-"999" #white asian
-    result$RACE[result$RACE == "804"]<-"999" #white pacific islander
-    result$RACE[result$RACE == "805"]<-"999" #black american indian
-    result$RACE[result$RACE == "806"]<-"999" #black asian
-    result$RACE[result$RACE == "807"]<-"999" #black pacific islander
-    result$RACE[result$RACE == "808"]<-"999" #american indian asian
-    result$RACE[result$RACE == "809"]<-"999" #asian pacific islander
-    result$RACE[result$RACE == "810"]<-"999" #white black american indian
-    result$RACE[result$RACE == "811"]<-"999" #white black asian
-    result$RACE[result$RACE == "812"]<-"999" #white american indian asian
-    result$RACE[result$RACE == "813"]<-"999" #white asian pacific islander
-    result$RACE[result$RACE == "814"]<-"999" #white black american indian asian
-    result$RACE[result$RACE == "815"]<-"999" #american indian
-    result$RACE[result$RACE == "816"]<-"999" #white black pacific islander
-    result$RACE[result$RACE == "817"]<-"999" #white american indian pacific islander
-    result$RACE[result$RACE == "818"]<-"999" #black american indian asian
-    result$RACE[result$RACE == "819"]<-"999" #white american indian asian pacific islander
-    result$RACE[result$RACE == "820"]<-"999" #mixed race, 2-3, unspecified
-    result$RACE[result$RACE == "830"]<-"999" #mixed race, 4-5, unspecified
-    
-    
-    # hispanic filtering
-    result$HISPAN[result$HISPAN == "0"]<-"000"
-    #other hispan filtering
-    result$HISPAN[result$HISPAN == "600"]<-"650"
-    result$HISPAN[result$HISPAN == "610"]<-"650"
-    result$HISPAN[result$HISPAN == "611"]<-"650"
-    result$HISPAN[result$HISPAN == "612"]<-"650"
-    
-    # sex
-    result$female <- ifelse(result$SEX == "2", 1, 0)
-    #result$SEX <- replace(result$SEX == "1", 0) #male base case is == 1
-    
-    # race
-    #result$RACE <- replace(result$RACE == "100", 0) # white base case is == 100
-    result$black <- ifelse(result$RACE == "200", 1, 0)
-    result$amer_indian <- ifelse(result$RACE == "300", 1, 0)
-    result$asian <- ifelse(result$RACE == "651", 1, 0)
-    result$islander <- ifelse(result$RACE == "652", 1, 0)
-    result$mixed_race <- ifelse(result$RACE == "999", 1, 0)
-    
-    # hispanic
-    #result$HISPAN <-- replace(result$HISPAN == "000", 0) # non hispanic base case == 000
-    result$mex <- ifelse(result$HISPAN == "100", 1, 0)
-    result$pr <- ifelse(result$HISPAN == "200", 1, 0)
-    result$cuban <- ifelse(result$HISPAN == "300", 1, 0)
-    result$dom <- ifelse(result$HISPAN == "400", 1, 0)
-    result$salv <- ifelse(result$HISPAN == "500", 1, 0)
-    result$otherhispan <- ifelse(result$HISPAN == "650", 1, 0)
-    
-    # to fix error: response should be ordinal -- see ordered() 
-    result$EDUC <- ordered(result$EDUC)
-    
-    ## sample data
-    sample_result <- result[sample(nrow(result), 100000), ]
-    
-    # model <- vglm(EDUC ~ RACE + SEX + HISPAN, family = cumulative(parallel = TRUE), data = sample_result)
-    
-    model <- vglm(EDUC ~ female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan, family = cumulative(parallel = TRUE), data = sample_result)
-    
-    # can also set the family as multinomial for multinomial log regression
-    
-    # summary
-    summary(model)
-  })
-  
-  output$odds <- renderPrint({
-    # query to display the first 5 rows
-    result <- dbGetQuery(conn,
-                         statement= "SELECT cpsidp, sex, educ, race, hispan, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
-    
-    
-    # all yrs
-    result$EDUC[result$EDUC == "10"]<-"Elementary School"
-    result$EDUC[result$EDUC == "111"]<-"Bachelor's Degree"
-    result$EDUC[result$EDUC == "123"]<-"Master's Degree"
-    result$EDUC[result$EDUC == "124"]<-"Professional School Degree"
-    result$EDUC[result$EDUC == "125"]<-"Doctorate Degree"
-    result$EDUC[result$EDUC == "2"]<-"None/Preschool/Kindergarten"
-    result$EDUC[result$EDUC == "20"]<-"Middle School"
-    result$EDUC[result$EDUC == "30"]<-"Middle School"
-    result$EDUC[result$EDUC == "40"]<-"High School, no diploma"
-    result$EDUC[result$EDUC == "50"]<-"High School, no diploma"
-    result$EDUC[result$EDUC == "60"]<-"High School, no diploma"
-    result$EDUC[result$EDUC == "71"]<-"High School, no diploma"
-    result$EDUC[result$EDUC == "73"]<-"HS Diploma or Equiv."
-    result$EDUC[result$EDUC == "81"]<-"Some college, no degree"
-    result$EDUC[result$EDUC == "91"]<-"Occupational/Vocational Program Degree"
-    result$EDUC[result$EDUC == "92"]<-"Associate's Degree, Academic"
-    
-    ##### converting educ levels to factor
-    result$EDUC <- factor(result$EDUC, levels=c("None/Preschool/Kindergarten","Elementary School","Middle School","High School, no diploma", "HS Diploma or Equiv.", "Some college, no degree","Occupational/Vocational Program Degree", "Associate's Degree, Academic", "Bachelor's Degree","Master's Degree", "Professional School Degree", "Doctorate Degree"))
-    
-    
-    # filtering
-    result$RACE[result$RACE == "801"]<-"999" #white black
-    result$RACE[result$RACE == "802"]<-"999" #white american indian
-    result$RACE[result$RACE == "803"]<-"999" #white asian
-    result$RACE[result$RACE == "804"]<-"999" #white pacific islander
-    result$RACE[result$RACE == "805"]<-"999" #black american indian
-    result$RACE[result$RACE == "806"]<-"999" #black asian
-    result$RACE[result$RACE == "807"]<-"999" #black pacific islander
-    result$RACE[result$RACE == "808"]<-"999" #american indian asian
-    result$RACE[result$RACE == "809"]<-"999" #asian pacific islander
-    result$RACE[result$RACE == "810"]<-"999" #white black american indian
-    result$RACE[result$RACE == "811"]<-"999" #white black asian
-    result$RACE[result$RACE == "812"]<-"999" #white american indian asian
-    result$RACE[result$RACE == "813"]<-"999" #white asian pacific islander
-    result$RACE[result$RACE == "814"]<-"999" #white black american indian asian
-    result$RACE[result$RACE == "815"]<-"999" #american indian
-    result$RACE[result$RACE == "816"]<-"999" #white black pacific islander
-    result$RACE[result$RACE == "817"]<-"999" #white american indian pacific islander
-    result$RACE[result$RACE == "818"]<-"999" #black american indian asian
-    result$RACE[result$RACE == "819"]<-"999" #white american indian asian pacific islander
-    result$RACE[result$RACE == "820"]<-"999" #mixed race, 2-3, unspecified
-    result$RACE[result$RACE == "830"]<-"999" #mixed race, 4-5, unspecified
-    
-    
-    # hispanic filtering
-    result$HISPAN[result$HISPAN == "0"]<-"000"
-    #other hispan filtering
-    result$HISPAN[result$HISPAN == "600"]<-"650"
-    result$HISPAN[result$HISPAN == "610"]<-"650"
-    result$HISPAN[result$HISPAN == "611"]<-"650"
-    result$HISPAN[result$HISPAN == "612"]<-"650"
-    
-    # sex
-    result$female <- ifelse(result$SEX == "2", 1, 0)
-    #result$SEX <- replace(result$SEX == "1", 0) #male base case is == 1
-    
-    # race
-    #result$RACE <- replace(result$RACE == "100", 0) # white base case is == 100
-    result$black <- ifelse(result$RACE == "200", 1, 0)
-    result$amer_indian <- ifelse(result$RACE == "300", 1, 0)
-    result$asian <- ifelse(result$RACE == "651", 1, 0)
-    result$islander <- ifelse(result$RACE == "652", 1, 0)
-    result$mixed_race <- ifelse(result$RACE == "999", 1, 0)
-    
-    # hispanic
-    #result$HISPAN <-- replace(result$HISPAN == "000", 0) # non hispanic base case == 000
-    result$mex <- ifelse(result$HISPAN == "100", 1, 0)
-    result$pr <- ifelse(result$HISPAN == "200", 1, 0)
-    result$cuban <- ifelse(result$HISPAN == "300", 1, 0)
-    result$dom <- ifelse(result$HISPAN == "400", 1, 0)
-    result$salv <- ifelse(result$HISPAN == "500", 1, 0)
-    result$otherhispan <- ifelse(result$HISPAN == "650", 1, 0)
-    
-    # to fix error: response should be ordinal -- see ordered() 
-    result$EDUC <- ordered(result$EDUC)
-    
-    ## sample data
-    sample_result <- result[sample(nrow(result), 100000), ]
-    
-    # model <- vglm(EDUC ~ RACE + SEX + HISPAN, family = cumulative(parallel = TRUE), data = sample_result)
-    
-    model <- vglm(EDUC ~ female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan, family = cumulative(parallel = TRUE), data = sample_result)
-    
-    # can also set the family as multinomial for multinomial log regression
-    
-    # summary
-    exp(coef(model, matrix = TRUE))
+  output$odds_interpret <- renderUI({
+    HTML("According to the results from the <em>binary logistic regression</em> and <em>odds ratio</em>:
+         <ul>
+         <li>Compared to the male population, the <b>female</b> population in this sample had higher odds of having an educational 
+         attainment equivalent to a high school diploma or greater</li>
+         
+         <li>Compared to the White population, <b>all other racial groups</b> have a lower odds of having an educational 
+         attainment equivalent to a high school diploma or greater.</li>
+         
+         <li>Compared to the non-Hispanic population, <b>all other Hispanic ethnic groups</b> have a lower odds of having an educational 
+         attainment equivalent to a high school diploma or greater.</li>
+         </ul>")
   })
 }
 

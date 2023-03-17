@@ -15,6 +15,7 @@ install.packages("plotly")
 install.packages("MASS")
 install.packages("brant")
 install.packages("VGAM")
+install.packages("caret")
 
 require(MASS)
 
@@ -29,6 +30,7 @@ library(vtable)
 library(plotly)
 library(brant)
 library(VGAM)
+library(caret)
 
 # setting database path -- via USB
 db <- "D:/eduattain/CPS.db"
@@ -1547,7 +1549,14 @@ m <- vglm(EDUC ~ RACE + SEX + HISPAN, family = cumulative(parallel = TRUE), data
 result <- na.omit(result)
 
 ## sample data
-sample_result <- result[sample(nrow(result), 100000), ]
+# train <- result[sample(nrow(result)*0.7, 100000), ]
+# 
+# test <- setdiff(1:nrow(result), train)
+
+# sample
+sample <- sample(nrow(result), prob=c(0.7,0.3))
+train <- data[sample, ]
+test <- data[!sample, ]
 
 View(sample_result)
 
@@ -1567,8 +1576,17 @@ prop.table(table(sample_result$pr))
 prop.table(table(sample_result$salv))
 prop.table(table(sample_result$otherhispan))
 
-m <- glm(EDUC~female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan, family = binomial, data = sample_result)
+m <- glm(EDUC~female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan, family = binomial, data = train)
 
+
+## confusion matrix
+mytable <- table(train$EDUC,test$EDUC)
+rownames(mytable) <- c("Obs. 1","Obs. 0")
+colnames(mytable) <- c("Pred. 1","Pred. 0")
+
+# efficiency
+efficiency <- sum(diag(mytable))/sum(mytable)
+efficiency
 
 ## view a summary of the model
 summary(m)
