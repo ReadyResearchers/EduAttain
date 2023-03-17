@@ -21,9 +21,9 @@
 library(shiny)
 library(shinydashboard)
 library(DBI)
+library(RSQLite)
 library(dplyr)
 library(tidyverse)
-library(ggplot2)
 library(plotly)
 library(rsconnect)
 
