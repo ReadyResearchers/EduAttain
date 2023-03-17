@@ -20,22 +20,21 @@
 
 library(shiny)
 library(shinydashboard)
-library(RSQLite)
+library(DBI)
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(plotly)
 library(rsconnect)
-library(VGAM)
 
 # setting database path
 #db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
 
 # setting database path -- via USB
-db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
+db <- "data/CPS.db"
 
 # connect to database
-conn <- dbConnect(drv = SQLite(), dbname = db)
+conn <- dbConnect(RSQLite::SQLite(), dbname = db)
 
 
 #### test to limit results to 18+####
@@ -315,7 +314,7 @@ body <- dashboardBody(
 # function for dash creation
 
 ui <- dashboardPage(
-  dashboardHeader(title = "EduAttain"),
+  dashboardHeader(title = "EduAttain", titleWidth = 250),
   sidebar,
   body
 )
@@ -344,7 +343,7 @@ server <- function(input, output) {
   
   output$description <- renderUI({
     HTML(paste("<b>EduAttain</b>, leverages data from <a href='https://cps.ipums.org/cps/index.shtml'>IPUMS</a>, to assess how an individual's <em>race, gender, or Hispanic ethnicity</em> influence the level of education attained. <br>
-               <br> This project is divided into two main sections: <em>Descriptive Statistics</em> and <em>Statistical Analysis</em>. <br> For the descriptive statistics, pie charts based on population percentages will depict how
+               <br> This project is divided into two main sections: <em>Descriptive Statistics</em> and <em>Statistical Analysis</em>. <br><br> For the descriptive statistics, pie charts based on population percentages will depict how
                educational attainment varies by race, gender, and Hispanic ethnicity over each survey year. For the statistical analysis, the statistical relationship between educational attainment and each of the explanatory variables will be tested using a binary logistic regression. 
                <br> <br>The source code for this project is stored in a <a href='https://github.com/ReadyResearchers/EduAttain'>GitHub Repository</a> that can be accessed for review of the code, adhering to fair use practices."))
   })
@@ -1862,7 +1861,7 @@ server <- function(input, output) {
           <b>American Indian</b> population, while having a lower proportion compared to the <b>White, Asian, Pacific Islander, and Mixed Race</b> population.</li>
           
           <li>The <b>American Indian</b> population had the lowest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
-          <b>all other racial groups/b>.</li>
+          <b>all other racial groups</b>.</li>
           
           <li>The <b>Pacific Islander</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
           <b>White, American Indian, Mixed Race, and Black</b> populations, while having a lower proportion compared to the <b>Asian</b> population.</li>
@@ -2322,7 +2321,7 @@ server <- function(input, output) {
           <b>American Indian and Black</b> populations, while having a lower proportion compared to the <b>White, Mixed Race, and Asian</b> population.</li>
           
           <li>The <b>Asian</b> population had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
-          <b>all other racial groups/b>.</li>
+          <b>all other racial groups</b>.</li>
           
                </ul>")
   })
@@ -2774,7 +2773,7 @@ server <- function(input, output) {
           <b>American Indian and Black</b> populations, while having a lower proportion compared to the <b>White, Mixed Race, and Asian</b> population.</li>
           
           <li>The <b>Asian</b> population had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
-          <b>all other racial groups/b>.</li>
+          <b>all other racial groups</b>.</li>
                
                </ul>")
   })
@@ -3236,7 +3235,7 @@ server <- function(input, output) {
           <b>American Indian and Black</b> populations, while having a lower proportion compared to the <b>White, Mixed Race, and Asian</b> population.</li>
           
           <li>The <b>Asian</b> population had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
-          <b>all other racial groups/b>.</li>
+          <b>all other racial groups</b>.</li>
                
                </ul>")
   })
@@ -3704,7 +3703,7 @@ server <- function(input, output) {
   output$hispan_intro <- renderUI({
     HTML("The comparisons in this section were computed by observing plots and recording their values on a spreadsheet. These were used to compare population percentages to see differences  in educational attainment between identity groups. The levels of education were combined to create two distinct categories: <b>High School Diploma or Greater</b> and <b>High School or Less</b><br><br>
          <small>*Any miscalculations may be a result of manual entry, The <em>Other Hispanic</em> population in this sample accounts for entries left unspecified or marked as Central or South American. Data for Salvadorian and Dominican Hispanic origin only available in survey years 2014 and 2015.</small><br><br> These computations can be observed 
-         <a href='https://docs.google.com/spreadsheets/d/1yo7w3FYOYPKFA_UBW6T1-d2AcJBCc-olJuapiMwqDOw/edit?usp=sharing'>here</a>.")
+         <a href='https://docs.google.com/spreadsheets/d/1UmisBE7AXtq3nleSEl2d4KGAKI4VKf8qxxjICS3SKYc/edit?usp=sharing'>here</a>.")
   })
   
   # 2010 HISPAN
@@ -3994,14 +3993,14 @@ server <- function(input, output) {
                <strong>Conclusions</strong><br>
                <ul>
                
-               <li>The <b>non-Hispanic</b> population in this sample had a higher proportion of <b>associates', bachelors', masters' and doctoral degree</b> holders than the <em>Mexican, Puerto Rican, and other Hispanic</em> populations, with the exception of the <em>Puerto Rican</em> population's slight advantage in the proportion of <b>associate degree</b> holders. Compared to the <em>Cuban</em> population, the non-Hispanic population only had a higher percentage 
-               of <b>bachelors' and masters' degree</b> holders.</li>
+               <li>The <b>non-Hispanic</b> population in this sample had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to <b>all other Hispanic ethnic groups</b>.</li>
                
-               <li>The <b>Mexican</b> population had a <b>lowest proportion of degree holders, across all levels of post-secondary education</b>, compared to all other populations in this sample.</li>
+               <li>The <b>Mexican</b> population had the lowest proportion of individuals who had an educational attainment of high school diploma or greater, compared to <b>all other Hispanic populations</b> in this sample.</li>
                
-               <li>The <b>Puerto Rican</b> population in this sample had a <b>higher proportion of post-secondary degree holders</b> than the <em>Mexican</em> population, but a <b>lower proportion</b> than the <em>Cuban</em> population. Compared to the <em>non-Hispanic and Other Hispanic</em> populations, the Puerto Rican population had a higher percentage of only <b>associate degree</b> holders.</li>
+               <li>The <b>Puerto Rican</b> population in this sample had a lower proportion of individuals with a high school diploma or greater than the <b>Non Hispanic and Cuban</b> populations, but a higher proportion than the 
+               <b>Mexican and Other Hispanic</b> populations.</li>
                
-               <li>The <b>Cuban</b> population in this sample had a higher proportion of <b>associates', bachelors', masters', and doctoral degree</b> holders than the <em>Mexican, Puerto Rican and Other Hispanic</em> populations. Compared to the <em>non-Hispanic</em> population, the Cuban population only had a higher proportion of <b>associates' and doctoral degree</b> holders.</li>
+               <li>The <b>Cuban</b> population in this sample had a higher proportion of individuals with an educational attainment of high school diploma or greater compared to <b>all other Hispanic populations, excluding the Non Hispanic population</b>. </li>
 
                </ul>")
   })
@@ -4293,13 +4292,14 @@ server <- function(input, output) {
                <strong>Conclusions</strong><br>
                <ul>
                
-               <li>The <b>non-Hispanic</b> population in this sample had a higher proportion of <b>associates', bachelors', masters', and doctoral degree</b> holders than the <em>Mexican, Puerto Rican, and other Hispanic</em> populations. Compared to the <em>Cuban</em> population, the non-Hispanic population only had a higher percentage of <b>bachelors' and masters' degree</b> holders.</li>
+                <li>The <b>non-Hispanic</b> population in this sample had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to <b>all other Hispanic ethnic groups</b>.</li>
                
-               <li>The <b>Mexican</b> population had the <b>lowest proportion of degree holders, across all levels of post-secondary education</b>, compared to all other populations in this sample.</li>
+               <li>The <b>Mexican</b> population had the lowest proportion of individuals who had an educational attainment of high school diploma or greater, compared to <b>all other Hispanic populations</b> in this sample.</li>
                
-               <li>The <b>Puerto Rican</b> population in this sample had a <b>higher proportion of post-secondary degree holders</b> than the <em>Mexican</em> population, but a <b>lower proportion</b> than the <em>Cuban and non-Hispanic</em> populations. Compared to the <em>other Hispanic</em> population, the Puerto Rican population had a higher percentage of only <b>associate degree</b> holders.</li>
+               <li>The <b>Puerto Rican</b> population in this sample had a lower proportion of individuals with a high school diploma or greater than the <b>Non Hispanic and Cuban</b> populations, but a higher proportion than the 
+               <b>Mexican and Other Hispanic</b> populations.</li>
                
-               <li>The <b>Cuban</b> population in this sample had a higher proportion of <b>associates', bachelors', masters', and doctoral degree</b> holders than the <em>Mexican, Puerto Rican and Other Hispanic</em> populations. Compared to the <em>non-Hispanic</em> population, the Cuban population only had a higher proportion of <b>associates' and doctoral degree</b> holders.</li>
+               <li>The <b>Cuban</b> population in this sample had a higher proportion of individuals with an educational attainment of high school diploma or greater compared to <b>all other Hispanic populations, excluding the Non Hispanic population</b>. </li>
 
                </ul>")
   })
@@ -4591,15 +4591,14 @@ server <- function(input, output) {
                <strong>Conclusions</strong><br>
                <ul>
                
-               <li>The <b>non-Hispanic</b> population had the <b>highest proportion of degree holders, across all levels of postsecondary education</b>, compared to all other populations in this sample.</li>
+                <li>The <b>non-Hispanic</b> population in this sample had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to <b>all other Hispanic ethnic groups</b>.</li>
                
-               <li>The <b>Mexican</b> population had the <b>lowest proportion of degree holders, across all levels of post-secondary education</b>, compared to all other populations in this sample.</li>
+               <li>The <b>Mexican</b> population had the lowest proportion of individuals who had an educational attainment of high school diploma or greater, compared to <b>all other Hispanic populations</b> in this sample.</li>
                
-               <li>The <b>Puerto Rican</b> population in this sample had a <b>higher proportion of post-secondary degree holders</b> than the <em>Mexican</em> population, but a <b>lower proportion</b> than the <em>Cuban and non-Hispanic</em> 
-               populations. Compared to the <em>other Hispanic</em> population, the Puerto Rican population had a higher percentage of only <b>associate degree</b> holders.</li>
+               <li>The <b>Puerto Rican</b> population in this sample had a lower proportion of individuals with a high school diploma or greater than the <b>Non Hispanic and Cuban</b> populations, but a higher proportion than the 
+               <b>Mexican and Other Hispanic</b> populations.</li>
                
-               <li>The <b>Cuban</b> population in this sample had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>, compared to the <em>Mexican, Puerto Rican, and Other Hispanic</em> populations. Compared to the <em>non-Hispanic</em>
-               population, the Cuban population had a <b>lower proportion of degree holders, across all levels of postsecondary education</b>.</li>
+               <li>The <b>Cuban</b> population in this sample had a higher proportion of individuals with an educational attainment of high school diploma or greater compared to <b>all other Hispanic populations, excluding the Non Hispanic population</b>. </li>
 
                </ul>")
   })
@@ -4895,16 +4894,14 @@ server <- function(input, output) {
                <strong>Conclusions</strong><br>
                <ul>
                
-               <li>The <b>non-Hispanic</b> population in this sample had a higher proportion of <b>associates', bachelors', masters' and doctoral degree</b> holders than the <em>Mexican, Puerto Rican, and other Hispanic</em> populations. 
-               Compared to the <em>Cuban</em> population, the non-Hispanic population had a lower proportion of <b>associates' degree</b> holders.</li>
+               <li>The <b>non-Hispanic</b> population in this sample had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to <b>all other Hispanic ethnic groups</b>.</li>
                
-               <li>The <b>Mexican</b> population had the <b>lowest proportion of degree holders, across all levels of post-secondary education</b>, compared to all other populations in this sample.</li>
+               <li>The <b>Mexican</b> population had the lowest proportion of individuals who had an educational attainment of high school diploma or greater, compared to <b>all other Hispanic populations</b> in this sample.</li>
                
-               <li>The <b>Puerto Rican</b> population in this sample had a <b>higher proportion of post-secondary degree holders</b> than the <em>Mexican</em> population, but a <b>lower proportion</b> than the <em>Cuban and non-Hispanic</em> populations. 
-               Compared to the <em>other Hispanic</em> population, the Puerto Rican population had a higher percentage of only <b>associate</b> degree holders.</li>
+               <li>The <b>Puerto Rican</b> population in this sample had a lower proportion of individuals with a high school diploma or greater than the <b>Non Hispanic and Cuban</b> populations, but a higher proportion than the 
+               <b>Mexican and Other Hispanic</b> populations.</li>
                
-               <li>The <b>Cuban</b> population in this sample had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>, compared to the <em>Mexican and Puerto Rican</em> populations. Compared to the <em>other Hispanic</em> population, the Cuban 
-               population had a slightly lower proportion of <b>doctorate degree</b> holders. Compared to the <em>non-Hispanic</em> population, the Cuban population only had a higher proportion of <b>associates' degree</b> holders.</li>
+               <li>The <b>Cuban</b> population in this sample had a higher proportion of individuals with an educational attainment of high school diploma or greater compared to <b>all other Hispanic populations, excluding the Non Hispanic population</b>. </li>
 
                </ul>")
   })
@@ -5316,23 +5313,20 @@ server <- function(input, output) {
                <strong>Conclusions</strong><br>
                <ul>
                
-               <li>The <b>Non-Hispanic</b> population in this sample had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>, compared to the <em>Mexican, Puerto Rican, other Hispanic, and Salvadorian</em> populations. Compared to the <em>Dominican</em> population,
-               the non-Hispanic population had a lower proportion of <b>associates' degree</b> holders. Compared to the <em>Cuban</em> population, the non-Hispanic population only had a higher proportion of <b>masters' degree</b> holders.</li>
+                <li>The <b>non-Hispanic</b> population in this sample had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to <b>all other Hispanic ethnic groups</b>.</li>
                
-               <li>The <b>Mexican</b> population had a <b>lower proportion of degree holders across all levels of postsecondary education</b> compared to the <em>non-Hispanic, Puerto Rican, Cuban, other Hispanic, and Dominican</em> populations. Compared to the <em>Salvadorian</em> population, the Mexican
-               population had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>.</li>
+               <li>The <b>Mexican</b> population had a lower proportion of individuals who had an educational attainment of high school diploma or greater, compared to <b>all other Hispanic populations</b> in this sample, excluding the <b>Salvadorian</b> population.</li>
                
-               <li>The <b>Puerto Rican</b> population in this sample had a <b>higher proportion of post-secondary degree holders</b> than the <em>Mexican and Salvadorian</em> populations, but a <b>lower proportion</b> than the <em>Cuban, Dominican, and non-Hispanic</em> populations. Compared to the <em>other Hispanic</em>
-               population, the Puerto Rican population had a higher percentage of only <b>associate degree</b> holders.</li>
+               <li>The <b>Puerto Rican</b> population in this sample had a lower proportion of individuals with a high school diploma or greater than the <b>Non Hispanic and Cuban</b> populations, but a higher proportion than the 
+               <b>Mexican, Other Hispanic, Dominican, and Salvadorian</b> populations.</li>
                
-               <li>The <b>Cuban</b> population in this sample had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>, compared to the <em>Mexican, Dominican, Salvadorian, other Hispanic, and Puerto Rican</em> populations. Compared to the <em>non-Hispanic</em> population,
-               the Cuban population only had a lower proportion of <b>masters' degree</b> holders.</li>
+               <li>The <b>Cuban</b> population in this sample had a higher proportion of individuals with an educational attainment of high school diploma or greater compared to <b>all other Hispanic populations, excluding the Non Hispanic population</b>. </li>
                
-               <li>The <b>other Hispanic</b> population had a <b>lower proportion of degree holders across all levels of postsecondary education</b> compared to the <em>non-Hispanic and Cuban</em> populations. Compared to the <em>Mexican and Salvadorian</em> populations, the other Hispanic population had a <b>higher 
-               proportion of postsecondary degree holders</b>. Compared to the <em>Puerto Rican and Dominican</em> populations, the other Hispanic population had a lower proportion of <b>associates' degree</b> holders.</li>
+               <li>The <b>other Hispanic</b> population had a lower proportion of individuals with a high school diploma or greater than the <b>Non Hispanic, Puerto Rican, and Cuban</b> populations, but a higher proportion than the 
+               <b>Mexican, Dominican, and Salvadorian</b> populations.</li>
                
-               <li>The <b>Dominican</b> population in this sample accounted for a higher proportion of only <b>associates' degree</b> holders compared to the <em>non-Hispanic and other Hispanic</em> populations. Compared to the <em>Mexican, Puerto Rican, and Salvadorian</em> populations, the Dominican population
-               had <b>a higher proportion of degree holders across all levels of postsecondary education</b>. Compared to the <em>Cuban</em> population, the Dominican population had a <b>lower proportion of degree holders across all levels of postsecondary education</b>.</li>
+               <li>The <b>Dominican</b> population in this sample had a lower proportion of individuals with a high school diploma or greater than the <b>Non Hispanic, Puerto Rican, Other Hispanic, and Cuban</b> populations, but a higher proportion than the 
+               <b>Mexican and Salvadorian</b> populations.</li>
 
                </ul>")
   })
@@ -5745,27 +5739,20 @@ server <- function(input, output) {
                <strong>Conclusions</strong><br>
                <ul>
                
-               <li>The <b>Non-Hispanic</b> population in this sample had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>, compared to the <em>Mexican, Puerto Rican, other Hispanic, Dominican, and Salvadorian</em> populations.
-               Compared to the <em>Cuban</em> population, the non-Hispanic population only had a higher proportion of <b>associates' and doctoral degree</b> holders.</li>
+               <li>The <b>non-Hispanic</b> population in this sample had the highest proportion of individuals who had an educational attainment of high school diploma or greater compared to <b>all other Hispanic ethnic groups</b>.</li>
                
-               <li>The <b>Mexican</b> population in this sample had a <b>lower proportion of degree holders across all levels of post-secondary education</b> compared to the <em>non-Hispanic and Cuban</em> populations. Compared to the <em>other Hispanic and Puerto Rican</em> populations, the Mexican 
-               population had a higher proportion of only <b>masters' degree</b> holders. Compared to the <em>Dominican</em> population, the Mexican population had a higher proportion of <b>masters' and doctoral degree</b> holders. Compared to the <em>Salvadorian</em> population, the Mexican population 
-               had a higher proportion of <b>doctoral degree</b> holders.</li>
+               <li>The <b>Mexican</b> population had a lower proportion of individuals who had an educational attainment of high school diploma or greater, compared to <b>all other Hispanic populations</b> in this sample, excluding the <b>Salvadorian</b> population.</li>
                
-               <li>The <b>Puerto Rican</b> population in this sample had a <b>lower proportion of postsecondary degree holders</b> than the <em>non-Hispanic</em> population. Compared to the <em>other Hispanic and Cuban</em> populations, the Puerto Rican population had a higher percentage of only <b>associate</b> degree holders. 
-               Compared to the <em>Mexican</em> population, the Puerto Rican population had a higher percentage of <b>masters' degree</b> holders. The Puerto Rican population had a lower percentage of <b>bachelors' degree</b> holders compared to the <em>Dominican</em> population and a lower percentage of <b>doctoral degree</b> holders 
-               compared to the <em>Salvadorian</em> population.</li>
+               <li>The <b>Puerto Rican</b> population in this sample had a lower proportion of individuals with a high school diploma or greater than the <b>Non Hispanic and Cuban</b> populations, but a higher proportion than the 
+               <b>Mexican, Other Hispanic, Dominican, and Salvadorian</b> populations.</li>
                
-               <li>The <b>Cuban</b> population in this sample had a <b>higher proportion of degree holders, across all levels of postsecondary education</b>, compared to the <em>Mexican and Salvadorian</em> populations. Compared to the <em>non-Hispanic</em> population, the Cuban population only had a lower proportion of <b>associates' and 
-               doctoral degree</b> holders. The Cuban population had a lower proportion of <b>associate degree</b> holders compared to the <em>Puerto Rican and Dominican</em> populations. Compared to the <em>other Hispanic</em> population, the Cuban population only had a higher proportion of <b>bachelors' and masters' degree</b> holders.</li>
+               <li>The <b>Cuban</b> population in this sample had a higher proportion of individuals with an educational attainment of high school diploma or greater compared to <b>all other Hispanic populations, excluding the Non Hispanic population</b>. </li>
                
-               <li>The <b>other Hispanic</b> population had a <b>lower proportion of degree holders across all levels of postsecondary education</b> compared to the <em>non-Hispanic</em> population. Compared to the <em>Cuban</em> population, the other Hispanic population had a slightly higher proportion of <b>associates' and doctoral degree</b> holders. 
-               Compared to the <em>Dominican and Salvadorian</em> populations, the other Hispanic population had a <b>higher proportion of postsecondary degree holders</b>. The other Hispanic population had a lower proportion of <b>masters' degree</b> holders compared to the <em>Mexican</em> population and a lower proportion of <b>associate degree</b> holders 
-               compared to the <em>Puerto Rican</em> population.</li>
+               <li>The <b>other Hispanic</b> population had a lower proportion of individuals with a high school diploma or greater than the <b>Non Hispanic, Puerto Rican, and Cuban</b> populations, but a higher proportion than the 
+               <b>Mexican, Dominican, and Salvadorian</b> populations.</li>
                
-               <li>The <b>Dominican</b> population in this sample accounted for a <b>lower proportion of degree holders across all levels of postsecondary education</b> compared to the <em>non-Hispanic and other Hispanic</em> populations. Compared to the <em>Mexican</em> population, the Dominican population had a higher proportion of <b>associates' and bachelors' 
-               degree</b> holders. Compared to the <em>Puerto Rican</em> population, the Dominican population had a higher percentage of <b>bachelors' degree</b> holders. Compared to the <em>Cuban</em> population, the Dominican population had a higher proportion of <b>associate degree</b> holders. Compared to the <em>Salvadorian</em> population, the Dominican population 
-               had a lower proportion of <b>doctorate degree</b> holders.</li>
+               <li>The <b>Dominican</b> population in this sample had a lower proportion of individuals with a high school diploma or greater than the <b>Non Hispanic, Puerto Rican, Other Hispanic, and Cuban</b> populations, but a higher proportion than the 
+               <b>Mexican and Salvadorian</b> populations.</li>
 
                </ul>")
   })

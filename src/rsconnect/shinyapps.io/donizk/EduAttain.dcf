@@ -1,0 +1,13 @@
+name: EduAttain
+title:
+username:
+account: donizk
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8599168
+bundleId: 6972715
+url: https://donizk.shinyapps.io/EduAttain/
+when: 1679079369.05207
+lastSyncTime: 1679079369.05207
+asMultiple: FALSE
+asStatic: FALSE
