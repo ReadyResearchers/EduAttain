@@ -5,12 +5,16 @@ on:
     branches: [main]
 
 jobs:
+
   build:
+    
     runs-on: ubuntu-latest
+    
     env:
       SHINYAPPS_ACCOUNT: ${{ secrets.SHINYAPPS_ACCOUNT }}
       SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
       SHINYAPPS_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
+    
     strategy:
       matrix:
         config:
