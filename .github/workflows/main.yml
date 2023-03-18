@@ -17,13 +17,13 @@ jobs:
       run: |
         export R_LIBS=$HOME/R/library
         mkdir -p $R_LIBS
-        Rscript -e "install.packages('shiny')"
-        Rscript -e "install.packages('shinydashboard')"
-        Rscript -e "install.packages('RSQLite')"
-        Rscript -e "install.packages('plotly')"
-        Rscript -e "install.packages('rsconnect')"
-        Rscript -e "install.packages('tidyverse')"
-        Rscript -e "install.packages('dplyr')"
+        Rscript -e "install.packages('shiny', lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")"
+        Rscript -e "install.packages('shinydashboard', lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")"
+        Rscript -e "install.packages('RSQLite', lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")"
+        Rscript -e "install.packages('plotly', lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")"
+        Rscript -e "install.packages('rsconnect', lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")"
+        Rscript -e "install.packages('tidyverse', lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")"
+        Rscript -e "install.packages('dplyr', lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")"
 
     - name: Build app
       run: Rscript -e "shiny::runApp('R/app.R')"
