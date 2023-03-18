@@ -6,11 +6,19 @@ on:
 
 jobs:
   build:
+    runs-on: ubuntu-latest
+    env:
+      SHINYAPPS_ACCOUNT: ${{ secrets.SHINYAPPS_ACCOUNT }}
+      SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
+      SHINYAPPS_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
+    strategy:
+      matrix:
+        config:
+          - r: '4.1'
 
-    runs-on: [os: ubuntu-latest, r: 'release']
-
-    - name: Checkout repo
-        uses: actions/checkout@v2
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
     - name: Setup R
       uses: r-lib/actions/setup-r@v2
@@ -25,14 +33,8 @@ jobs:
         extra-packages: any::rcmdcheck
 
     - name: Build app
-      run: shiny::runApp('R/app.R')
-      shell: Rscript {0}
+      run: Rscript -e 'shiny::runApp("R/app.R")'
 
     - name: Deploy to shinyapps.io
-        # Continuous deployment only for pushes to the main / master branch
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-        env:
-          SHINYAPPS_ACCOUNT: ${{ secrets.SHINYAPPS_ACCOUNT }}
-          SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
-          SHINYAPPS_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
-        run: Rscript deploy/deploy-shinyapps.R
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      run: Rscript deploy/deploy-shinyapps.R
