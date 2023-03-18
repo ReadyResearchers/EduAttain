@@ -33,6 +33,8 @@ jobs:
 
     - name: Install dependencies
       run:
+          export R_LIBS=$HOME/R/library
+          mkdir -p $R_LIBS
           Rscript -e 'install.packages("shiny", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
           Rscript -e 'install.packages("shinydashboard", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
           Rscript -e 'install.packages("RSQLite", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
