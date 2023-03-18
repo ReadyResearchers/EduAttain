@@ -15,9 +15,9 @@ jobs:
 
     - name: Install dependencies
       run: |
-        export R_LIBS=$HOME/R/library
-        mkdir -p $R_LIBS
-        Rscript --no-restore --no-save -e 'install.packages("shiny", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
-    
+        install.packages(c("shiny", "shinydashboard", "RSQLite", "dplyr", "tidyverse", "plotly", "rsconnect"))
+      shell: Rscript {0}
+
     - name: Build app
-      run: Rscript -e "shiny::runApp('R/app.R')"
+      run: shiny::runApp('R/app.R')
+      shell: Rscript {0}
