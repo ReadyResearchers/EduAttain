@@ -33,7 +33,7 @@ jobs:
 
     - name: Install dependencies
       env:
-          R_LIBS: ${{ runner.home }}/R/library/
+          R_LIBS: ${{ runner.home }}/R/
       run: |
           mkdir -p $R_LIBS
           Rscript -e 'install.packages("shiny", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
