@@ -32,7 +32,6 @@ jobs:
         use-public-rspm: true
 
     - name: Install dependencies
-      uses: r-lib/actions/setup-r-dependencies@v2
       run:
           Rscript -e 'install.packages("shiny", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
           Rscript -e 'install.packages("shinydashboard", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
