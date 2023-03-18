@@ -58,19 +58,19 @@ EduAttain is a comprehensive data analysis dashboard studying educational attain
 The structure of the dashboard is as follows:
 
 - **Data & Description**: This page of the dashboard presents a table of the raw data set extracted from IPUMS, summary statistics relating to the age and amount of individuals captured in the data, project description, and a data key for the data table.
-![Data & Description](home.jpg)
+![Data & Description](files/home.jpg)
 
 - **Gender x Educational Attainment**: This page of the dashboard presents pie charts that were generated for each survey year representing the proportion of each gender's population above or below a High School education, and interpretations of the plots that compare female and male educational attainment.
-![Gender x Educational Attainment](genxedu.jpg)
+![Gender x Educational Attainment](files/genxedu.jpg)
 
 - **Race x Educational Attainment**: This page of the dashboard presents pie charts that were generated for each survey year representing the proportion of each racial population above or below a High School education, and interpretations of the plots that compare White, Black, Asian, American Indian, Pacific Islander, and Mixed Race educational attainment.
-![Race x Educational Attainment](racexedu.jpg)
+![Race x Educational Attainment](files/racexedu.jpg)
 
 - **Hispanic x Educational Attainment**: This page of the dashboard presents pie charts that were generated for each survey year representing the proportion of each Hispanic population above or below a High School education, and interpretations of the plots that compare Non Hispanic, Mexican, Puerto Rican, Cuban, Other Hispanic, Dominican, and Salvadorian educational attainment.
-![Hispanic x Educational Attainment](hispanxedu.jpg)
+![Hispanic x Educational Attainment](files/hispanxedu.jpg)
 
 - **Regression**: This page of the dashboard presents the results of the binary logistic regression and corresponding odds ratio, along with interpretations from these figures.
-![Statistical Analysis](stats.jpg)
+![Statistical Analysis](files/stats.jpg)
 
 The Gender x Educational Attainment, Race x Educational Attainment, and Hispanic x Educational Attainment fall under the Descriptive Statistics section, where plotly pie charts based on population percentages depict how educational attainment varies by race, gender, and Hispanic ethnicity over each survey year.
 
