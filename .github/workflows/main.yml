@@ -7,7 +7,7 @@ on:
 jobs:
   build:
 
-    runs-on: {os: ubuntu-latest, r: 'release'}
+    runs-on: [os: ubuntu-latest, r: 'release']
 
     - name: Checkout repo
         uses: actions/checkout@v2
