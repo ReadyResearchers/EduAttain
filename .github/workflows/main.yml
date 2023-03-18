@@ -31,10 +31,16 @@ jobs:
         # Enable RStudio Package Manager to speed up package installation
         use-public-rspm: true
 
-    - name: Install and cache dependencies
+    - name: Install dependencies
       uses: r-lib/actions/setup-r-dependencies@v2
-      with:
-        extra-packages: any::rcmdcheck
+      run:
+          Rscript -e 'install.packages("shiny", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
+          Rscript -e 'install.packages("shinydashboard", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
+          Rscript -e 'install.packages("RSQLite", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
+          Rscript -e 'install.packages("dplyr", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
+          Rscript -e 'install.packages("tidyverse", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
+          Rscript -e 'install.packages("plotly", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
+          Rscript -e 'install.packages("rsconnect", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
 
     - name: Build app
       run: Rscript -e 'shiny::runApp("EduAttain/app.R")'
