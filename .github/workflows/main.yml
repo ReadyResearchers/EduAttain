@@ -23,9 +23,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-    
-    - name: Set working directory
-      run: cd EduAttain
 
     - name: Setup R
       uses: r-lib/actions/setup-r@v2
