@@ -3,7 +3,7 @@ Author: Kyrie Doniz
 AuthorUrl: http://www.github.com/ReadyResearchers/EduAttain
 Description: This is a Shiny dashboard app that visualizes and tests the statistical relationship between educational attainment and the factors of race, gender, and Hispanic ethnicity.
 Version: 1.0.0
-License: GPL-3
+License: MIT
 Tags: thesis
 Type: Shiny
 Imports:

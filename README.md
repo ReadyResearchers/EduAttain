@@ -1,18 +1,25 @@
-![eduattain header](files/eduattain.jpg)
-
 # EduAttain: A Statistical Analysis of the Impact of Different Demographic Indicators on Educational Attainment
+
+![MIT License badge](https://img.shields.io/github/license/ReadyResearchers/EduAttain)
+
+![eduattain header](files/eduattain.jpg)
 
 # Table of Contents
 
 1. [Abstract](#abstract)
-2. [Installation](#installation)
-3. [Structure](#structure)
-4. [Usage](#usage)
-5. [Results](#results)
+2. [Technical Details](#technical-details)
+3. [Installation](#installation)
+4. [Structure](#structure)
+5. [Usage](#usage)
+6. [Results](#results)
 
 ## Abstract
 
 Over the last fifty years, trends in educational attainment have reflected simultaneous movements towards closing and widening disparities between different identity groups. Studying educational attainment, specifically revolved around studying differences or disparities in educational attainment, is important because of the implications for future work opportunities, financial security, and resource access. This study identifies and investigates the demographic factors as determinants of educational attainment, namely sex, race, and Hispanic ethnicity. The main goal of this study is to address the lack of research in comparing educational attainment trends between different identity groups and to present research that studies these factors statistical relationship to education. Leveraging data from IPUMS, and using R and SQLite, trends in educational attainment across different identity groups will be studied through the use of pie charts to display results and draw comparisons that will be displayed on a web-based dashboard. The statistical relationship between these factors and educational attainment will be studied using a binary logistic regression, to determine what populations had a higher odds of having a high school diploma or greater. The findings of this project affirm much of the research done in the realm of gender, racial, and ethnic inequities in education, in that White, Non Hispanic, and Female populations have the highest rates of educational attainment, compared to all other populations.
+
+## Technical Details
+
+[include details about tools and packages]
 
 ## Installation
 
