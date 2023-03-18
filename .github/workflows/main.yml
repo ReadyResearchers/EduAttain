@@ -1,0 +1,27 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        Rscript -e "install.packages('shiny')"
+        Rscript -e "install.packages('shinydashboard')"
+        Rscript -e "install.packages('RSQLite')"
+        Rscript -e "install.packages('plotly')"
+        Rscript -e "install.packages('rsconnect')"
+        Rscript -e "install.packages('tidyverse')"
+        Rscript -e "install.packages('dplyr')"
+
+    - name: Build app
+      run: Rscript -e "shiny::runApp('R/app.R')"
