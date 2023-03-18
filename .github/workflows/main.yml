@@ -13,5 +13,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Install dependencies
+      run: |
+        export R_LIBS=$HOME/R/library
+        mkdir -p $R_LIBS
+        Rscript --no-restore --no-save -e 'install.packages("shiny", lib = Sys.getenv("R_LIBS"), repos="https://cran.rstudio.com/")'
+    
     - name: Build app
       run: Rscript -e "shiny::runApp('R/app.R')"
