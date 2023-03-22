@@ -9,12 +9,9 @@
 #install.packages("shinydashboard")
 #install.packages('rsconnect')
 #install.packages("RSQLite")
-#install.packages("vtable")
 #install.packages("plotly")
-#install.packages("foreign")
-#install.packages("MASS")
-#install.packages("Hmsic")
-#install.packages("reshape2")
+#install.packages("testthat")
+
 
 # install libs
 
@@ -293,10 +290,8 @@ body <- dashboardBody(
               column(width = 12,
                      tabBox(
                          title = "Summary", width = NULL,
-                         tabPanel("Binary Logistic Regression", verbatimTextOutput("binary"), htmlOutput("reg_interpret")), tabPanel("Odds Ratio", verbatimTextOutput("binary_odds"), htmlOutput("odds_interpret")),
-                         tabPanel("Confusion Matrix", verbatimTextOutput("cm")),
-                         tabPanel("Binary Logistic Regression 2", verbatimTextOutput("binary_2"), htmlOutput("reg_interpret_2")), tabPanel("Odds Ratio 2", verbatimTextOutput("binary_odds_2"), htmlOutput("odds_interpret_2")),
-                         tabPanel("Confusion Matrix 2", verbatimTextOutput("cm_2")),
+                         tabPanel("Binary Logistic Regression", verbatimTextOutput("binary"), htmlOutput("reg_interpret"), verbatimTextOutput("cm")), tabPanel("Odds Ratio", verbatimTextOutput("binary_odds"), htmlOutput("odds_interpret")),
+                         tabPanel("2nd Binary Logistic Regression", verbatimTextOutput("binary_2"), htmlOutput("reg_interpret_2"), verbatimTextOutput("cm_2")), tabPanel("2nd Odds Ratio", verbatimTextOutput("binary_odds_2"), htmlOutput("odds_interpret_2"))
                      )
                   )
             )
@@ -1399,7 +1394,7 @@ server <- function(input, output) {
           <b>American Indian</b> population, while having a lower proportion compared to the <b>White, Asian, Pacific Islander, and Mixed Race</b> population.</li>
           
           <li>The <b>American Indian</b> population had the lowest proportion of individuals who had an educational attainment of high school diploma or greater compared to 
-          <b>all other racial groups/b>.</li>
+          <b>all other racial groups</b>.</li>
           
           <li>The <b>Pacific Islander</b> population had a higher proportion of individuals who had an educational attainment of high school diploma or greater compared to the 
           <b>American Indian and Black</b> populations, while having a lower proportion compared to the <b>White, Asian, and Mixed Race</b> population.</li>
@@ -5753,9 +5748,9 @@ server <- function(input, output) {
   ##################################################
   
   output$stat_intro <- renderUI({
-    HTML("For this project, a binary logistic regression model was employed to study the relationship between race, gender, and Hispanic ethnicity as they relate to educational attainment. To achieve these results, the educational attainment variable was recoded from its original <em>ordinal</em> form into a <em>binary</em> variable, separating the levels of educational
-         attainment into two categories, High School Diploma or Greater and Some High School or Lesser. This should be kept in mind in the interpretation of the generated regression and subsequent odds ratio. Most of the interpretation from this model will come from the results of the odds ratio, which provide insight into the likelihood of a given identity group to attain an
-         education equivalent to or greater than a high school diploma.<br><br><small>This regression was constructed using a randomly selected sample of 100,000 observations from the source data, as to improve processing time.</small>")
+    HTML("For this project, a <b>binary logistic regression</b> model was employed to study the relationship between <em>race, gender, and Hispanic ethnicity</em> as they relate to educational attainment. To achieve these results, the educational attainment variable was recoded from its original <em>ordinal</em> form into a <em>binary</em> variable, separating the levels of educational
+         attainment into two categories, <b>High School Diploma or Greater and Some High School or Lesser</b>. This should be kept in mind in the interpretation of the generated regression and subsequent odds ratio. Most of the interpretation from this model will come from the results of the odds ratio, which provide insight into the likelihood of a given identity group to attain an
+         education equivalent to or greater than a high school diploma. Additionally, a second regression and odds ratio provide insight into how racial and ethnic groups compare in the likelihood of getting a High School Degree or Greater.<br><br><small>These regressions were constructed using a randomly selected sample of 100,000 observations from the source data, as to improve processing time.</small>")
   })
   
   # regression model output
@@ -5851,7 +5846,108 @@ server <- function(input, output) {
   })
   
   output$reg_interpret <- renderUI({
-    HTML("In this regression, all the predictor variables (<em>those included within the regression equation</em>) that are accompanied by a * or . are statistically significant. In this model, all of the explanatory variables are statistically significant, meaning they have an impact on the educational attainment variable.")
+    HTML("In this regression, all the predictor variables (<em>those included within the regression equation</em>) that are accompanied by a * or . are <b>statistically significant</b>. In this model, all of the explanatory variables are statistically significant, meaning they have an impact on the educational attainment variable. <br><br>
+         Given the confusion matrix that was computed for the model, the <b>accuracy</b> of the results of the regression is as follows:")
+  })
+  
+  output$cm <- renderPrint({
+    # query to display the first 5 rows
+    result <- dbGetQuery(conn,
+                         statement= "SELECT cpsidp, sex, educ, race, hispan, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
+    
+    ##coding for all yrs - binary reg
+    result$EDUC[result$EDUC == "10"]<-"Some High School or Less" # Some High School or Less = 0
+    result$EDUC[result$EDUC == "111"]<-"High School Diploma or Greater" # High School Diploma or Greater = 1
+    result$EDUC[result$EDUC == "123"]<-"High School Diploma or Greater"
+    result$EDUC[result$EDUC == "124"]<-"High School Diploma or Greater"
+    result$EDUC[result$EDUC == "125"]<-"High School Diploma or Greater"
+    result$EDUC[result$EDUC == "2"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "20"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "30"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "40"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "50"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "60"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "71"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "73"]<-"High School Diploma or Greater"
+    result$EDUC[result$EDUC == "81"]<-"High School Diploma or Greater"
+    result$EDUC[result$EDUC == "91"]<-"High School Diploma or Greater"
+    result$EDUC[result$EDUC == "92"]<-"High School Diploma or Greater"
+    
+    # filtering
+    result$RACE[result$RACE == "801"]<-"999" #white black
+    result$RACE[result$RACE == "802"]<-"999" #white american indian
+    result$RACE[result$RACE == "803"]<-"999" #white asian
+    result$RACE[result$RACE == "804"]<-"999" #white pacific islander
+    result$RACE[result$RACE == "805"]<-"999" #black american indian
+    result$RACE[result$RACE == "806"]<-"999" #black asian
+    result$RACE[result$RACE == "807"]<-"999" #black pacific islander
+    result$RACE[result$RACE == "808"]<-"999" #american indian asian
+    result$RACE[result$RACE == "809"]<-"999" #asian pacific islander
+    result$RACE[result$RACE == "810"]<-"999" #white black american indian
+    result$RACE[result$RACE == "811"]<-"999" #white black asian
+    result$RACE[result$RACE == "812"]<-"999" #white american indian asian
+    result$RACE[result$RACE == "813"]<-"999" #white asian pacific islander
+    result$RACE[result$RACE == "814"]<-"999" #white black american indian asian
+    result$RACE[result$RACE == "815"]<-"999" #american indian
+    result$RACE[result$RACE == "816"]<-"999" #white black pacific islander
+    result$RACE[result$RACE == "817"]<-"999" #white american indian pacific islander
+    result$RACE[result$RACE == "818"]<-"999" #black american indian asian
+    result$RACE[result$RACE == "819"]<-"999" #white american indian asian pacific islander
+    result$RACE[result$RACE == "820"]<-"999" #mixed race, 2-3, unspecified
+    result$RACE[result$RACE == "830"]<-"999" #mixed race, 4-5, unspecified
+    
+    
+    # hispanic filtering
+    result$HISPAN[result$HISPAN == "0"]<-"000" # non hispanic
+    #other hispan filtering
+    result$HISPAN[result$HISPAN == "600"]<-"650" # other hispanic
+    result$HISPAN[result$HISPAN == "610"]<-"650" # central/south american
+    result$HISPAN[result$HISPAN == "611"]<-"650" # central american, excluding salvadorian
+    result$HISPAN[result$HISPAN == "612"]<-"650" # south american 
+    
+    # sex
+    result$female <- ifelse(result$SEX == "2", 1, 0)
+    #result$SEX <- replace(result$SEX == "1", 0) #male base case is == 1
+    
+    # race
+    #result$RACE <- replace(result$RACE == "100", 0) # white base case is == 100
+    result$black <- ifelse(result$RACE == "200", 1, 0)
+    result$amer_indian <- ifelse(result$RACE == "300", 1, 0)
+    result$asian <- ifelse(result$RACE == "651", 1, 0)
+    result$islander <- ifelse(result$RACE == "652", 1, 0)
+    result$mixed_race <- ifelse(result$RACE == "999", 1, 0)
+    
+    # hispanic
+    #result$HISPAN <-- replace(result$HISPAN == "000", 0) # non hispanic base case == 000
+    result$mex <- ifelse(result$HISPAN == "100", 1, 0)
+    result$pr <- ifelse(result$HISPAN == "200", 1, 0)
+    result$cuban <- ifelse(result$HISPAN == "300", 1, 0)
+    result$dom <- ifelse(result$HISPAN == "400", 1, 0)
+    result$salv <- ifelse(result$HISPAN == "500", 1, 0)
+    result$otherhispan <- ifelse(result$HISPAN == "650", 1, 0)
+    result$EDUC <- ifelse(result$EDUC == "High School Diploma or Greater", 1, 0)
+    
+    ## remove na values
+    result <- na.omit(result)
+    
+    ## sample data
+    sample_result <- result[sample(nrow(result), 100000), ]
+    
+    # binary logistic regression model
+    m <- glm(EDUC~female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan, family = binomial, data = sample_result)
+    
+    # obtain predictions
+    predict <- predict(m, type="response")
+    predict_class <- ifelse(predict > 0.5, "Yes", "No")
+    
+    # confusion matrix
+    cm <- table(predict_class, sample_result$EDUC)
+    
+    TP <- cm[1,1]
+    TN <- cm[2,2]
+    
+    accuracy <- (TP+TN)/sum(cm)
+    cat("Binary Logit Model 1 Accuracy: ", round(accuracy,4))
   })
   
   output$binary_odds <- renderPrint({
@@ -5959,106 +6055,6 @@ server <- function(input, output) {
          </ul>")
   })
   
-  output$cm <- renderPrint({
-    # query to display the first 5 rows
-    result <- dbGetQuery(conn,
-                         statement= "SELECT cpsidp, sex, educ, race, hispan, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
-    
-    ##coding for all yrs - binary reg
-    result$EDUC[result$EDUC == "10"]<-"Some High School or Less" # Some High School or Less = 0
-    result$EDUC[result$EDUC == "111"]<-"High School Diploma or Greater" # High School Diploma or Greater = 1
-    result$EDUC[result$EDUC == "123"]<-"High School Diploma or Greater"
-    result$EDUC[result$EDUC == "124"]<-"High School Diploma or Greater"
-    result$EDUC[result$EDUC == "125"]<-"High School Diploma or Greater"
-    result$EDUC[result$EDUC == "2"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "20"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "30"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "40"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "50"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "60"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "71"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "73"]<-"High School Diploma or Greater"
-    result$EDUC[result$EDUC == "81"]<-"High School Diploma or Greater"
-    result$EDUC[result$EDUC == "91"]<-"High School Diploma or Greater"
-    result$EDUC[result$EDUC == "92"]<-"High School Diploma or Greater"
-    
-    # filtering
-    result$RACE[result$RACE == "801"]<-"999" #white black
-    result$RACE[result$RACE == "802"]<-"999" #white american indian
-    result$RACE[result$RACE == "803"]<-"999" #white asian
-    result$RACE[result$RACE == "804"]<-"999" #white pacific islander
-    result$RACE[result$RACE == "805"]<-"999" #black american indian
-    result$RACE[result$RACE == "806"]<-"999" #black asian
-    result$RACE[result$RACE == "807"]<-"999" #black pacific islander
-    result$RACE[result$RACE == "808"]<-"999" #american indian asian
-    result$RACE[result$RACE == "809"]<-"999" #asian pacific islander
-    result$RACE[result$RACE == "810"]<-"999" #white black american indian
-    result$RACE[result$RACE == "811"]<-"999" #white black asian
-    result$RACE[result$RACE == "812"]<-"999" #white american indian asian
-    result$RACE[result$RACE == "813"]<-"999" #white asian pacific islander
-    result$RACE[result$RACE == "814"]<-"999" #white black american indian asian
-    result$RACE[result$RACE == "815"]<-"999" #american indian
-    result$RACE[result$RACE == "816"]<-"999" #white black pacific islander
-    result$RACE[result$RACE == "817"]<-"999" #white american indian pacific islander
-    result$RACE[result$RACE == "818"]<-"999" #black american indian asian
-    result$RACE[result$RACE == "819"]<-"999" #white american indian asian pacific islander
-    result$RACE[result$RACE == "820"]<-"999" #mixed race, 2-3, unspecified
-    result$RACE[result$RACE == "830"]<-"999" #mixed race, 4-5, unspecified
-    
-    
-    # hispanic filtering
-    result$HISPAN[result$HISPAN == "0"]<-"000" # non hispanic
-    #other hispan filtering
-    result$HISPAN[result$HISPAN == "600"]<-"650" # other hispanic
-    result$HISPAN[result$HISPAN == "610"]<-"650" # central/south american
-    result$HISPAN[result$HISPAN == "611"]<-"650" # central american, excluding salvadorian
-    result$HISPAN[result$HISPAN == "612"]<-"650" # south american 
-    
-    # sex
-    result$female <- ifelse(result$SEX == "2", 1, 0)
-    #result$SEX <- replace(result$SEX == "1", 0) #male base case is == 1
-    
-    # race
-    #result$RACE <- replace(result$RACE == "100", 0) # white base case is == 100
-    result$black <- ifelse(result$RACE == "200", 1, 0)
-    result$amer_indian <- ifelse(result$RACE == "300", 1, 0)
-    result$asian <- ifelse(result$RACE == "651", 1, 0)
-    result$islander <- ifelse(result$RACE == "652", 1, 0)
-    result$mixed_race <- ifelse(result$RACE == "999", 1, 0)
-    
-    # hispanic
-    #result$HISPAN <-- replace(result$HISPAN == "000", 0) # non hispanic base case == 000
-    result$mex <- ifelse(result$HISPAN == "100", 1, 0)
-    result$pr <- ifelse(result$HISPAN == "200", 1, 0)
-    result$cuban <- ifelse(result$HISPAN == "300", 1, 0)
-    result$dom <- ifelse(result$HISPAN == "400", 1, 0)
-    result$salv <- ifelse(result$HISPAN == "500", 1, 0)
-    result$otherhispan <- ifelse(result$HISPAN == "650", 1, 0)
-    result$EDUC <- ifelse(result$EDUC == "High School Diploma or Greater", 1, 0)
-    
-    ## remove na values
-    result <- na.omit(result)
-    
-    ## sample data
-    sample_result <- result[sample(nrow(result), 100000), ]
-    
-    # binary logistic regression model
-    m <- glm(EDUC~female + black + amer_indian + asian + islander + mixed_race + mex + pr + cuban + dom + salv + otherhispan, family = binomial, data = sample_result)
-    
-    # obtain predictions
-    predict <- predict(m, type="response")
-    predict_class <- ifelse(predict > 0.5, "Yes", "No")
-    
-    # confusion matrix
-    cm <- table(predict_class, sample_result$EDUC)
-    
-    TP <- cm[1,1]
-    TN <- cm[2,2]
-    
-    accuracy <- (TP+TN)/sum(cm)
-    cat("Accuracy: ", round(accuracy,4))
-  })
-  
   # regression model output
   output$binary_2 <- renderPrint({
     # query to display the first 5 rows
@@ -6150,101 +6146,10 @@ server <- function(input, output) {
   })
   
   output$reg_interpret_2 <- renderUI({
-    HTML("write")
+    HTML("In this regression, all the predictor variables (<em>those included within the regression equation</em>) that are accompanied by a * or . are <b>statistically significant</b>. In this second model, all of the explanatory variables are statistically significant, meaning they have an impact on the educational attainment variable. <br><br>
+         Given the confusion matrix that was computed for the model, the <b>accuracy</b> of the results of the regression is as follows:")
   })
-  output$binary_odds_2 <- renderPrint({
-    # query to display the first 5 rows
-    result <- dbGetQuery(conn,
-                         statement= "SELECT cpsidp, sex, educ, race, hispan, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
-    
-    ##coding for all yrs - binary reg
-    result$EDUC[result$EDUC == "10"]<-"Some High School or Less" # Some High School or Less = 0
-    result$EDUC[result$EDUC == "111"]<-"High School Diploma or Greater" # High School Diploma or Greater = 1
-    result$EDUC[result$EDUC == "123"]<-"High School Diploma or Greater"
-    result$EDUC[result$EDUC == "124"]<-"High School Diploma or Greater"
-    result$EDUC[result$EDUC == "125"]<-"High School Diploma or Greater"
-    result$EDUC[result$EDUC == "2"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "20"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "30"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "40"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "50"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "60"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "71"]<-"Some High School or Less"
-    result$EDUC[result$EDUC == "73"]<-"High School Diploma or Greater"
-    result$EDUC[result$EDUC == "81"]<-"High School Diploma or Greater"
-    result$EDUC[result$EDUC == "91"]<-"High School Diploma or Greater"
-    result$EDUC[result$EDUC == "92"]<-"High School Diploma or Greater"
-    
-    # filtering
-    result$RACE[result$RACE == "801"]<-"999" #white black
-    result$RACE[result$RACE == "802"]<-"999" #white american indian
-    result$RACE[result$RACE == "803"]<-"999" #white asian
-    result$RACE[result$RACE == "804"]<-"999" #white pacific islander
-    result$RACE[result$RACE == "805"]<-"999" #black american indian
-    result$RACE[result$RACE == "806"]<-"999" #black asian
-    result$RACE[result$RACE == "807"]<-"999" #black pacific islander
-    result$RACE[result$RACE == "808"]<-"999" #american indian asian
-    result$RACE[result$RACE == "809"]<-"999" #asian pacific islander
-    result$RACE[result$RACE == "810"]<-"999" #white black american indian
-    result$RACE[result$RACE == "811"]<-"999" #white black asian
-    result$RACE[result$RACE == "812"]<-"999" #white american indian asian
-    result$RACE[result$RACE == "813"]<-"999" #white asian pacific islander
-    result$RACE[result$RACE == "814"]<-"999" #white black american indian asian
-    result$RACE[result$RACE == "815"]<-"999" #american indian
-    result$RACE[result$RACE == "816"]<-"999" #white black pacific islander
-    result$RACE[result$RACE == "817"]<-"999" #white american indian pacific islander
-    result$RACE[result$RACE == "818"]<-"999" #black american indian asian
-    result$RACE[result$RACE == "819"]<-"999" #white american indian asian pacific islander
-    result$RACE[result$RACE == "820"]<-"999" #mixed race, 2-3, unspecified
-    result$RACE[result$RACE == "830"]<-"999" #mixed race, 4-5, unspecified
-    
-    
-    # hispanic filtering
-    result$HISPAN[result$HISPAN == "000"]<-"0" # non hispanic
-    #hispan filtering
-    result$HISPAN[result$HISPAN == "100"]<-"650" #mexican
-    result$HISPAN[result$HISPAN == "200"]<-"650"#puerto rican
-    result$HISPAN[result$HISPAN == "300"]<-"650"#cuban
-    result$HISPAN[result$HISPAN == "400"]<-"650"#dominican
-    result$HISPAN[result$HISPAN == "500"]<-"650"#salvadorian
-    result$HISPAN[result$HISPAN == "600"]<-"650" # other hispanic
-    result$HISPAN[result$HISPAN == "610"]<-"650" # central/south american
-    result$HISPAN[result$HISPAN == "611"]<-"650" # central american, excluding salvadorian
-    result$HISPAN[result$HISPAN == "612"]<-"650" # south american 
-    
-    # sex
-    result$female <- ifelse(result$SEX == "2", 1, 0)
-    #result$SEX <- replace(result$SEX == "1", 0) #male base case is == 1
-    
-    # race
-    #result$RACE <- replace(result$RACE == "100", 0) # white base case is == 100
-    result$black <- ifelse(result$RACE == "200", 1, 0)
-    result$amer_indian <- ifelse(result$RACE == "300", 1, 0)
-    result$asian <- ifelse(result$RACE == "651", 1, 0)
-    result$islander <- ifelse(result$RACE == "652", 1, 0)
-    result$mixed_race <- ifelse(result$RACE == "999", 1, 0)
-    
-    # hispanic
-    #result$HISPAN <-- replace(result$HISPAN == "000", 0) # non hispanic base case == 000
-    result$hispanic <- ifelse(result$HISPAN == "650", 1, 0)
-    result$EDUC <- ifelse(result$EDUC == "High School Diploma or Greater", 1, 0)
-    
-    ## remove na values
-    result <- na.omit(result)
-    
-    ## sample data
-    sample_result <- result[sample(nrow(result), 100000), ]
-    
-    # binary logistic regression model
-    m <- glm(EDUC~female + black + amer_indian + asian + islander + mixed_race + hispanic, family = binomial, data = sample_result)
-    
-    ## view odds ratio
-    exp(coef(m))
-    
-  })
-  output$odds_interpret_2 <- renderUI({
-    HTML("write")
-  })
+  
   output$cm_2 <- renderPrint({
     # query to display the first 5 rows
     result <- dbGetQuery(conn,
@@ -6344,6 +6249,108 @@ server <- function(input, output) {
     accuracy <- (TP+TN)/sum(cm)
     cat("Accuracy: ", round(accuracy,4))
     
+  })
+  
+  output$binary_odds_2 <- renderPrint({
+    # query to display the first 5 rows
+    result <- dbGetQuery(conn,
+                         statement= "SELECT cpsidp, sex, educ, race, hispan, age FROM CPS WHERE age >= 18 AND cpsidp !='CPSIDP'")
+    
+    ##coding for all yrs - binary reg
+    result$EDUC[result$EDUC == "10"]<-"Some High School or Less" # Some High School or Less = 0
+    result$EDUC[result$EDUC == "111"]<-"High School Diploma or Greater" # High School Diploma or Greater = 1
+    result$EDUC[result$EDUC == "123"]<-"High School Diploma or Greater"
+    result$EDUC[result$EDUC == "124"]<-"High School Diploma or Greater"
+    result$EDUC[result$EDUC == "125"]<-"High School Diploma or Greater"
+    result$EDUC[result$EDUC == "2"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "20"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "30"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "40"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "50"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "60"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "71"]<-"Some High School or Less"
+    result$EDUC[result$EDUC == "73"]<-"High School Diploma or Greater"
+    result$EDUC[result$EDUC == "81"]<-"High School Diploma or Greater"
+    result$EDUC[result$EDUC == "91"]<-"High School Diploma or Greater"
+    result$EDUC[result$EDUC == "92"]<-"High School Diploma or Greater"
+    
+    # filtering
+    result$RACE[result$RACE == "801"]<-"999" #white black
+    result$RACE[result$RACE == "802"]<-"999" #white american indian
+    result$RACE[result$RACE == "803"]<-"999" #white asian
+    result$RACE[result$RACE == "804"]<-"999" #white pacific islander
+    result$RACE[result$RACE == "805"]<-"999" #black american indian
+    result$RACE[result$RACE == "806"]<-"999" #black asian
+    result$RACE[result$RACE == "807"]<-"999" #black pacific islander
+    result$RACE[result$RACE == "808"]<-"999" #american indian asian
+    result$RACE[result$RACE == "809"]<-"999" #asian pacific islander
+    result$RACE[result$RACE == "810"]<-"999" #white black american indian
+    result$RACE[result$RACE == "811"]<-"999" #white black asian
+    result$RACE[result$RACE == "812"]<-"999" #white american indian asian
+    result$RACE[result$RACE == "813"]<-"999" #white asian pacific islander
+    result$RACE[result$RACE == "814"]<-"999" #white black american indian asian
+    result$RACE[result$RACE == "815"]<-"999" #american indian
+    result$RACE[result$RACE == "816"]<-"999" #white black pacific islander
+    result$RACE[result$RACE == "817"]<-"999" #white american indian pacific islander
+    result$RACE[result$RACE == "818"]<-"999" #black american indian asian
+    result$RACE[result$RACE == "819"]<-"999" #white american indian asian pacific islander
+    result$RACE[result$RACE == "820"]<-"999" #mixed race, 2-3, unspecified
+    result$RACE[result$RACE == "830"]<-"999" #mixed race, 4-5, unspecified
+    
+    
+    # hispanic filtering
+    result$HISPAN[result$HISPAN == "000"]<-"0" # non hispanic
+    #hispan filtering
+    result$HISPAN[result$HISPAN == "100"]<-"650" #mexican
+    result$HISPAN[result$HISPAN == "200"]<-"650"#puerto rican
+    result$HISPAN[result$HISPAN == "300"]<-"650"#cuban
+    result$HISPAN[result$HISPAN == "400"]<-"650"#dominican
+    result$HISPAN[result$HISPAN == "500"]<-"650"#salvadorian
+    result$HISPAN[result$HISPAN == "600"]<-"650" # other hispanic
+    result$HISPAN[result$HISPAN == "610"]<-"650" # central/south american
+    result$HISPAN[result$HISPAN == "611"]<-"650" # central american, excluding salvadorian
+    result$HISPAN[result$HISPAN == "612"]<-"650" # south american 
+    
+    # sex
+    result$female <- ifelse(result$SEX == "2", 1, 0)
+    #result$SEX <- replace(result$SEX == "1", 0) #male base case is == 1
+    
+    # race
+    #result$RACE <- replace(result$RACE == "100", 0) # white base case is == 100
+    result$black <- ifelse(result$RACE == "200", 1, 0)
+    result$amer_indian <- ifelse(result$RACE == "300", 1, 0)
+    result$asian <- ifelse(result$RACE == "651", 1, 0)
+    result$islander <- ifelse(result$RACE == "652", 1, 0)
+    result$mixed_race <- ifelse(result$RACE == "999", 1, 0)
+    
+    # hispanic
+    #result$HISPAN <-- replace(result$HISPAN == "000", 0) # non hispanic base case == 000
+    result$hispanic <- ifelse(result$HISPAN == "650", 1, 0)
+    result$EDUC <- ifelse(result$EDUC == "High School Diploma or Greater", 1, 0)
+    
+    ## remove na values
+    result <- na.omit(result)
+    
+    ## sample data
+    sample_result <- result[sample(nrow(result), 100000), ]
+    
+    # binary logistic regression model
+    m <- glm(EDUC~female + black + amer_indian + asian + islander + mixed_race + hispanic, family = binomial, data = sample_result)
+    
+    ## view odds ratio
+    exp(coef(m))
+    
+  })
+  output$odds_interpret_2 <- renderUI({
+    HTML("According to the results from the <em>binary logistic regression</em> and <em>odds ratio</em>:
+         <ul>
+         <li>Compared to the male population, the <b>female</b> population in this sample had higher odds of having an educational 
+         attainment equivalent to a high school diploma or greater</li>
+         
+         <li>Compared to the White, non-Hispanic population, <b>all other racial and ethnic groups</b> have a lower odds of having an educational 
+         attainment equivalent to a high school diploma or greater, albeit at varying levels. Following the attainment of the White population is that of the Mixed Race,
+         Pacific Islander, Asian, Black, American Indian, and Hispanic populations, in order.</li>
+         </ul>")
   })
 }
 

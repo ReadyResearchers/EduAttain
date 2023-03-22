@@ -1,6 +1,6 @@
 # EduAttain: A Statistical Analysis of the Impact of Different Demographic Indicators on Educational Attainment
 
-![MIT License badge](https://img.shields.io/github/license/ReadyResearchers/EduAttain) ![Running site badge](https://img.shields.io/website-up-down-green-red/https://donizk.shinyapps.io/EduAttain.svg) ![SQLite badge](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white) ![RStudio Badge](https://img.shields.io/badge/RStudio-75AADB?style=for-the-badge&logo=RStudio&logoColor=white)
+![MIT License badge](https://img.shields.io/github/license/ReadyResearchers/EduAttain) ![SQLite badge](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white) ![RStudio Badge](https://img.shields.io/badge/RStudio-75AADB?style=for-the-badge&logo=RStudio&logoColor=white)
 
 ![eduattain header](files/eduattain.jpg)
 
