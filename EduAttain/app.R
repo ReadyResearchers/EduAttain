@@ -26,6 +26,7 @@ library(dplyr)
 library(tidyverse)
 library(plotly)
 library(rsconnect)
+library(testthat)
 
 # setting database path
 #db <- "C:/Users/kyrie/Documents/cs600/CPS.db"
@@ -35,17 +36,6 @@ db <- "data/CPS.db"
 
 # connect to database
 conn <- dbConnect(RSQLite::SQLite(), dbname = db)
-
-
-#### test to limit results to 18+####
-# query to display the first 5 rows
-#q <- 'SELECT * from CPS;'
-#result <- dbGetQuery(conn,q)
-#result = result[-1,]
-#as.numeric(result$AGE)
-#res <- result %>% filter(AGE >= 18)
-######################################
-
 
 # format dash sidebar
 sidebar <- dashboardSidebar(
