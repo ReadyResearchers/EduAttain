@@ -36,14 +36,6 @@ jobs:
         # Enable RStudio Package Manager to speed up package installation
         use-public-rspm: true
 
-    - name: Set up dependencies
-      uses: r-lib/actions/setup-pkgdown@v1
-
-   - name: Install packages
-      run: |
-        install.packages("remotes")
-        remotes::install_deps(dependencies = TRUE)
-
     - name: Run tests
       uses: r-lib/actions/check-r-package@v1
       with:
