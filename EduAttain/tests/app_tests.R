@@ -17,7 +17,7 @@ test_that("SQLite query returns expected output", {
     library(shinytest)
     
     # setting database path -- via USB
-    db <- "C:/Users/kyrie/Documents/cs600/EduAttain/EduAttain/data/CPS.db"
+    db <- "data/CPS.db"
     
     # connect to database
     conn <- dbConnect(RSQLite::SQLite(), dbname = db)
@@ -47,7 +47,7 @@ test_that("Random sample is correctly generated from original data", {
     library(shinytest)
     
     # setting database path -- via USB
-    db <- "C:/Users/kyrie/Documents/cs600/EduAttain/EduAttain/data/CPS.db"
+    db <- "data/CPS.db"
     
     # connect to database
     conn <- dbConnect(RSQLite::SQLite(), dbname = db)
@@ -85,7 +85,7 @@ test_that("Test that a plotly object is correctly generated from original data",
     library(dplyr)
     
     # setting database path -- via USB
-    db <- "C:/Users/kyrie/Documents/cs600/EduAttain/EduAttain/data/CPS.db"
+    db <- "data/CPS.db"
     
     # connect to database
     conn <- dbConnect(RSQLite::SQLite(), dbname = db)
