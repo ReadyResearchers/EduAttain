@@ -36,5 +36,5 @@ jobs:
       shell: Rscript {0}
 
     - name: Run testthat file
-      run: testthat::test_file("/EduAttain/tests/app_tests.R", quiet = FALSE)
+      run: testthat::test_file("EduAttain/tests/app_tests.R", quiet = FALSE)
       shell: Rscript {0}
