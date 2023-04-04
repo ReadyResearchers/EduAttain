@@ -32,7 +32,9 @@ jobs:
         use-public-rspm: true
 
     - name: Set up dependencies
-      uses: r-lib/actions/setup-r-dependencies@v2
+      run: install.packages("testthat")
+      shell: Rscript {0}
 
-    - name: Check R Package
-      uses: r-lib/actions/check-r-package@v2
+    - name: Run testthat file
+      run: testthat::test_file("app_tests.R", quiet = FALSE)
+      shell: Rscript {0}
