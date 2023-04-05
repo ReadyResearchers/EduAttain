@@ -1,1 +1,1 @@
-"line-length": false
+rules "~MD026", "~MD007", "~MD013"
