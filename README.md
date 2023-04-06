@@ -107,14 +107,14 @@ Within the **statistical analysis** section, the results from the binary logisti
 
 - *First Binary Logistic Regression, Accuracy, & Odds Ratio*
   - All gender, race, and Hispanic ethnicity variables are ***statistically significant*** in relation to educational attainment.
-  - The first binary logistic regression had an accuracy of ****, based on the results of the confusion matrix.
+  - The first binary logistic regression had an accuracy of **86.5%**, based on the results of the confusion matrix.
   - *Odds Ratio*
-        - *Gender and Educational Attainment*: **Women** have a higher odds of completing an education greater than or equivalent to a high school diploma.
-        - *Race and Educational Attainment*: The **White** population has a higher odds of completing an education greater than or equivalent to a high school diploma. All other racial groups have a lower odds of attaining this level of education, albeit at varying levels.
-        - *Hispanic Ethnicity and Educational Attainment*: The **Hispanic** subgroups accounted for in the regression all have a lower odds of completing high school or college relative to the Non-Hispanic group.
+    - *Gender and Educational Attainment*: **Women** have a higher odds of completing an education greater than or equivalent to a high school diploma.
+    - *Race and Educational Attainment*: The **White** population has a higher odds of completing an education greater than or equivalent to a high school diploma. All other racial groups have a lower odds of attaining this level of education, albeit at varying levels.
+    - *Hispanic Ethnicity and Educational Attainment*: The **Hispanic** subgroups accounted for in the regression all have a lower odds of completing high school or college relative to the Non-Hispanic group.
 - *Second Binary Logistic Regression, Accuracy, & Odds Ratio*
   - The Hispanic ethnicity variable and all other race and gender variables are ***statistically significant*** in relation to educational attainment.
-  - The second binary logistic regression had an accuracy of ****, based on the results of the confusion matrix.
+  - The second binary logistic regression had an accuracy of **86.5%**, based on the results of the confusion matrix.
   - *Odds Ratio*
     - *Gender and Educational Attainment*: **Women** have a higher odds of completing an education greater than or equivalent to a high school diploma.
     - *Race, Hispanic Ethnicity, and Educational Attainment*: The **White, Non Hispanic** population has a higher odds of completing an education greater than or equivalent to a high school diploma. All other racial groups have a lower odds of attaining this level of education, albeit at varying levels.
