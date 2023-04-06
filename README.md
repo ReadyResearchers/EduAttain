@@ -44,7 +44,7 @@ For those who would like to install the project files for use on a local machine
 
 The structure of the files contributing to the development of EduAttain are as follows:
 
-- `R` folder: contains the main code file for this project, `app.R`, and the corresponding `description` configuration file. This folder also contains the following folders, all of which contain pertinent information for the project:
+- `EduAttain` folder: contains the main code file for this project, `app.R`, and the corresponding `description` configuration file. This folder also contains the following folders, all of which contain pertinent information for the project:
         - `data` folder: contains the data source for this project, `CPS.db`.
         - `tests` folder: contains the test file for this project, `app_tests.R`.
         - `www` folder: contains the picture files used in the project
@@ -58,9 +58,9 @@ Read along to learn more about the [Local Usage](local-usage), [Web Usage](web-u
 
 To use EduAttain locally using the source files mentioned in the [Installation](#installation) section, the following steps must be taken:
 
-1. Traverse the installed, extracted directory within your local machine's file directory ( which should be named *EduAttain*) for the **R/app.R** file.
-2. Open the **R/app.R** file in RStudio.
-3. Run the application using the IDE's run button or by typing in the following command to the RStudio console: `runApp('path/to/file/EduAttain/R')`
+1. Traverse the installed, extracted directory within your local machine's file directory ( which should be named *EduAttain*) for the **EduAttain/app.R** file.
+2. Open the **EduAttain/app.R** file in RStudio.
+3. Run the application using the IDE's run button or by typing in the following command to the RStudio console: `runApp('path/to/file/EduAttain/EduAttain')`
 4. If the application is running successfully, a separate browser or RStudio application window should open, displaying an application similar to that documented in [Expected Output](#expected-output)
 
 ### Web Usage
@@ -104,19 +104,20 @@ Within the **descriptive statistics** section, the results from observing popula
                         - Within the Hispanic ethnic group, the **Cuban** population had the highest proportion of high school and college educated individuals, followed by the attainment of the Puerto Rican, Other Hispanic, Dominican, Mexican, and Salvadoran populations, in order.
 
 Within the **statistical analysis** section, the results from the binary logistic regressions, odds ratios, and confusion matrices are as follows.
-        - *First Binary Logistic Regression, Accuracy, & Odds Ratio*
-                - All gender, race, and Hispanic ethnicity variables are ***statistically significant*** in relation to educational attainment.
-                - The first binary logistic regression had an accuracy of ****, based on the results of the confusion matrix.
-                - *Odds Ratio*
-                        - *Gender and Educational Attainment*: **Women** have a higher odds of completing an education greater than or equivalent to a high school diploma.
-                        - *Race and Educational Attainment*: The **White** population has a higher odds of completing an education greater than or equivalent to a high school diploma. All other racial groups have a lower odds of attaining this level of education, albeit at varying levels.
-                        - *Hispanic Ethnicity and Educational Attainment*: The **Hispanic** subgroups accounted for in the regression all have a lower odds of completing high school or college relative to the Non-Hispanic group.
-        - *Second Binary Logistic Regression, Accuracy, & Odds Ratio*
-                - The Hispanic ethnicity variable and all other race and gender variables are ***statistically significant*** in relation to educational attainment.
-                - The second binary logistic regression had an accuracy of ****, based on the results of the confusion matrix.
-                - *Odds Ratio*
-                        - *Gender and Educational Attainment*: **Women** have a higher odds of completing an education greater than or equivalent to a high school diploma.
-                        - *Race, Hispanic Ethnicity, and Educational Attainment*: The **White, Non Hispanic** population has a higher odds of completing an education greater than or equivalent to a high school diploma. All other racial groups have a lower odds of attaining this level of education, albeit at varying levels.
-                                - The population with the lowest odds of completing a high school or college education was the **Hispanic** ethnic group.
+
+- *First Binary Logistic Regression, Accuracy, & Odds Ratio*
+        - All gender, race, and Hispanic ethnicity variables are ***statistically significant*** in relation to educational attainment.
+        - The first binary logistic regression had an accuracy of ****, based on the results of the confusion matrix.
+        - *Odds Ratio*
+                - *Gender and Educational Attainment*: **Women** have a higher odds of completing an education greater than or equivalent to a high school diploma.
+                - *Race and Educational Attainment*: The **White** population has a higher odds of completing an education greater than or equivalent to a high school diploma. All other racial groups have a lower odds of attaining this level of education, albeit at varying levels.
+                - *Hispanic Ethnicity and Educational Attainment*: The **Hispanic** subgroups accounted for in the regression all have a lower odds of completing high school or college relative to the Non-Hispanic group.
+- *Second Binary Logistic Regression, Accuracy, & Odds Ratio*
+        - The Hispanic ethnicity variable and all other race and gender variables are ***statistically significant*** in relation to educational attainment.
+        - The second binary logistic regression had an accuracy of ****, based on the results of the confusion matrix.
+        - *Odds Ratio*
+                - *Gender and Educational Attainment*: **Women** have a higher odds of completing an education greater than or equivalent to a high school diploma.
+                - *Race, Hispanic Ethnicity, and Educational Attainment*: The **White, Non Hispanic** population has a higher odds of completing an education greater than or equivalent to a high school diploma. All other racial groups have a lower odds of attaining this level of education, albeit at varying levels.
+                        - The population with the lowest odds of completing a high school or college education was the **Hispanic** ethnic group.
 
 Review the [final report](https://github.com/ReadyResearchers/cmpsc-600-fall-2022-and-spring-2023-senior-thesis-donizk/releases/download/senior_thesis-donizk-2.0.2/SeniorThesis.pdf), based on the development and findings of EduAttain.
