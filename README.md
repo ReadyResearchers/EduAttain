@@ -1,6 +1,6 @@
 # EduAttain: A Statistical Analysis of the Impact of Different Demographic Indicators on Educational Attainment
 
-![MIT License badge](https://img.shields.io/github/license/ReadyResearchers/EduAttain) ![SQLite badge](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white) ![RStudio Badge](https://img.shields.io/badge/RStudio-75AADB?style=for-the-badge&logo=RStudio&logoColor=white) ![Build Status](https://img.shields.io/github/actions/workflow/status/ReadyResearchers/EduAttain/main.yml)
+![MIT License badge](https://img.shields.io/github/license/ReadyResearchers/EduAttain) ![Build Status](https://img.shields.io/github/actions/workflow/status/ReadyResearchers/EduAttain/main.yml) ![SQLite badge](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white) ![RStudio Badge](https://img.shields.io/badge/RStudio-75AADB?style=for-the-badge&logo=RStudio&logoColor=white)
 
 ![eduattain header](files/eduattain.jpg)
 
@@ -15,11 +15,20 @@
 
 ## Abstract
 
-Over the last fifty years, trends in educational attainment have reflected simultaneous movements towards closing and widening disparities between different identity groups. Studying educational attainment, specifically revolved around studying differences or disparities in educational attainment, is important because of the implications for future work opportunities, financial security, and resource access. This study identifies and investigates the demographic factors as determinants of educational attainment, namely sex, race, and Hispanic ethnicity. The main goal of this study is to address the lack of research in comparing educational attainment trends between different identity groups and to present research that studies these factors statistical relationship to education. Leveraging data from IPUMS, and using R and SQLite, trends in educational attainment across different identity groups will be studied through the use of pie charts to display results and draw comparisons that will be displayed on a web-based dashboard. The statistical relationship between these factors and educational attainment will be studied using a binary logistic regression, to determine what populations had a higher odds of having a high school diploma or greater. The findings of this project affirm much of the research done in the realm of gender, racial, and ethnic inequities in education, in that White, Non Hispanic, and Female populations have the highest rates of educational attainment, compared to all other populations.
+Over the last fifty years, trends in educational attainment have reflected simultaneous movements towards closing and widening disparities between different identity groups. Studying educational attainment, specifically revolved around studying disparities in education, is vital because of the implications for future work opportunities, financial security, and resource access. **EduAttain** identifies and investigates the role certain demographic factors play as determinants of educational attainment, namely, sex, race, and Hispanic ethnicity. Leveraging data from *IPUMS*, and using *R*, *R Shiny*, and *SQLite*, trends in educational attainment across different identity groups are studied through the use of pie charts to display results and draw comparisons displayed on a **[web-based dashboard](https://donizk.shinyapps.io/EduAttain/)**. The statistical relationship between these factors and educational attainment are studied using a *binary logistic regression*, to determine what populations had a higher odds of having a high school diploma or greater. The findings of this project affirm some of the findings presented in the literature, while providing new insight into certain racial and Hispanic ethnic subgroups rates of educational attainment. In general, the highest attaining populations in educational attainment were the White, Non Hispanic, and Female populations, compared to all other respective identity groups. Within the Hispanic ethnic group, the Cuban population maintained the highest level of educational attainment, relative to all other Hispanic ethnic subgroups. Furthermore, these results establish that the *Human Capital Model* fails to consider certain aspects of identity that may greatly influence the level of education an individual attains, outside of the influence of income and financial investments into education.
 
 ## Technical Details
 
-[include details about tools and packages]
+**EduAttain** was developed using the following tools and packages.
+        - *R*: data cleaning and manipulations, visualizations, & statistical analysis
+        - *RStudio*: main IDE
+        - *SQLite*: database storage for data source
+        - *R packages*
+                - *tidyverse* & *dplyr*: data manipulation
+                - *shiny* & *shinydashboard*: dashboard creation
+                - *plotly*: visualization generation
+                - *RSQLite*: connects SQLite and R together
+                - *rsconnect*: connects Shiny apps & dashboards to Shinyapps.io to be deployed and hosted online
 
 ## Installation
 
@@ -85,4 +94,29 @@ The Regression section of the dashboard falls within the Statistical Analysis se
 
 ## Results
 
-[write about results of plots and regression]
+Within the **descriptive statistics** section, the results from observing population percentages from the plots are as follows.
+        - *Gender and Educational Attainment*:
+                - The **female** population had the highest proportion of individuals with a completed high school education or greater.
+        - *Race and Educational Attainment*:
+                - The **Asian** population had the highest proportion of individuals with a completed high school education or greater followed closely by the Mixed Race, White, & Pacific Islander populations. The lowest attaining populations were the Black and American Indian populations, in order.
+        - *Hispanic Ethnicity and Educational Attainment*:
+                - The **Non Hispanic** population had the highest proportion of individuals with a completed high school education or greater. 
+                        - Within the Hispanic ethnic group, the **Cuban** population had the highest proportion of high school and college educated individuals, followed by the attainment of the Puerto Rican, Other Hispanic, Dominican, Mexican, and Salvadoran populations, in order.
+
+Within the **statistical analysis** section, the results from the binary logistic regressions, odds ratios, and confusion matrices are as follows.
+        - *First Binary Logistic Regression, Accuracy, & Odds Ratio*
+                - All gender, race, and Hispanic ethnicity variables are ***statistically significant*** in relation to educational attainment.
+                - The first binary logistic regression had an accuracy of ****, based on the results of the confusion matrix.
+                - *Odds Ratio*
+                        - *Gender and Educational Attainment*: **Women** have a higher odds of completing an education greater than or equivalent to a high school diploma.
+                        - *Race and Educational Attainment*: The **White** population has a higher odds of completing an education greater than or equivalent to a high school diploma. All other racial groups have a lower odds of attaining this level of education, albeit at varying levels.
+                        - *Hispanic Ethnicity and Educational Attainment*: The **Hispanic** subgroups accounted for in the regression all have a lower odds of completing high school or college relative to the Non-Hispanic group.
+        - *Second Binary Logistic Regression, Accuracy, & Odds Ratio*
+                - The Hispanic ethnicity variable and all other race and gender variables are ***statistically significant*** in relation to educational attainment.
+                - The second binary logistic regression had an accuracy of ****, based on the results of the confusion matrix.
+                - *Odds Ratio*
+                        - *Gender and Educational Attainment*: **Women** have a higher odds of completing an education greater than or equivalent to a high school diploma.
+                        - *Race, Hispanic Ethnicity, and Educational Attainment*: The **White, Non Hispanic** population has a higher odds of completing an education greater than or equivalent to a high school diploma. All other racial groups have a lower odds of attaining this level of education, albeit at varying levels.
+                                - The population with the lowest odds of completing a high school or college education was the **Hispanic** ethnic group.
+
+Review the [final report](https://github.com/ReadyResearchers/cmpsc-600-fall-2022-and-spring-2023-senior-thesis-donizk/releases/download/senior_thesis-donizk-2.0.2/SeniorThesis.pdf), based on the development and findings of EduAttain.
