@@ -20,15 +20,17 @@ Over the last fifty years, trends in educational attainment have reflected simul
 ## Technical Details
 
 **EduAttain** was developed using the following tools and packages.
-        - [`R`](https://www.r-project.org/about.html): data cleaning and manipulations, visualizations, & statistical analysis
-        - [`RStudio`](https://posit.co/products/open-source/rstudio/): main IDE
-        - [`SQLite`](https://www.sqlite.org/about.html): database storage for data source
-        - [`tidyverse`](https://www.tidyverse.org/) & [`dplyr`](https://dplyr.tidyverse.org/): data manipulation
-        - [`shiny`](https://shiny.rstudio.com/) & [`shinydashboard`](https://rstudio.github.io/shinydashboard/): dashboard creation
-        - [`plotly`](https://plotly.com/r/getting-started/#:~:text=plotly%20is%20an%20R%20package,locally%20through%20the%20htmlwidgets%20framework.): visualization generation
-        - [`RSQLite`](https://cran.r-project.org/web/packages/RSQLite/vignettes/RSQLite.html#:~:text=RSQLite%20is%20a%20DBI%2Dcompatible,library(DBI)): connects SQLite and R together
-        - [`rsconnect`](https://www.shinyapps.io/): connects Shiny apps & dashboards to Shinyapps.io to be deployed and hosted online
-        - [`testthat`](https://testthat.r-lib.org/): facilitates unit testing for R packages
+
+- [`R`](https://www.r-project.org/about.html): data cleaning and manipulations, visualizations, & statistical analysis
+- [`RStudio`](https://posit.co/products/open-source/rstudio/): main IDE
+- [`SQLite`](https://www.sqlite.org/about.html): database storage for data source
+- _**R Packages**_
+  - [`tidyverse`](https://www.tidyverse.org/) & [`dplyr`](https://dplyr.tidyverse.org/): data manipulation
+  - [`shiny`](https://shiny.rstudio.com/) & [`shinydashboard`](https://rstudio.github.io/shinydashboard/): dashboard creation
+  - [`plotly`](https://plotly.com/r/getting-started/#:~:text=plotly%20is%20an%20R%20package,locally%20through%20the%20htmlwidgets%20framework.): visualization generation
+  - [`RSQLite`](https://cran.r-project.org/web/packages/RSQLite/vignettes/RSQLite.html#:~:text=RSQLite%20is%20a%20DBI%2Dcompatible,library(DBI)): connects SQLite and R together
+  - [`rsconnect`](https://www.shinyapps.io/): connects Shiny apps & dashboards to Shinyapps.io to be deployed and hosted online
+  - [`testthat`](https://testthat.r-lib.org/): facilitates unit testing for R packages
 
 ## Installation
 
