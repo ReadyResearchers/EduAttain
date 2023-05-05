@@ -333,7 +333,7 @@ server <- function(input, output) {
     HTML(paste("<b>EduAttain</b>, leverages data from <a href='https://cps.ipums.org/cps/index.shtml'>IPUMS</a>, to assess how an individual's <em>race, gender, or Hispanic ethnicity</em> influence the level of education attained. <br>
                <br> This project is divided into two main sections: <em>Descriptive Statistics</em> and <em>Statistical Analysis</em>. <br><br> For the descriptive statistics, pie charts based on population percentages will depict how
                educational attainment varies by race, gender, and Hispanic ethnicity over each survey year. For the statistical analysis, the statistical relationship between educational attainment and each of the explanatory variables will be tested using a binary logistic regression. 
-               <br> <br>The source code for this project is stored in a <a href='https://github.com/ReadyResearchers/EduAttain'>GitHub Repository</a> that can be accessed for review of the code, adhering to fair use practices."))
+               <br> <br>The source code for this project is stored in a <a href='https://github.com/ReadyResearchers/EduAttain'>GitHub Repository</a> that can be accessed for review of the code, adhering to fair use practices. The final written report is also stored in a <a href=https://github.com/ReadyResearchers/cmpsc-600-fall-2022-and-spring-2023-senior-thesis-donizk/releases/>GitHub Repository</a>, to refer to for detailed research and findings"))
   })
   
   output$name <- renderUI({

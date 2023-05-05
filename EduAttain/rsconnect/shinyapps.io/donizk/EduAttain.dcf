@@ -5,9 +5,9 @@ account: donizk
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 8599168
-bundleId: 6993196
+bundleId: 7068414
 url: https://donizk.shinyapps.io/EduAttain/
-when: 1679502576.18214
-lastSyncTime: 1679502576.18214
+when: 1681078227.50424
+lastSyncTime: 1681078227.50424
 asMultiple: FALSE
 asStatic: FALSE
